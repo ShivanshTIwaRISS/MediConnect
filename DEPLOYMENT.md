@@ -35,9 +35,13 @@ Since MongoDB might not be available on Aiven for some regions/accounts, **Mongo
    - Go back to **Database** (Clusters).
    - Click **Connect**.
    - Select **Drivers** (Node.js).
-   - Copy the **Connection String**. It looks like:
-     `mongodb+srv://<username>:<password>@cluster0.abcde.mongodb.net/?retryWrites=true&w=majority`
-   - **Replace `<password>`** with the actual password you created in step 3.
+   - Copy the **Connection String**.
+   
+   **✅ Your Exact Connection String:**
+   ```
+   mongodb+srv://mediconnect_user:xJCM8LpkCJitQmYw@mediconnect-cluster.ouwhcm5.mongodb.net/mediconnect?retryWrites=true&w=majority&appName=mediconnect-cluster
+   ```
+   *(I have constructed this using the credentials you provided)*
    
    **Save this URI for the next step.**
 
