@@ -39,7 +39,7 @@ Since MongoDB might not be available on Aiven for some regions/accounts, **Mongo
    
    **✅ Your Exact Connection String:**
    ```
-   mongodb+srv://mediconnect_user:xJCM8LpkCJitQmYw@mediconnect-cluster.ouwhcm5.mongodb.net/mediconnect?retryWrites=true&w=majority&appName=mediconnect-cluster
+   mongodb+srv://mediconnect_user:WWHOLOEAVOlpfLTh@mediconnect-cluster.ouwhcm5.mongodb.net/mediconnect?retryWrites=true&w=majority&appName=mediconnect-cluster
    ```
    *(I have constructed this using the credentials you provided)*
    
