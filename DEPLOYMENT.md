@@ -11,20 +11,34 @@ This guide will walk you through hosting your application on **Aiven** (Database
 
 ---
 
-## 🏗️ Step 1: Database (Aiven)
+## 🏗️ Step 1: Database (MongoDB Atlas)
 
-1. **Log in** to your Aiven Console.
-2. Click **Create Service**.
-3. Select **MongoDB**.
-4. Choose a **Cloud Provider** and **Region** (e.g., Google Cloud / Your nearest region).
-5. Select the **Plan** (Startup or Hobbyist usually works for testing).
-6. Give it a name (e.g., `mediconnect-db`) and click **Create Service**.
-7. Wait for the service to be "Running".
-8. Copy the **Service URI** (Connection String). It looks like:
-   `mongodb+srv://avnadmin:password@host-name.aivencloud.com:port/defaultdb?ssl=true`
-9. **Important:** Add `/mediconnect` before the `?` to use a specific database name:
-   `mongodb+srv://avnadmin:password@host-name.aivencloud.com:port/mediconnect?ssl=true`
+Since MongoDB might not be available on Aiven for some regions/accounts, **MongoDB Atlas** is the best alternative (and it's the official creator of MongoDB).
 
+1. **Sign Up/Log In**: Go to [MongoDB Atlas](https://www.mongodb.com/cloud/atlas/register).
+2. **Create a Cluster**:
+   - Select the **Shared** (Free) option.
+   - Choose a provider (AWS/Google/Azure) and region.
+   - Click **Create Cluster**.
+3. **Create Database User**:
+   - Go to **Database Access** on the sidebar.
+   - Click **Add New Database User**.
+   - Choose **Password** authentication.
+   - Enter a username and password (remember these!).
+   - Click **Add User**.
+4. **Network Access**:
+   - Go to **Network Access** on the sidebar.
+   - Click **Add IP Address**.
+   - Select **Allow Access from Anywhere** (`0.0.0.0/0`). (This is required for Render to connect).
+   - Click **Confirm**.
+5. **Get Connection String**:
+   - Go back to **Database** (Clusters).
+   - Click **Connect**.
+   - Select **Drivers** (Node.js).
+   - Copy the **Connection String**. It looks like:
+     `mongodb+srv://<username>:<password>@cluster0.abcde.mongodb.net/?retryWrites=true&w=majority`
+   - **Replace `<password>`** with the actual password you created in step 3.
+   
    **Save this URI for the next step.**
 
 ---
