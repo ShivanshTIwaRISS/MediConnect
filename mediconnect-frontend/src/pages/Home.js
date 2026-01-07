@@ -2,6 +2,8 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import './Home.css';
+import { assets } from '../assets/assets_frontend/assets';
+import { assets as adminAssets } from '../assets/assets_admin/assets';
 
 const Home = () => {
     const { isAuthenticated, user } = useAuth();
@@ -62,32 +64,44 @@ const Home = () => {
                     <h2 className="section-title">Why Choose MediConnect?</h2>
                     <div className="features-grid">
                         <div className="feature-card card card-glass">
-                            <div className="feature-icon">👨‍⚕️</div>
+                            <div className="feature-icon">
+                                <img src={adminAssets.doctor_icon} alt="Doctors" style={{ width: '40px' }} />
+                            </div>
                             <h3>Qualified Doctors</h3>
                             <p>Connect with verified and experienced medical professionals</p>
                         </div>
                         <div className="feature-card card card-glass">
-                            <div className="feature-icon">📅</div>
+                            <div className="feature-icon">
+                                <img src={adminAssets.appointment_icon} alt="Booking" style={{ width: '40px' }} />
+                            </div>
                             <h3>Easy Booking</h3>
                             <p>Schedule appointments at your convenience with just a few clicks</p>
                         </div>
                         <div className="feature-card card card-glass">
-                            <div className="feature-icon">🔒</div>
+                            <div className="feature-icon">
+                                <img src={assets.verified_icon} alt="Secure" style={{ width: '40px' }} />
+                            </div>
                             <h3>Secure & Private</h3>
                             <p>Your health data is protected with industry-standard security</p>
                         </div>
                         <div className="feature-card card card-glass">
-                            <div className="feature-icon">⚡</div>
+                            <div className="feature-icon">
+                                <img src={assets.chats_icon} alt="Response" style={{ width: '40px' }} />
+                            </div>
                             <h3>Quick Response</h3>
                             <p>Get timely responses from doctors for your health concerns</p>
                         </div>
                         <div className="feature-card card card-glass">
-                            <div className="feature-icon">💰</div>
+                            <div className="feature-icon">
+                                <img src={adminAssets.earning_icon} alt="Pricing" style={{ width: '40px' }} />
+                            </div>
                             <h3>Transparent Pricing</h3>
                             <p>Know consultation fees upfront with no hidden charges</p>
                         </div>
                         <div className="feature-card card card-glass">
-                            <div className="feature-icon">📱</div>
+                            <div className="feature-icon">
+                                <img src={adminAssets.people_icon} alt="Access" style={{ width: '40px' }} />
+                            </div>
                             <h3>Easy Access</h3>
                             <p>Access healthcare from anywhere, anytime on any device</p>
                         </div>

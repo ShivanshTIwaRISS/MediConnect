@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import './Navbar.css';
+import { assets } from '../assets/assets_frontend/assets';
 
 const Navbar = () => {
     const { user, logout, isAuthenticated } = useAuth();
@@ -25,7 +26,7 @@ const Navbar = () => {
             <div className="container">
                 <div className="navbar-content">
                     <Link to="/" className="navbar-brand">
-                        <span className="brand-icon">🏥</span>
+                        <img src={assets.logo} alt="MediConnect Logo" style={{ height: '35px', marginRight: '10px' }} />
                         <span className="brand-text">MediConnect</span>
                     </Link>
 
