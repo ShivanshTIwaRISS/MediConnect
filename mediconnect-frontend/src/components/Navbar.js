@@ -26,7 +26,6 @@ const Navbar = () => {
             <div className="container">
                 <div className="navbar-content">
                     <Link to="/" className="navbar-brand">
-                        <img src={assets.logo} alt="MediConnect Logo" style={{ height: '35px', marginRight: '10px' }} />
                         <span className="brand-text">MediConnect</span>
                     </Link>
 

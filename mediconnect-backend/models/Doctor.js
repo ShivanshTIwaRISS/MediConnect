@@ -30,6 +30,14 @@ const doctorSchema = new mongoose.Schema({
         type: String,
         required: [true, 'Please provide availability'],
     },
+    about: {
+        type: String,
+        trim: true,
+    },
+    image: {
+        type: String,
+        default: '',
+    },
     status: {
         type: String,
         enum: ['pending', 'approved', 'blocked'],

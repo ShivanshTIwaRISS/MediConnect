@@ -8,6 +8,8 @@ const DoctorProfile = () => {
         experience: '',
         fees: '',
         availability: '',
+        about: '',
+        image: '',
     });
     const [hasProfile, setHasProfile] = useState(false);
     const [loading, setLoading] = useState(true);
@@ -28,6 +30,8 @@ const DoctorProfile = () => {
                 experience: profile.experience,
                 fees: profile.fees,
                 availability: profile.availability,
+                about: profile.about || '',
+                image: profile.image || '',
             });
             setHasProfile(true);
             setLoading(false);
@@ -147,6 +151,31 @@ const DoctorProfile = () => {
                                 onChange={handleChange}
                                 required
                             />
+                        </div>
+
+                        <div className="form-group">
+                            <label className="form-label">About Me</label>
+                            <textarea
+                                name="about"
+                                className="form-textarea"
+                                placeholder="Brief description about your professional background..."
+                                value={formData.about}
+                                onChange={handleChange}
+                                rows="4"
+                            />
+                        </div>
+
+                        <div className="form-group">
+                            <label className="form-label">Profile Image URL</label>
+                            <input
+                                type="text"
+                                name="image"
+                                className="form-input"
+                                placeholder="https://example.com/photo.jpg"
+                                value={formData.image}
+                                onChange={handleChange}
+                            />
+                            <p className="form-help">Provide a URL for your profile photo</p>
                         </div>
 
                         <button type="submit" className="btn btn-primary" disabled={saving} style={{ width: '100%' }}>

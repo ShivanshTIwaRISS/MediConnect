@@ -1,13 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../../utils/api';
+import './BookAppointment.css';
+import { assets } from '../../assets/assets_frontend/assets';
 
 const BookAppointment = () => {
     const [doctors, setDoctors] = useState([]);
+    const [selectedDoctor, setSelectedDoctor] = useState(null);
+    const [docSlots, setDocSlots] = useState([]);
+    const [slotIndex, setSlotIndex] = useState(0);
+    const [slotTime, setSlotTime] = useState('');
     const [formData, setFormData] = useState({
-        doctorId: '',
-        date: '',
-        time: '',
         reason: '',
     });
     const [loading, setLoading] = useState(false);
@@ -19,6 +22,12 @@ const BookAppointment = () => {
         fetchDoctors();
     }, []);
 
+    useEffect(() => {
+        if (selectedDoctor) {
+            getAvailableSlots();
+        }
+    }, [selectedDoctor]);
+
     const fetchDoctors = async () => {
         try {
             const response = await api.get('/patient/doctors');
@@ -28,18 +37,67 @@ const BookAppointment = () => {
         }
     };
 
-    const handleChange = (e) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value });
+    const getAvailableSlots = async () => {
+        let today = new Date();
+        let slots = [];
+
+        for (let i = 0; i < 7; i++) {
+            let currentDate = new Date(today);
+            currentDate.setDate(today.getDate() + i);
+
+            let endTime = new Date(today);
+            endTime.setDate(today.getDate() + i);
+            endTime.setHours(21, 0, 0, 0);
+
+            if (today.getDate() === currentDate.getDate()) {
+                currentDate.setHours(currentDate.getHours() > 10 ? currentDate.getHours() + 1 : 10);
+                currentDate.setMinutes(currentDate.getMinutes() > 30 ? 30 : 0);
+            } else {
+                currentDate.setHours(10);
+                currentDate.setMinutes(0);
+            }
+
+            let timeSlots = [];
+
+            while (currentDate < endTime) {
+                let formattedTime = currentDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                timeSlots.push({
+                    datetime: new Date(currentDate),
+                    time: formattedTime
+                });
+                currentDate.setMinutes(currentDate.getMinutes() + 30);
+            }
+            slots.push(timeSlots);
+        }
+        setDocSlots(slots);
+    };
+
+    const handleDoctorSelect = (e) => {
+        const doc = doctors.find(d => d._id === e.target.value);
+        setSelectedDoctor(doc);
+        setSlotTime('');
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        if (!slotTime) {
+            setError('Please select a time slot');
+            return;
+        }
+
         setError('');
         setSuccess('');
         setLoading(true);
 
+        const date = docSlots[slotIndex][0].datetime;
+
         try {
-            await api.post('/patient/appointments', formData);
+            await api.post('/patient/appointments', {
+                doctorId: selectedDoctor._id,
+                date: date,
+                time: slotTime,
+                reason: formData.reason || 'General Consultation',
+            });
             setSuccess('Appointment booked successfully!');
             setTimeout(() => navigate('/patient/appointments'), 2000);
         } catch (error) {
@@ -50,77 +108,118 @@ const BookAppointment = () => {
 
     return (
         <div className="dashboard-page">
-            <div className="container container-sm">
-                <div className="dashboard-header fade-in">
+            <div className="booking-container fade-in">
+                <div className="dashboard-header">
                     <h1>Book Appointment</h1>
-                    <p>Schedule a consultation with a doctor</p>
+                    {!selectedDoctor && <p>Select a doctor to see availability</p>}
                 </div>
 
-                <div className="card card-glass">
-                    {error && <div className="alert alert-error">{error}</div>}
-                    {success && <div className="alert alert-success">{success}</div>}
+                {error && <div className="alert alert-error">{error}</div>}
+                {success && <div className="alert alert-success">{success}</div>}
 
-                    <form onSubmit={handleSubmit}>
-                        <div className="form-group">
-                            <label className="form-label">Select Doctor</label>
-                            <select
-                                name="doctorId"
-                                className="form-select"
-                                value={formData.doctorId}
-                                onChange={handleChange}
-                                required
-                            >
-                                <option value="">Choose a doctor...</option>
-                                {doctors.map((doctor) => (
-                                    <option key={doctor._id} value={doctor._id}>
-                                        {doctor.userId.name} - {doctor.specialization} (${doctor.fees})
-                                    </option>
+                <div className="card card-glass mb-4" style={{ padding: '1.5rem' }}>
+                    <div className="form-group mb-0">
+                        <label className="form-label">Select Doctor</label>
+                        <select
+                            className="form-select"
+                            onChange={handleDoctorSelect}
+                            value={selectedDoctor?._id || ''}
+                        >
+                            <option value="">Choose a doctor...</option>
+                            {doctors.map((doc) => (
+                                <option key={doc._id} value={doc._id}>
+                                    {doc.userId.name} - {doc.specialization}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+                </div>
+
+                {selectedDoctor && (
+                    <>
+                        {/* Doctor Details Card */}
+                        <div className="card doctor-card">
+                            <div className="doctor-image-container">
+                                <img src={selectedDoctor.image || assets.doc1} alt={selectedDoctor.userId.name} />
+                            </div>
+                            <div style={{ flex: 1 }}>
+                                <div className="doctor-info-header">
+                                    <h2 className="doctor-name">{selectedDoctor.userId.name}</h2>
+                                    <img src={assets.verified_icon} alt="Verified" className="verified-icon" />
+                                </div>
+                                <p className="doctor-credentials">
+                                    {selectedDoctor.qualifications} - {selectedDoctor.specialization}
+                                    <span className="experience-badge ml-2">{selectedDoctor.experience} Years</span>
+                                </p>
+
+                                <div className="about-section">
+                                    <h3 className="about-title">
+                                        About <img src={assets.info_icon} alt="info" style={{ width: '15px' }} />
+                                    </h3>
+                                    <p className="about-text">
+                                        {selectedDoctor.about || 'No description provided.'}
+                                    </p>
+                                </div>
+
+                                <p className="fee-text">
+                                    Appointment fee: <span className="fee-amount">${selectedDoctor.fees}</span>
+                                </p>
+                            </div>
+                        </div>
+
+                        {/* Booking Slots */}
+                        <div className="booking-slots-container card card-glass p-4">
+                            <h3 className="slots-title">Booking slots</h3>
+
+                            <div className="days-scroll">
+                                {docSlots.length > 0 && docSlots.map((item, index) => (
+                                    <div
+                                        key={index}
+                                        onClick={() => setSlotIndex(index)}
+                                        className={`day-slot ${slotIndex === index ? 'active' : ''}`}
+                                    >
+                                        <span className="day-name">
+                                            {item[0] && item[0].datetime.toLocaleDateString([], { weekday: 'short' })}
+                                        </span>
+                                        <span className="day-date">
+                                            {item[0] && item[0].datetime.getDate()}
+                                        </span>
+                                    </div>
                                 ))}
-                            </select>
-                        </div>
+                            </div>
 
-                        <div className="form-group">
-                            <label className="form-label">Appointment Date</label>
-                            <input
-                                type="date"
-                                name="date"
-                                className="form-input"
-                                value={formData.date}
-                                onChange={handleChange}
-                                min={new Date().toISOString().split('T')[0]}
-                                required
-                            />
-                        </div>
+                            <div className="times-scroll">
+                                {docSlots.length > 0 && docSlots[slotIndex].map((item, index) => (
+                                    <div
+                                        key={index}
+                                        onClick={() => setSlotTime(item.time)}
+                                        className={`time-slot ${item.time === slotTime ? 'active' : ''}`}
+                                    >
+                                        {item.time.toLowerCase()}
+                                    </div>
+                                ))}
+                            </div>
 
-                        <div className="form-group">
-                            <label className="form-label">Appointment Time</label>
-                            <input
-                                type="time"
-                                name="time"
-                                className="form-input"
-                                value={formData.time}
-                                onChange={handleChange}
-                                required
-                            />
-                        </div>
+                            <div className="form-group mt-4">
+                                <label className="form-label">Reason for Consultation</label>
+                                <textarea
+                                    className="form-textarea"
+                                    placeholder="Describe your symptoms..."
+                                    value={formData.reason}
+                                    onChange={(e) => setFormData({ ...formData, reason: e.target.value })}
+                                />
+                            </div>
 
-                        <div className="form-group">
-                            <label className="form-label">Reason for Consultation</label>
-                            <textarea
-                                name="reason"
-                                className="form-textarea"
-                                value={formData.reason}
-                                onChange={handleChange}
-                                placeholder="Describe your symptoms or reason for consultation..."
-                                required
-                            />
+                            <button
+                                onClick={handleSubmit}
+                                className="btn btn-primary btn-book"
+                                disabled={loading || !slotTime}
+                            >
+                                {loading ? 'Booking...' : 'Book an appointment'}
+                            </button>
                         </div>
-
-                        <button type="submit" className="btn btn-primary" disabled={loading} style={{ width: '100%' }}>
-                            {loading ? 'Booking...' : 'Book Appointment'}
-                        </button>
-                    </form>
-                </div>
+                    </>
+                )}
             </div>
         </div>
     );

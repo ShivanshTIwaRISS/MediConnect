@@ -6,7 +6,7 @@ const Appointment = require('../models/Appointment');
 // @access  Private (Doctor)
 exports.createProfile = async (req, res) => {
     try {
-        const { specialization, qualifications, experience, fees, availability } = req.body;
+        const { specialization, qualifications, experience, fees, availability, about, image } = req.body;
 
         // Check if profile already exists
         const existingProfile = await Doctor.findOne({ userId: req.user.id });
@@ -26,6 +26,8 @@ exports.createProfile = async (req, res) => {
             experience,
             fees,
             availability,
+            about,
+            image,
         });
 
         res.status(201).json({
@@ -46,7 +48,7 @@ exports.createProfile = async (req, res) => {
 // @access  Private (Doctor)
 exports.updateProfile = async (req, res) => {
     try {
-        const { specialization, qualifications, experience, fees, availability } = req.body;
+        const { specialization, qualifications, experience, fees, availability, about, image } = req.body;
 
         let doctor = await Doctor.findOne({ userId: req.user.id });
 
@@ -59,7 +61,7 @@ exports.updateProfile = async (req, res) => {
 
         doctor = await Doctor.findOneAndUpdate(
             { userId: req.user.id },
-            { specialization, qualifications, experience, fees, availability },
+            { specialization, qualifications, experience, fees, availability, about, image },
             { new: true, runValidators: true }
         );
 
