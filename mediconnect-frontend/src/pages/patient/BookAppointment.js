@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import api from '../../utils/api';
 import './BookAppointment.css';
 import { assets } from '../../assets/assets_frontend/assets';
@@ -17,10 +17,22 @@ const BookAppointment = () => {
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
     const navigate = useNavigate();
+    const [searchParams] = useSearchParams();
 
     useEffect(() => {
         fetchDoctors();
     }, []);
+
+    // Auto-select doctor from URL param
+    useEffect(() => {
+        const doctorId = searchParams.get('doctorId');
+        if (doctorId && doctors.length > 0) {
+            const doc = doctors.find(d => d._id === doctorId);
+            if (doc) {
+                setSelectedDoctor(doc);
+            }
+        }
+    }, [doctors, searchParams]);
 
     useEffect(() => {
         if (selectedDoctor) {
@@ -36,6 +48,7 @@ const BookAppointment = () => {
             console.error('Error fetching doctors:', error);
         }
     };
+
 
     const getAvailableSlots = async () => {
         let today = new Date();
