@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import api from '../../utils/api';
+import { useAuth } from '../../context/AuthContext';
+import '../patient/PatientDashboard.css';
 
 const PatientProfile = () => {
+    const { user } = useAuth();
     const [formData, setFormData] = useState({ name: '', email: '' });
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
-    const [message, setMessage] = useState('');
+    const [message, setMessage] = useState({ type: '', text: '' });
 
     useEffect(() => {
         fetchProfile();
@@ -18,28 +21,27 @@ const PatientProfile = () => {
                 name: response.data.user.name,
                 email: response.data.user.email,
             });
-            setLoading(false);
         } catch (error) {
-            console.error('Error fetching profile:', error);
+            console.error('Error:', error);
+        } finally {
             setLoading(false);
         }
-    };
-
-    const handleChange = (e) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setSaving(true);
-        setMessage('');
+        setMessage({ type: '', text: '' });
 
         try {
             await api.put('/patient/profile', formData);
-            setMessage('Profile updated successfully!');
-            setSaving(false);
+            setMessage({ type: 'success', text: 'Profile updated successfully!' });
         } catch (error) {
-            setMessage(error.response?.data?.message || 'Failed to update profile');
+            setMessage({
+                type: 'error',
+                text: error.response?.data?.message || 'Failed to update profile',
+            });
+        } finally {
             setSaving(false);
         }
     };
@@ -50,16 +52,34 @@ const PatientProfile = () => {
 
     return (
         <div className="dashboard-page">
-            <div className="container container-sm">
-                <div className="dashboard-header fade-in">
-                    <h1>My Profile</h1>
-                    <p>Update your personal information</p>
+            <div className="container" style={{ maxWidth: '700px' }}>
+                <div className="welcome-banner fade-in">
+                    <div className="welcome-content" style={{ justifyContent: 'center', textAlign: 'center' }}>
+                        <div className="welcome-text">
+                            <h1>My Profile 👤</h1>
+                            <p>Manage your personal information</p>
+                        </div>
+                    </div>
                 </div>
 
-                <div className="card card-glass">
-                    {message && (
-                        <div className={`alert ${message.includes('success') ? 'alert-success' : 'alert-error'}`}>
-                            {message}
+                <div className="card card-glass fade-in">
+                    {/* Avatar Section */}
+                    <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
+                        <div className="avatar avatar-xl" style={{
+                            margin: '0 auto 1rem',
+                            fontSize: '2.5rem',
+                            width: '100px',
+                            height: '100px',
+                        }}>
+                            {(formData.name || user?.name || '?').charAt(0).toUpperCase()}
+                        </div>
+                        <h3 style={{ marginBottom: '0.25rem', color: 'var(--gray-800)' }}>{formData.name}</h3>
+                        <span className="badge badge-patient">Patient</span>
+                    </div>
+
+                    {message.text && (
+                        <div className={`alert alert-${message.type}`}>
+                            {message.text}
                         </div>
                     )}
 
@@ -68,10 +88,9 @@ const PatientProfile = () => {
                             <label className="form-label">Full Name</label>
                             <input
                                 type="text"
-                                name="name"
                                 className="form-input"
                                 value={formData.name}
-                                onChange={handleChange}
+                                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                                 required
                             />
                         </div>
@@ -80,16 +99,19 @@ const PatientProfile = () => {
                             <label className="form-label">Email Address</label>
                             <input
                                 type="email"
-                                name="email"
                                 className="form-input"
                                 value={formData.email}
-                                onChange={handleChange}
+                                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                                 required
                             />
                         </div>
 
-                        <button type="submit" className="btn btn-primary" disabled={saving} style={{ width: '100%' }}>
-                            {saving ? 'Saving...' : 'Update Profile'}
+                        <button
+                            type="submit"
+                            className="btn btn-primary btn-full"
+                            disabled={saving}
+                        >
+                            {saving ? 'Saving...' : 'Save Changes'}
                         </button>
                     </form>
                 </div>

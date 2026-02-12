@@ -21,10 +21,13 @@ import PatientProfile from './pages/patient/PatientProfile';
 import DoctorDashboard from './pages/doctor/DoctorDashboard';
 import DoctorProfile from './pages/doctor/DoctorProfile';
 import AppointmentRequests from './pages/doctor/AppointmentRequests';
+import DoctorHistory from './pages/doctor/DoctorHistory';
 
 // Admin Pages
 import AdminDashboard from './pages/admin/AdminDashboard';
 import ManageDoctors from './pages/admin/ManageDoctors';
+import ManageUsers from './pages/admin/ManageUsers';
+import ManageAppointments from './pages/admin/ManageAppointments';
 
 function App() {
     return (
@@ -110,7 +113,7 @@ function App() {
                                 path="/doctor/history"
                                 element={
                                     <ProtectedRoute allowedRoles={['doctor']}>
-                                        <AppointmentRequests />
+                                        <DoctorHistory />
                                     </ProtectedRoute>
                                 }
                             />
@@ -136,7 +139,7 @@ function App() {
                                 path="/admin/users"
                                 element={
                                     <ProtectedRoute allowedRoles={['admin']}>
-                                        <AdminDashboard />
+                                        <ManageUsers />
                                     </ProtectedRoute>
                                 }
                             />
@@ -144,7 +147,7 @@ function App() {
                                 path="/admin/appointments"
                                 element={
                                     <ProtectedRoute allowedRoles={['admin']}>
-                                        <AdminDashboard />
+                                        <ManageAppointments />
                                     </ProtectedRoute>
                                 }
                             />

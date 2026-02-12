@@ -1,37 +1,30 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../../utils/api';
+import { useAuth } from '../../context/AuthContext';
 import '../patient/PatientDashboard.css';
-import { assets } from '../../assets/assets_frontend/assets';
-import { assets as adminAssets } from '../../assets/assets_admin/assets';
 
 const AdminDashboard = () => {
+    const { user } = useAuth();
     const [stats, setStats] = useState({
         totalUsers: 0,
         totalDoctors: 0,
-        pendingDoctors: 0,
+        pendingApprovals: 0,
         totalAppointments: 0,
     });
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        fetchStatistics();
+        fetchStats();
     }, []);
 
-    const fetchStatistics = async () => {
+    const fetchStats = async () => {
         try {
             const response = await api.get('/admin/statistics');
-            const data = response.data.statistics;
-
-            setStats({
-                totalUsers: data.users.total,
-                totalDoctors: data.doctors.total,
-                pendingDoctors: data.doctors.pending,
-                totalAppointments: data.appointments.total,
-            });
-            setLoading(false);
+            setStats(response.data);
         } catch (error) {
-            console.error('Error fetching statistics:', error);
+            console.error('Error:', error);
+        } finally {
             setLoading(false);
         }
     };
@@ -40,77 +33,58 @@ const AdminDashboard = () => {
         return <div className="loading-container"><div className="spinner"></div></div>;
     }
 
+    const statCards = [
+        { icon: '👥', label: 'Total Users', value: stats.totalUsers, gradient: 'gradient-blue' },
+        { icon: '👨‍⚕️', label: 'Total Doctors', value: stats.totalDoctors, gradient: 'gradient-green' },
+        { icon: '⏳', label: 'Pending Approvals', value: stats.pendingApprovals, gradient: 'gradient-amber' },
+        { icon: '📋', label: 'Appointments', value: stats.totalAppointments, gradient: 'gradient-blue' },
+    ];
+
+    const quickActions = [
+        { icon: '👨‍⚕️', title: 'Manage Doctors', desc: 'Approve or block doctors', to: '/admin/doctors' },
+        { icon: '👥', title: 'Manage Users', desc: 'View & manage users', to: '/admin/users' },
+        { icon: '📋', title: 'All Appointments', desc: 'View platform appointments', to: '/admin/appointments' },
+    ];
+
     return (
         <div className="dashboard-page">
             <div className="container">
-                <div className="dashboard-header fade-in">
-                    <h1>Admin Dashboard</h1>
-                    <p>Manage users, doctors, and platform operations</p>
-                </div>
-
-                <div className="stats-grid">
-                    <div className="stat-card card card-glass">
-                        <div className="stat-icon">
-                            <img src={adminAssets.people_icon} alt="Users" style={{ width: '30px' }} />
-                        </div>
-                        <div className="stat-info">
-                            <h3>{stats.totalUsers}</h3>
-                            <p>Total Users</p>
-                        </div>
-                    </div>
-                    <div className="stat-card card card-glass">
-                        <div className="stat-icon">
-                            <img src={adminAssets.doctor_icon} alt="Doctors" style={{ width: '30px' }} />
-                        </div>
-                        <div className="stat-info">
-                            <h3>{stats.totalDoctors}</h3>
-                            <p>Total Doctors</p>
-                        </div>
-                    </div>
-                    <div className="stat-card card card-glass">
-                        <div className="stat-icon">
-                            <img src={assets.info_icon} alt="Pending" style={{ width: '30px' }} />
-                        </div>
-                        <div className="stat-info">
-                            <h3>{stats.pendingDoctors}</h3>
-                            <p>Pending Approvals</p>
-                        </div>
-                    </div>
-                    <div className="stat-card card card-glass">
-                        <div className="stat-icon">
-                            <img src={adminAssets.appointment_icon} alt="Appointments" style={{ width: '30px' }} />
-                        </div>
-                        <div className="stat-info">
-                            <h3>{stats.totalAppointments}</h3>
-                            <p>Total Appointments</p>
+                {/* Welcome Banner */}
+                <div className="welcome-banner fade-in">
+                    <div className="welcome-content">
+                        <div className="welcome-text">
+                            <span className="welcome-greeting">Admin Panel 🛡️</span>
+                            <h1>Welcome, {user?.name || 'Admin'}</h1>
+                            <p>Platform overview and management tools</p>
                         </div>
                     </div>
                 </div>
 
-                <div className="quick-actions">
-                    <h2>Quick Actions</h2>
-                    <div className="actions-grid">
-                        <Link to="/admin/doctors" className="action-card card card-glass">
-                            <div className="action-icon">
-                                <img src={adminAssets.doctor_icon} alt="Manage Doctors" style={{ width: '40px' }} />
+                {/* Stats */}
+                <div className="dash-stats-grid stagger-children" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))' }}>
+                    {statCards.map((stat, i) => (
+                        <div key={i} className={`dash-stat-card card card-glass scale-in ${stat.gradient}`}>
+                            <div className="dash-stat-icon">{stat.icon}</div>
+                            <div className="dash-stat-info">
+                                <h3>{stat.value}</h3>
+                                <p>{stat.label}</p>
                             </div>
-                            <h3>Manage Doctors</h3>
-                            <p>Approve or block doctor accounts</p>
-                        </Link>
-                        <Link to="/admin/users" className="action-card card card-glass">
-                            <div className="action-icon">
-                                <img src={adminAssets.people_icon} alt="Manage Users" style={{ width: '40px' }} />
-                            </div>
-                            <h3>Manage Users</h3>
-                            <p>View and manage all users</p>
-                        </Link>
-                        <Link to="/admin/appointments" className="action-card card card-glass">
-                            <div className="action-icon">
-                                <img src={adminAssets.list_icon} alt="All Appointments" style={{ width: '40px' }} />
-                            </div>
-                            <h3>All Appointments</h3>
-                            <p>View all platform appointments</p>
-                        </Link>
+                        </div>
+                    ))}
+                </div>
+
+                {/* Quick Actions */}
+                <div className="quick-actions-section fade-in">
+                    <h2 className="section-title-dash">Management Tools</h2>
+                    <div className="quick-actions-grid stagger-children">
+                        {quickActions.map((action, i) => (
+                            <Link key={i} to={action.to} className="quick-action-card card card-glass scale-in">
+                                <div className="qa-icon">{action.icon}</div>
+                                <h3>{action.title}</h3>
+                                <p>{action.desc}</p>
+                                <span className="qa-arrow">→</span>
+                            </Link>
+                        ))}
                     </div>
                 </div>
             </div>

@@ -2,48 +2,24 @@ import React, { useState, useEffect } from 'react';
 import api from '../../utils/api';
 import '../patient/PatientDashboard.css';
 
-const AppointmentRequests = () => {
-    const [appointments, setAppointments] = useState([]);
+const DoctorHistory = () => {
+    const [history, setHistory] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [filter, setFilter] = useState('all');
 
     useEffect(() => {
-        fetchAppointments();
+        fetchHistory();
     }, []);
 
-    const fetchAppointments = async () => {
+    const fetchHistory = async () => {
         try {
-            const response = await api.get('/doctor/appointments');
-            setAppointments(response.data.appointments);
+            const response = await api.get('/doctor/history');
+            setHistory(response.data.appointments || []);
         } catch (error) {
             console.error('Error:', error);
         } finally {
             setLoading(false);
         }
     };
-
-    const handleAccept = async (id) => {
-        try {
-            await api.put(`/doctor/appointments/${id}/accept`);
-            fetchAppointments();
-        } catch (error) {
-            alert(error.response?.data?.message || 'Failed to accept');
-        }
-    };
-
-    const handleReject = async (id) => {
-        if (!window.confirm('Are you sure you want to reject this appointment?')) return;
-        try {
-            await api.put(`/doctor/appointments/${id}/reject`);
-            fetchAppointments();
-        } catch (error) {
-            alert(error.response?.data?.message || 'Failed to reject');
-        }
-    };
-
-    const filtered = filter === 'all'
-        ? appointments
-        : appointments.filter(a => a.status === filter);
 
     if (loading) {
         return <div className="loading-container"><div className="spinner"></div></div>;
@@ -55,38 +31,23 @@ const AppointmentRequests = () => {
                 <div className="welcome-banner fade-in">
                     <div className="welcome-content" style={{ justifyContent: 'center', textAlign: 'center' }}>
                         <div className="welcome-text">
-                            <h1>Appointment Requests 📋</h1>
-                            <p>Manage patient consultation requests</p>
+                            <h1>Consultation History 📜</h1>
+                            <p>View your past consultations and patient records</p>
                         </div>
                     </div>
                 </div>
 
-                {/* Filter Tabs */}
-                <div className="filter-tabs" style={{ marginBottom: '1.5rem' }}>
-                    {['all', 'pending', 'approved', 'rejected'].map(status => (
-                        <button
-                            key={status}
-                            className={`filter-tab ${filter === status ? 'active' : ''}`}
-                            onClick={() => setFilter(status)}
-                        >
-                            {status === 'all' ? 'All' : status.charAt(0).toUpperCase() + status.slice(1)}
-                            {` (${status === 'all' ? appointments.length : appointments.filter(a => a.status === status).length})`}
-                        </button>
-                    ))}
-                </div>
-
-                {/* Appointments */}
-                {filtered.length === 0 ? (
+                {history.length === 0 ? (
                     <div className="card card-glass">
                         <div className="empty-state">
-                            <div className="empty-state-icon">📋</div>
-                            <h3>No Requests</h3>
-                            <p>{filter === 'all' ? 'No appointment requests yet' : `No ${filter} requests`}</p>
+                            <div className="empty-state-icon">📜</div>
+                            <h3>No History Yet</h3>
+                            <p>Your completed consultations will appear here</p>
                         </div>
                     </div>
                 ) : (
                     <div className="appt-cards-list">
-                        {filtered.map((appt) => (
+                        {history.map((appt) => (
                             <div key={appt._id} className="appt-card card card-glass fade-in">
                                 <div className="appt-card-main">
                                     <div className="appt-card-left">
@@ -114,16 +75,6 @@ const AppointmentRequests = () => {
                                         </div>
                                     )}
                                 </div>
-                                {appt.status === 'pending' && (
-                                    <div className="appt-card-actions">
-                                        <button onClick={() => handleAccept(appt._id)} className="btn btn-sm btn-success">
-                                            ✓ Accept
-                                        </button>
-                                        <button onClick={() => handleReject(appt._id)} className="btn btn-sm btn-error">
-                                            ✕ Reject
-                                        </button>
-                                    </div>
-                                )}
                             </div>
                         ))}
                     </div>
@@ -133,4 +84,4 @@ const AppointmentRequests = () => {
     );
 };
 
-export default AppointmentRequests;
+export default DoctorHistory;

@@ -2,10 +2,11 @@ import React, { useState, useEffect } from 'react';
 import api from '../../utils/api';
 import '../patient/PatientDashboard.css';
 
-const MyAppointments = () => {
+const ManageAppointments = () => {
     const [appointments, setAppointments] = useState([]);
     const [loading, setLoading] = useState(true);
     const [filter, setFilter] = useState('all');
+    const [searchTerm, setSearchTerm] = useState('');
 
     useEffect(() => {
         fetchAppointments();
@@ -13,7 +14,7 @@ const MyAppointments = () => {
 
     const fetchAppointments = async () => {
         try {
-            const response = await api.get('/patient/appointments');
+            const response = await api.get('/admin/appointments');
             setAppointments(response.data.appointments);
         } catch (error) {
             console.error('Error:', error);
@@ -22,19 +23,13 @@ const MyAppointments = () => {
         }
     };
 
-    const handleCancel = async (id) => {
-        if (!window.confirm('Are you sure you want to cancel this appointment?')) return;
-        try {
-            await api.put(`/patient/appointments/${id}/cancel`);
-            fetchAppointments();
-        } catch (error) {
-            alert(error.response?.data?.message || 'Failed to cancel.');
-        }
-    };
-
-    const filtered = filter === 'all'
-        ? appointments
-        : appointments.filter(a => a.status === filter);
+    const filtered = appointments.filter(a => {
+        const matchesFilter = filter === 'all' || a.status === filter;
+        const matchesSearch = !searchTerm ||
+            a.patientId?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            a.doctorId?.userId?.name?.toLowerCase().includes(searchTerm.toLowerCase());
+        return matchesFilter && matchesSearch;
+    });
 
     if (loading) {
         return <div className="loading-container"><div className="spinner"></div></div>;
@@ -46,34 +41,47 @@ const MyAppointments = () => {
                 <div className="welcome-banner fade-in">
                     <div className="welcome-content" style={{ justifyContent: 'center', textAlign: 'center' }}>
                         <div className="welcome-text">
-                            <h1>My Appointments 📋</h1>
-                            <p>View and manage all your appointment bookings</p>
+                            <h1>All Appointments 📋</h1>
+                            <p>View all appointments across the platform</p>
                         </div>
                     </div>
                 </div>
 
-                {/* Filter Tabs */}
-                <div className="filter-tabs" style={{ marginBottom: '1.5rem' }}>
-                    {['all', 'pending', 'approved', 'rejected', 'cancelled'].map(status => (
-                        <button
-                            key={status}
-                            className={`filter-tab ${filter === status ? 'active' : ''}`}
-                            onClick={() => setFilter(status)}
-                        >
-                            {status === 'all' ? 'All' : status.charAt(0).toUpperCase() + status.slice(1)}
-                            {status === 'all' && ` (${appointments.length})`}
-                            {status !== 'all' && ` (${appointments.filter(a => a.status === status).length})`}
-                        </button>
-                    ))}
+                {/* Search & Filter */}
+                <div className="card card-glass" style={{ marginBottom: '1.5rem', padding: '1.25rem' }}>
+                    <div style={{ marginBottom: '1rem' }}>
+                        <input
+                            type="text"
+                            className="form-input"
+                            placeholder="🔍 Search by patient or doctor name..."
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                        />
+                    </div>
+                    <div className="filter-tabs">
+                        {['all', 'pending', 'approved', 'rejected', 'cancelled'].map(status => (
+                            <button
+                                key={status}
+                                className={`filter-tab ${filter === status ? 'active' : ''}`}
+                                onClick={() => setFilter(status)}
+                            >
+                                {status === 'all' ? 'All' : status.charAt(0).toUpperCase() + status.slice(1)}
+                                {` (${status === 'all' ? appointments.length : appointments.filter(a => a.status === status).length})`}
+                            </button>
+                        ))}
+                    </div>
                 </div>
 
-                {/* Appointments List */}
+                <p style={{ color: 'rgba(255,255,255,0.7)', marginBottom: '1rem', fontSize: '0.9rem' }}>
+                    Showing {filtered.length} appointment{filtered.length !== 1 ? 's' : ''}
+                </p>
+
                 {filtered.length === 0 ? (
                     <div className="card card-glass">
                         <div className="empty-state">
                             <div className="empty-state-icon">📋</div>
-                            <h3>No Appointments</h3>
-                            <p>{filter === 'all' ? "You haven't booked any appointments yet" : `No ${filter} appointments found`}</p>
+                            <h3>No Appointments Found</h3>
+                            <p>{filter === 'all' ? 'No appointments on the platform yet' : `No ${filter} appointments`}</p>
                         </div>
                     </div>
                 ) : (
@@ -82,10 +90,10 @@ const MyAppointments = () => {
                             <div key={appt._id} className="appt-card card card-glass fade-in">
                                 <div className="appt-card-main">
                                     <div className="appt-card-left">
-                                        <div className="avatar">{(appt.doctorId?.userId?.name || 'D').charAt(0)}</div>
+                                        <div className="avatar">{(appt.patientId?.name || 'P').charAt(0)}</div>
                                         <div className="appt-card-info">
-                                            <h3>{appt.doctorId?.userId?.name || 'Doctor'}</h3>
-                                            <span className="appt-spec">{appt.doctorId?.specialization || 'Specialist'}</span>
+                                            <h3>{appt.patientId?.name || 'Patient'}</h3>
+                                            <span className="appt-spec">with Dr. {appt.doctorId?.userId?.name || 'Doctor'}</span>
                                         </div>
                                     </div>
                                     <span className={`badge badge-${appt.status}`}>{appt.status}</span>
@@ -93,7 +101,7 @@ const MyAppointments = () => {
                                 <div className="appt-card-details">
                                     <div className="appt-detail-item">
                                         <span className="appt-detail-icon">📅</span>
-                                        <span>{new Date(appt.date).toLocaleDateString('en-US', { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' })}</span>
+                                        <span>{new Date(appt.date).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' })}</span>
                                     </div>
                                     <div className="appt-detail-item">
                                         <span className="appt-detail-icon">🕐</span>
@@ -106,16 +114,6 @@ const MyAppointments = () => {
                                         </div>
                                     )}
                                 </div>
-                                {appt.status === 'pending' && (
-                                    <div className="appt-card-actions">
-                                        <button
-                                            onClick={() => handleCancel(appt._id)}
-                                            className="btn btn-sm btn-error"
-                                        >
-                                            Cancel Appointment
-                                        </button>
-                                    </div>
-                                )}
                             </div>
                         ))}
                     </div>
@@ -125,4 +123,4 @@ const MyAppointments = () => {
     );
 };
 
-export default MyAppointments;
+export default ManageAppointments;

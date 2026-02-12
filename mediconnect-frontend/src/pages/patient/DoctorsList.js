@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import api from '../../utils/api';
-import { assets } from '../../assets/assets_frontend/assets';
+import '../patient/PatientDashboard.css';
 
 const DoctorsList = () => {
     const [doctors, setDoctors] = useState([]);
+    const [filteredDoctors, setFilteredDoctors] = useState([]);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
-    const navigate = useNavigate();
+    const [selectedSpecialty, setSelectedSpecialty] = useState('all');
 
     useEffect(() => {
         fetchDoctors();
@@ -17,21 +18,29 @@ const DoctorsList = () => {
         try {
             const response = await api.get('/patient/doctors');
             setDoctors(response.data.doctors);
-            setLoading(false);
+            setFilteredDoctors(response.data.doctors);
         } catch (error) {
-            console.error('Error fetching doctors:', error);
+            console.error('Error:', error);
+        } finally {
             setLoading(false);
         }
     };
 
-    const filteredDoctors = doctors.filter(doctor =>
-        doctor.userId.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        doctor.specialization.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    useEffect(() => {
+        let result = [...doctors];
+        if (searchTerm) {
+            result = result.filter(d =>
+                d.userId?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                d.specialization?.toLowerCase().includes(searchTerm.toLowerCase())
+            );
+        }
+        if (selectedSpecialty !== 'all') {
+            result = result.filter(d => d.specialization?.toLowerCase() === selectedSpecialty.toLowerCase());
+        }
+        setFilteredDoctors(result);
+    }, [searchTerm, selectedSpecialty, doctors]);
 
-    const handleBookAppointment = (doctorId) => {
-        navigate(`/patient/book-appointment?doctorId=${doctorId}`);
-    };
+    const specialties = ['all', ...new Set(doctors.map(d => d.specialization).filter(Boolean))];
 
     if (loading) {
         return <div className="loading-container"><div className="spinner"></div></div>;
@@ -40,158 +49,105 @@ const DoctorsList = () => {
     return (
         <div className="dashboard-page">
             <div className="container">
-                <div className="dashboard-header fade-in">
-                    <h1>Available Doctors</h1>
-                    <p>Find and connect with qualified medical professionals</p>
+                <div className="welcome-banner fade-in">
+                    <div className="welcome-content" style={{ justifyContent: 'center', textAlign: 'center' }}>
+                        <div className="welcome-text">
+                            <h1>Find a Doctor 🔍</h1>
+                            <p>Browse through our qualified specialists and book your appointment</p>
+                        </div>
+                    </div>
                 </div>
 
-                <div className="card card-glass" style={{ marginBottom: '2rem' }}>
-                    <input
-                        type="text"
-                        className="form-input"
-                        placeholder="Search by name or specialization..."
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                    />
+                {/* Search & Filters */}
+                <div className="card card-glass" style={{ marginBottom: '1.5rem', padding: '1.25rem' }}>
+                    <div style={{ marginBottom: '1rem' }}>
+                        <input
+                            type="text"
+                            className="form-input"
+                            placeholder="🔍 Search by doctor name or specialty..."
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                        />
+                    </div>
+                    <div className="filter-tabs">
+                        {specialties.map(spec => (
+                            <button
+                                key={spec}
+                                className={`filter-tab ${selectedSpecialty === spec ? 'active' : ''}`}
+                                onClick={() => setSelectedSpecialty(spec)}
+                            >
+                                {spec === 'all' ? 'All Specialties' : spec}
+                            </button>
+                        ))}
+                    </div>
                 </div>
 
+                {/* Results Count */}
+                <p style={{ color: 'rgba(255,255,255,0.7)', marginBottom: '1rem', fontSize: '0.9rem' }}>
+                    Showing {filteredDoctors.length} doctor{filteredDoctors.length !== 1 ? 's' : ''}
+                </p>
+
+                {/* Doctors Grid */}
                 {filteredDoctors.length === 0 ? (
-                    <div className="card card-glass text-center">
-                        <p>No doctors found.</p>
+                    <div className="card card-glass">
+                        <div className="empty-state">
+                            <div className="empty-state-icon">🩺</div>
+                            <h3>No Doctors Found</h3>
+                            <p>Try adjusting your search or filter criteria</p>
+                        </div>
                     </div>
                 ) : (
-                    <div className="grid grid-2">
+                    <div className="doctors-grid stagger-children">
                         {filteredDoctors.map((doctor) => (
-                            <div key={doctor._id} className="card card-glass doctor-list-card">
-                                <div className="doctor-list-header">
-                                    <div className="doctor-list-avatar">
-                                        <img
-                                            src={doctor.image || assets.doc1}
-                                            alt={doctor.userId.name}
-                                            onError={(e) => { e.target.src = assets.doc1; }}
-                                        />
+                            <div key={doctor._id} className="doctor-list-card card card-glass scale-in">
+                                <div className="dlc-header">
+                                    <div className="dlc-avatar">
+                                        {doctor.image ? (
+                                            <img src={doctor.image} alt={doctor.userId?.name} />
+                                        ) : (
+                                            <div className="avatar avatar-lg">
+                                                {(doctor.userId?.name || 'D').charAt(0)}
+                                            </div>
+                                        )}
                                     </div>
-                                    <div className="doctor-list-info">
-                                        <div className="doctor-name-row">
-                                            <h3>{doctor.userId.name}</h3>
-                                            <img src={assets.verified_icon} alt="Verified" className="verified-badge" />
-                                        </div>
-                                        <span className="doctor-specialization">{doctor.specialization}</span>
-                                        <span className="badge badge-approved">{doctor.status}</span>
+                                    <div className="dlc-info">
+                                        <h3>{doctor.userId?.name || 'Doctor'}</h3>
+                                        <span className="dlc-spec">{doctor.specialization}</span>
+                                        {doctor.qualifications && (
+                                            <span className="dlc-qual">{doctor.qualifications}</span>
+                                        )}
                                     </div>
                                 </div>
-
-                                <div className="doctor-list-details">
-                                    <p><strong>Qualifications:</strong> {doctor.qualifications}</p>
-                                    <p><strong>Experience:</strong> {doctor.experience} years</p>
-                                    <p><strong>Consultation Fee:</strong> ${doctor.fees}</p>
-                                    <p><strong>Availability:</strong> {doctor.availability}</p>
-                                    {doctor.about && (
-                                        <p className="doctor-about"><strong>About:</strong> {doctor.about}</p>
-                                    )}
+                                <div className="dlc-details">
+                                    <div className="dlc-detail-row">
+                                        <span className="dlc-detail-label">⏱ Experience</span>
+                                        <span className="dlc-detail-value">{doctor.experience} years</span>
+                                    </div>
+                                    <div className="dlc-detail-row">
+                                        <span className="dlc-detail-label">💰 Fee</span>
+                                        <span className="dlc-detail-value dlc-fee">${doctor.fees}</span>
+                                    </div>
+                                    <div className="dlc-detail-row">
+                                        <span className="dlc-detail-label">📅 Available</span>
+                                        <span className="dlc-detail-value">
+                                            {Array.isArray(doctor.availability) && doctor.availability.length > 0
+                                                ? doctor.availability.slice(0, 3).join(', ')
+                                                : (typeof doctor.availability === 'string' ? doctor.availability : 'Contact for schedule')}
+                                        </span>
+                                    </div>
                                 </div>
-
-                                <button
-                                    className="btn btn-primary btn-book-doctor"
-                                    onClick={() => handleBookAppointment(doctor._id)}
+                                <Link
+                                    to={`/patient/book-appointment?doctor=${doctor._id}`}
+                                    className="btn btn-primary btn-full"
+                                    style={{ marginTop: '1rem' }}
                                 >
-                                    Book Appointment
-                                </button>
+                                    Book Appointment →
+                                </Link>
                             </div>
                         ))}
                     </div>
                 )}
             </div>
-
-            <style>{`
-                .doctor-list-card {
-                    display: flex;
-                    flex-direction: column;
-                    gap: 1rem;
-                    transition: transform 0.3s ease, box-shadow 0.3s ease;
-                }
-
-                .doctor-list-card:hover {
-                    transform: translateY(-4px);
-                    box-shadow: 0 12px 40px rgba(79, 70, 229, 0.15);
-                }
-
-                .doctor-list-header {
-                    display: flex;
-                    gap: 1rem;
-                    align-items: flex-start;
-                }
-
-                .doctor-list-avatar {
-                    width: 80px;
-                    height: 80px;
-                    border-radius: 12px;
-                    overflow: hidden;
-                    flex-shrink: 0;
-                    background: linear-gradient(145deg, #e0e7ff, #c7d2fe);
-                }
-
-                .doctor-list-avatar img {
-                    width: 100%;
-                    height: 100%;
-                    object-fit: cover;
-                }
-
-                .doctor-list-info {
-                    flex: 1;
-                    display: flex;
-                    flex-direction: column;
-                    gap: 0.25rem;
-                }
-
-                .doctor-name-row {
-                    display: flex;
-                    align-items: center;
-                    gap: 0.5rem;
-                }
-
-                .doctor-name-row h3 {
-                    margin: 0;
-                    font-size: 1.1rem;
-                    color: var(--text-primary);
-                }
-
-                .verified-badge {
-                    width: 18px;
-                    height: 18px;
-                }
-
-                .doctor-specialization {
-                    color: var(--primary);
-                    font-weight: 500;
-                    font-size: 0.9rem;
-                }
-
-                .doctor-list-details {
-                    padding-top: 0.5rem;
-                    border-top: 1px solid rgba(0, 0, 0, 0.05);
-                }
-
-                .doctor-list-details p {
-                    margin: 0.4rem 0;
-                    font-size: 0.9rem;
-                    color: var(--text-secondary);
-                }
-
-                .doctor-about {
-                    display: -webkit-box;
-                    -webkit-line-clamp: 2;
-                    -webkit-box-orient: vertical;
-                    overflow: hidden;
-                }
-
-                .btn-book-doctor {
-                    margin-top: auto;
-                    width: 100%;
-                    padding: 0.75rem 1.5rem;
-                    font-weight: 600;
-                }
-            `}</style>
         </div>
     );
 };
