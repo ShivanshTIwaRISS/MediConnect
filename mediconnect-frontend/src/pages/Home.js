@@ -1,7 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { assets, specialityData } from '../assets/assets_frontend/assets';
 import './Home.css';
+
 
 const Counter = ({ end, suffix = '', duration = 2000 }) => {
     const [count, setCount] = useState(0);
@@ -49,16 +51,10 @@ const Home = () => {
         }
     };
 
-    const specialties = [
-        { icon: '🫀', name: 'Cardiology' },
-        { icon: '🧠', name: 'Neurology' },
-        { icon: '🦴', name: 'Orthopedics' },
-        { icon: '👶', name: 'Pediatrics' },
-        { icon: '🔬', name: 'Dermatology' },
-        { icon: '👁️', name: 'Ophthalmology' },
-        { icon: '🦷', name: 'Dentistry' },
-        { icon: '🩺', name: 'General' },
-    ];
+    const specialties = specialityData.map(item => ({
+        icon: <img src={item.image} alt={item.speciality} style={{ width: '32px', height: '32px' }} />,
+        name: item.speciality
+    }));
 
     const testimonials = [
         {
@@ -89,10 +85,10 @@ const Home = () => {
                     <div className="hero-circle hero-circle-1"></div>
                     <div className="hero-circle hero-circle-2"></div>
                     <div className="hero-circle hero-circle-3"></div>
-                    <div className="floating-icon fi-1">🩺</div>
-                    <div className="floating-icon fi-2">💊</div>
-                    <div className="floating-icon fi-3">🏥</div>
-                    <div className="floating-icon fi-4">❤️</div>
+                    <div className="floating-icon fi-1"><img src={assets.info_icon} alt="" style={{ width: '24px' }} /></div>
+                    <div className="floating-icon fi-2"><img src={assets.verified_icon} alt="" style={{ width: '24px' }} /></div>
+                    <div className="floating-icon fi-3"><img src={assets.logo} alt="" style={{ width: '24px' }} /></div>
+                    <div className="floating-icon fi-4">✨</div>
                 </div>
                 <div className="container">
                     <div className="hero-content fade-in">
@@ -183,7 +179,7 @@ const Home = () => {
                     </div>
                     <div className="features-grid stagger-children">
                         <div className="feature-card card card-glass slide-up">
-                            <div className="feature-icon-wrap gradient-1">🩺</div>
+                            <div className="feature-icon-wrap gradient-1"><img src={assets.info_icon} alt="" style={{ width: '24px', filter: 'brightness(0) invert(1)' }} /></div>
                             <h3>Qualified Doctors</h3>
                             <p>Connect with verified and experienced medical professionals across 50+ specialties</p>
                         </div>
@@ -228,8 +224,8 @@ const Home = () => {
                         {[
                             { num: '01', title: 'Create Account', desc: 'Sign up as a patient or doctor in just a few seconds', icon: '👤' },
                             { num: '02', title: 'Find a Doctor', desc: 'Browse through our qualified doctors and specializations', icon: '🔍' },
-                            { num: '03', title: 'Book Appointment', desc: 'Select a convenient date and time for your consultation', icon: '📋' },
-                            { num: '04', title: 'Get Consultation', desc: 'Receive expert medical advice and treatment plans', icon: '✅' },
+                            { num: '03', title: 'Book Appointment', desc: 'Select a convenient date and time for your consultation', icon: <img src={assets.chats_icon} alt="" style={{ width: '40px' }} /> },
+                            { num: '04', title: 'Get Consultation', desc: 'Receive expert medical advice and treatment plans', icon: <img src={assets.verified_icon} alt="" style={{ width: '40px' }} /> },
                         ].map((step, i) => (
                             <div key={i} className="step-card">
                                 <div className="step-number-badge">{step.num}</div>

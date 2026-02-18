@@ -2,7 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../../utils/api';
 import { useAuth } from '../../context/AuthContext';
+import { assets as assetsAdmin } from '../../assets/assets_admin/assets';
 import '../patient/PatientDashboard.css';
+
+
 
 const DoctorDashboard = () => {
     const { user } = useAuth();
@@ -48,15 +51,15 @@ const DoctorDashboard = () => {
     }
 
     const statCards = [
-        { icon: '📋', label: 'Total Appointments', value: stats.total, gradient: 'gradient-blue' },
-        { icon: '⏳', label: 'Pending Requests', value: stats.pending, gradient: 'gradient-amber' },
-        { icon: '✅', label: 'Approved', value: stats.approved, gradient: 'gradient-green' },
+        { icon: <img src={assetsAdmin.appointments_icon} alt="" />, label: 'Total Appointments', value: stats.total, gradient: 'gradient-blue' },
+        { icon: <img src={assetsAdmin.appointment_icon} alt="" />, label: 'Pending Requests', value: stats.pending, gradient: 'gradient-amber' },
+        { icon: <img src={assetsAdmin.tick_icon} alt="" />, label: 'Approved', value: stats.approved, gradient: 'gradient-green' },
     ];
 
     const quickActions = [
-        { icon: '📋', title: 'Appointment Requests', desc: 'Review pending requests', to: '/doctor/appointments' },
-        { icon: '📜', title: 'Consultation History', desc: 'View past consultations', to: '/doctor/history' },
-        { icon: '👤', title: 'My Profile', desc: 'Update your profile', to: '/doctor/profile' },
+        { icon: <img src={assetsAdmin.appointments_icon} alt="" style={{ width: '40px' }} />, title: 'Appointment Requests', desc: 'Review pending requests', to: '/doctor/appointments' },
+        { icon: <img src={assetsAdmin.list_icon} alt="" style={{ width: '40px' }} />, title: 'Consultation History', desc: 'View past consultations', to: '/doctor/history' },
+        { icon: <img src={assetsAdmin.people_icon} alt="" style={{ width: '40px' }} />, title: 'My Profile', desc: 'Update your profile', to: '/doctor/profile' },
     ];
 
     return (
@@ -66,7 +69,8 @@ const DoctorDashboard = () => {
                 <div className="welcome-banner fade-in">
                     <div className="welcome-content">
                         <div className="welcome-text">
-                            <span className="welcome-greeting">Good {new Date().getHours() < 12 ? 'Morning' : new Date().getHours() < 18 ? 'Afternoon' : 'Evening'} 👋</span>
+                            <span className="welcome-greeting">Good {new Date().getHours() < 12 ? 'Morning' : new Date().getHours() < 18 ? 'Afternoon' : 'Evening'} ✨</span>
+
                             <h1>Dr. {user?.name || 'Doctor'}</h1>
                             <p>Here's your practice overview for today</p>
                         </div>
@@ -78,12 +82,14 @@ const DoctorDashboard = () => {
                             )}
                             {profileStatus === 'pending' && (
                                 <span className="badge badge-pending" style={{ fontSize: '0.85rem', padding: '0.5rem 1rem' }}>
-                                    ⏳ Profile Pending Approval
+                                    <img src={assetsAdmin.appointment_icon} alt="" style={{ width: '14px', verticalAlign: 'middle' }} /> Profile Pending Approval
+
                                 </span>
                             )}
                             {profileStatus === 'approved' && (
                                 <span className="badge badge-approved" style={{ fontSize: '0.85rem', padding: '0.5rem 1rem' }}>
-                                    ✅ Profile Approved
+                                    <img src={assetsAdmin.tick_icon} alt="" style={{ width: '14px', verticalAlign: 'middle' }} /> Profile Approved
+
                                 </span>
                             )}
                         </div>

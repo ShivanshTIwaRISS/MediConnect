@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import api from '../../utils/api';
+import { assets } from '../../assets/assets_admin/assets';
 import '../patient/PatientDashboard.css';
+
 
 const ManageDoctors = () => {
     const [doctors, setDoctors] = useState([]);
@@ -55,7 +57,8 @@ const ManageDoctors = () => {
                 <div className="welcome-banner fade-in">
                     <div className="welcome-content" style={{ justifyContent: 'center', textAlign: 'center' }}>
                         <div className="welcome-text">
-                            <h1>Manage Doctors 👨‍⚕️</h1>
+                            <h1>Manage Doctors <img src={assets.doctor_icon} alt="" style={{ width: '28px', verticalAlign: 'middle' }} /></h1>
+
                             <p>Approve, manage, or block doctor accounts</p>
                         </div>
                     </div>
@@ -78,7 +81,8 @@ const ManageDoctors = () => {
                 {filtered.length === 0 ? (
                     <div className="card card-glass">
                         <div className="empty-state">
-                            <div className="empty-state-icon">👨‍⚕️</div>
+                            <div className="empty-state-icon"><img src={assets.doctor_icon} alt="" style={{ width: '48px', opacity: 0.5 }} /></div>
+
                             <h3>No Doctors Found</h3>
                             <p>{filter === 'all' ? 'No doctors registered yet' : `No ${filter} doctors`}</p>
                         </div>

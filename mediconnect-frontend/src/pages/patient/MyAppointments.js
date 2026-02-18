@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import api from '../../utils/api';
+import { assets as assetsFrontend } from '../../assets/assets_frontend/assets';
+import { assets as assetsAdmin } from '../../assets/assets_admin/assets';
 import '../patient/PatientDashboard.css';
+
 
 const MyAppointments = () => {
     const [appointments, setAppointments] = useState([]);
@@ -46,7 +49,8 @@ const MyAppointments = () => {
                 <div className="welcome-banner fade-in">
                     <div className="welcome-content" style={{ justifyContent: 'center', textAlign: 'center' }}>
                         <div className="welcome-text">
-                            <h1>My Appointments 📋</h1>
+                            <h1>My Appointments <img src={assetsAdmin.appointment_icon} alt="" style={{ width: '28px', verticalAlign: 'middle' }} /></h1>
+
                             <p>View and manage all your appointment bookings</p>
                         </div>
                     </div>
@@ -71,7 +75,8 @@ const MyAppointments = () => {
                 {filtered.length === 0 ? (
                     <div className="card card-glass">
                         <div className="empty-state">
-                            <div className="empty-state-icon">📋</div>
+                            <div className="empty-state-icon"><img src={assetsAdmin.appointment_icon} alt="" style={{ width: '48px', opacity: 0.5 }} /></div>
+
                             <h3>No Appointments</h3>
                             <p>{filter === 'all' ? "You haven't booked any appointments yet" : `No ${filter} appointments found`}</p>
                         </div>
@@ -92,16 +97,19 @@ const MyAppointments = () => {
                                 </div>
                                 <div className="appt-card-details">
                                     <div className="appt-detail-item">
-                                        <span className="appt-detail-icon">📅</span>
+                                        <span className="appt-detail-icon"><img src={assetsAdmin.appointment_icon} alt="" style={{ width: '16px' }} /></span>
+
                                         <span>{new Date(appt.date).toLocaleDateString('en-US', { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' })}</span>
                                     </div>
                                     <div className="appt-detail-item">
-                                        <span className="appt-detail-icon">🕐</span>
+                                        <span className="appt-detail-icon"><img src={assetsFrontend.chats_icon} alt="" style={{ width: '16px' }} /></span>
+
                                         <span>{appt.time}</span>
                                     </div>
                                     {appt.reason && (
                                         <div className="appt-detail-item">
-                                            <span className="appt-detail-icon">📝</span>
+                                            <span className="appt-detail-icon"><img src={assetsFrontend.info_icon} alt="" style={{ width: '16px' }} /></span>
+
                                             <span>{appt.reason}</span>
                                         </div>
                                     )}

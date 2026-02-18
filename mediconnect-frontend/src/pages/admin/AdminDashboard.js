@@ -2,7 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../../utils/api';
 import { useAuth } from '../../context/AuthContext';
+import { assets } from '../../assets/assets_admin/assets';
 import '../patient/PatientDashboard.css';
+
 
 const AdminDashboard = () => {
     const { user } = useAuth();
@@ -34,16 +36,16 @@ const AdminDashboard = () => {
     }
 
     const statCards = [
-        { icon: '👥', label: 'Total Users', value: stats.totalUsers, gradient: 'gradient-blue' },
-        { icon: '👨‍⚕️', label: 'Total Doctors', value: stats.totalDoctors, gradient: 'gradient-green' },
-        { icon: '⏳', label: 'Pending Approvals', value: stats.pendingApprovals, gradient: 'gradient-amber' },
-        { icon: '📋', label: 'Appointments', value: stats.totalAppointments, gradient: 'gradient-blue' },
+        { icon: <img src={assets.people_icon} alt="" />, label: 'Total Users', value: stats.totalUsers, gradient: 'gradient-blue' },
+        { icon: <img src={assets.doctor_icon} alt="" />, label: 'Total Doctors', value: stats.totalDoctors, gradient: 'gradient-green' },
+        { icon: <img src={assets.list_icon} alt="" />, label: 'Pending Approvals', value: stats.pendingApprovals, gradient: 'gradient-amber' },
+        { icon: <img src={assets.appointments_icon} alt="" />, label: 'Appointments', value: stats.totalAppointments, gradient: 'gradient-blue' },
     ];
 
     const quickActions = [
-        { icon: '👨‍⚕️', title: 'Manage Doctors', desc: 'Approve or block doctors', to: '/admin/doctors' },
-        { icon: '👥', title: 'Manage Users', desc: 'View & manage users', to: '/admin/users' },
-        { icon: '📋', title: 'All Appointments', desc: 'View platform appointments', to: '/admin/appointments' },
+        { icon: <img src={assets.doctor_icon} alt="" style={{ width: '40px' }} />, title: 'Manage Doctors', desc: 'Approve or block doctors', to: '/admin/doctors' },
+        { icon: <img src={assets.people_icon} alt="" style={{ width: '40px' }} />, title: 'Manage Users', desc: 'View & manage users', to: '/admin/users' },
+        { icon: <img src={assets.appointments_icon} alt="" style={{ width: '40px' }} />, title: 'All Appointments', desc: 'View platform appointments', to: '/admin/appointments' },
     ];
 
     return (
@@ -53,7 +55,8 @@ const AdminDashboard = () => {
                 <div className="welcome-banner fade-in">
                     <div className="welcome-content">
                         <div className="welcome-text">
-                            <span className="welcome-greeting">Admin Panel 🛡️</span>
+                            <span className="welcome-greeting">Admin Panel <img src={assets.admin_logo} alt="" style={{ width: '16px', display: 'inline' }} /></span>
+
                             <h1>Welcome, {user?.name || 'Admin'}</h1>
                             <p>Platform overview and management tools</p>
                         </div>

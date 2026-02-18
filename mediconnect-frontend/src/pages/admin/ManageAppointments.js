@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import api from '../../utils/api';
+import { assets as assetsFrontend } from '../../assets/assets_frontend/assets';
+import { assets as assetsAdmin } from '../../assets/assets_admin/assets';
 import '../patient/PatientDashboard.css';
+
 
 const ManageAppointments = () => {
     const [appointments, setAppointments] = useState([]);
@@ -41,7 +44,8 @@ const ManageAppointments = () => {
                 <div className="welcome-banner fade-in">
                     <div className="welcome-content" style={{ justifyContent: 'center', textAlign: 'center' }}>
                         <div className="welcome-text">
-                            <h1>All Appointments 📋</h1>
+                            <h1>All Appointments <img src={assetsAdmin.appointments_icon} alt="" style={{ width: '28px', verticalAlign: 'middle' }} /></h1>
+
                             <p>View all appointments across the platform</p>
                         </div>
                     </div>
@@ -53,7 +57,8 @@ const ManageAppointments = () => {
                         <input
                             type="text"
                             className="form-input"
-                            placeholder="🔍 Search by patient or doctor name..."
+                            placeholder="Search by patient or doctor name..."
+
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
                         />
@@ -79,7 +84,8 @@ const ManageAppointments = () => {
                 {filtered.length === 0 ? (
                     <div className="card card-glass">
                         <div className="empty-state">
-                            <div className="empty-state-icon">📋</div>
+                            <div className="empty-state-icon"><img src={assetsAdmin.appointments_icon} alt="" style={{ width: '48px', opacity: 0.5 }} /></div>
+
                             <h3>No Appointments Found</h3>
                             <p>{filter === 'all' ? 'No appointments on the platform yet' : `No ${filter} appointments`}</p>
                         </div>
@@ -100,16 +106,19 @@ const ManageAppointments = () => {
                                 </div>
                                 <div className="appt-card-details">
                                     <div className="appt-detail-item">
-                                        <span className="appt-detail-icon">📅</span>
+                                        <span className="appt-detail-icon"><img src={assetsAdmin.appointment_icon} alt="" style={{ width: '16px' }} /></span>
+
                                         <span>{new Date(appt.date).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' })}</span>
                                     </div>
                                     <div className="appt-detail-item">
-                                        <span className="appt-detail-icon">🕐</span>
+                                        <span className="appt-detail-icon"><img src={assetsFrontend.chats_icon} alt="" style={{ width: '16px' }} /></span>
+
                                         <span>{appt.time}</span>
                                     </div>
                                     {appt.reason && (
                                         <div className="appt-detail-item">
-                                            <span className="appt-detail-icon">📝</span>
+                                            <span className="appt-detail-icon"><img src={assetsFrontend.info_icon} alt="" style={{ width: '16px' }} /></span>
+
                                             <span>{appt.reason}</span>
                                         </div>
                                     )}
