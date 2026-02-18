@@ -58,7 +58,15 @@
     border-radius: var(--radius-xl);
     position: relative;
     overflow: hidden;
+    cursor: default;
+    transition: none;
 }
+
+.dash-stat-card:hover {
+    transform: none;
+    box-shadow: var(--shadow-md);
+}
+
 
 .dash-stat-card::before {
     content: '';

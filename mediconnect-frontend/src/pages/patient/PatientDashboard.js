@@ -2,7 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../../utils/api';
 import { useAuth } from '../../context/AuthContext';
+import { assets as assetsAdmin } from '../../assets/assets_admin/assets';
 import './PatientDashboard.css';
+
+
 
 const PatientDashboard = () => {
     const { user } = useAuth();
@@ -37,16 +40,16 @@ const PatientDashboard = () => {
     }
 
     const statCards = [
-        { icon: '📋', label: 'Total Appointments', value: stats.total, gradient: 'gradient-blue' },
-        { icon: '⏳', label: 'Pending', value: stats.pending, gradient: 'gradient-amber' },
-        { icon: '✅', label: 'Approved', value: stats.approved, gradient: 'gradient-green' },
+        { icon: <img src={assetsAdmin.appointments_icon} alt="" />, label: 'Total Appointments', value: stats.total, gradient: 'gradient-blue' },
+        { icon: <img src={assetsAdmin.appointment_icon} alt="" />, label: 'Pending', value: stats.pending, gradient: 'gradient-amber' },
+        { icon: <img src={assetsAdmin.tick_icon} alt="" />, label: 'Approved', value: stats.approved, gradient: 'gradient-green' },
     ];
 
     const quickActions = [
-        { icon: '🔍', title: 'Find Doctors', desc: 'Browse specialists', to: '/patient/doctors' },
-        { icon: '📅', title: 'Book Appointment', desc: 'Schedule a visit', to: '/patient/book-appointment' },
-        { icon: '📋', title: 'My Appointments', desc: 'View & manage', to: '/patient/appointments' },
-        { icon: '👤', title: 'My Profile', desc: 'Update details', to: '/patient/profile' },
+        { icon: <img src={assetsAdmin.list_icon} alt="" style={{ width: '40px' }} />, title: 'Find Doctors', desc: 'Browse specialists', to: '/patient/doctors' },
+        { icon: <img src={assetsAdmin.appointment_icon} alt="" style={{ width: '40px' }} />, title: 'Book Appointment', desc: 'Schedule a visit', to: '/patient/book-appointment' },
+        { icon: <img src={assetsAdmin.appointments_icon} alt="" style={{ width: '40px' }} />, title: 'My Appointments', desc: 'View & manage', to: '/patient/appointments' },
+        { icon: <img src={assetsAdmin.people_icon} alt="" style={{ width: '40px' }} />, title: 'My Profile', desc: 'Update details', to: '/patient/profile' },
     ];
 
     return (
@@ -56,7 +59,8 @@ const PatientDashboard = () => {
                 <div className="welcome-banner fade-in">
                     <div className="welcome-content">
                         <div className="welcome-text">
-                            <span className="welcome-greeting">Good {new Date().getHours() < 12 ? 'Morning' : new Date().getHours() < 18 ? 'Afternoon' : 'Evening'} 👋</span>
+                            <span className="welcome-greeting">Good {new Date().getHours() < 12 ? 'Morning' : new Date().getHours() < 18 ? 'Afternoon' : 'Evening'} ✨</span>
+
                             <h1>{user?.name || 'Patient'}</h1>
                             <p>Here's an overview of your healthcare journey</p>
                         </div>

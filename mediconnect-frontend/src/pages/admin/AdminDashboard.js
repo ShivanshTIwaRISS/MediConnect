@@ -23,7 +23,13 @@ const AdminDashboard = () => {
     const fetchStats = async () => {
         try {
             const response = await api.get('/admin/statistics');
-            setStats(response.data);
+            const data = response.data.statistics;
+            setStats({
+                totalUsers: data.users.total,
+                totalDoctors: data.doctors.total,
+                pendingApprovals: data.doctors.pending,
+                totalAppointments: data.appointments.total,
+            });
         } catch (error) {
             console.error('Error:', error);
         } finally {
