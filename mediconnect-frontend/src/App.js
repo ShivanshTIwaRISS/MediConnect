@@ -4,6 +4,8 @@ import { AuthProvider } from './context/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
+import ScrollToTop from './components/ScrollToTop';
+
 
 // Pages
 import Home from './pages/Home';
@@ -33,7 +35,9 @@ function App() {
     return (
         <AuthProvider>
             <Router>
+                <ScrollToTop />
                 <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+
                     <Navbar />
                     <main style={{ flex: 1 }}>
                         <Routes>

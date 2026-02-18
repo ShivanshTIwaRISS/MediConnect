@@ -59,12 +59,25 @@
     position: relative;
     overflow: hidden;
     cursor: default;
-    transition: none;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    animation: floatSubtle 5s ease-in-out infinite;
+}
+
+.dash-stat-card:nth-child(2) {
+    animation-delay: 0.5s;
+}
+
+.dash-stat-card:nth-child(3) {
+    animation-delay: 1s;
+}
+
+.dash-stat-card:nth-child(4) {
+    animation-delay: 1.5s;
 }
 
 .dash-stat-card:hover {
-    transform: none;
-    box-shadow: var(--shadow-md);
+    transform: translateY(-5px) scale(1.02);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
 }
 
 
