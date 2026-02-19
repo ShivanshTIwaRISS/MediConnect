@@ -51,18 +51,24 @@ const BookAppointment = () => {
 
 
     const getAvailableSlots = async () => {
+        const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
         let today = new Date();
         let slots = [];
 
-        for (let i = 0; i < 7; i++) {
+        for (let i = 0; i < 14; i++) {
             let currentDate = new Date(today);
             currentDate.setDate(today.getDate() + i);
 
-            let endTime = new Date(today);
-            endTime.setDate(today.getDate() + i);
+            // Only show days that match the doctor's availability
+            const dayName = dayNames[currentDate.getDay()];
+            if (!selectedDoctor.availability || !selectedDoctor.availability.includes(dayName)) {
+                continue;
+            }
+
+            let endTime = new Date(currentDate);
             endTime.setHours(21, 0, 0, 0);
 
-            if (today.getDate() === currentDate.getDate()) {
+            if (today.getDate() === currentDate.getDate() && today.getMonth() === currentDate.getMonth()) {
                 currentDate.setHours(currentDate.getHours() > 10 ? currentDate.getHours() + 1 : 10);
                 currentDate.setMinutes(currentDate.getMinutes() > 30 ? 30 : 0);
             } else {
@@ -80,10 +86,14 @@ const BookAppointment = () => {
                 });
                 currentDate.setMinutes(currentDate.getMinutes() + 30);
             }
-            slots.push(timeSlots);
+
+            if (timeSlots.length > 0) {
+                slots.push(timeSlots);
+            }
         }
         setDocSlots(slots);
     };
+
 
     const handleDoctorSelect = (e) => {
         const doc = doctors.find(d => d._id === e.target.value);
