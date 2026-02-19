@@ -38,7 +38,9 @@ const BookAppointment = () => {
         if (selectedDoctor) {
             getAvailableSlots();
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [selectedDoctor]);
+
 
     const fetchDoctors = async () => {
         try {
