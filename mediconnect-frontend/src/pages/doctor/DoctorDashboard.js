@@ -66,7 +66,7 @@ const DoctorDashboard = () => {
         <div className="dashboard-page">
             <div className="container">
                 {/* Welcome Banner */}
-                <div className="welcome-banner fade-in">
+                <div className="welcome-banner slide-in-left">
                     <div className="welcome-content">
                         <div className="welcome-text">
                             <span className="welcome-greeting">Good {new Date().getHours() < 12 ? 'Morning' : new Date().getHours() < 18 ? 'Afternoon' : 'Evening'} ✨</span>
@@ -97,9 +97,9 @@ const DoctorDashboard = () => {
                 </div>
 
                 {/* Stats */}
-                <div className="dash-stats-grid stagger-children">
+                <div className="dash-stats-grid" style={{ gap: '2rem' }}>
                     {statCards.map((stat, i) => (
-                        <div key={i} className={`dash-stat-card card card-glass scale-in ${stat.gradient}`}>
+                        <div key={i} className={`organic-stat-card premium-glass slide-in-right float-organic ${stat.gradient}`} style={{ animationDelay: `${i * 0.15}s` }}>
                             <div className="dash-stat-icon">{stat.icon}</div>
                             <div className="dash-stat-info">
                                 <h3>{stat.value}</h3>
@@ -108,6 +108,7 @@ const DoctorDashboard = () => {
                         </div>
                     ))}
                 </div>
+
 
                 {/* Today's Schedule */}
                 {todayAppointments.length > 0 && (
@@ -134,7 +135,7 @@ const DoctorDashboard = () => {
                 )}
 
                 {/* Quick Actions */}
-                <div className="quick-actions-section fade-in">
+                <div className="quick-actions-section slide-in-left">
                     <h2 className="section-title-dash">Quick Actions</h2>
                     <div className="quick-actions-grid stagger-children">
                         {quickActions.map((action, i) => (

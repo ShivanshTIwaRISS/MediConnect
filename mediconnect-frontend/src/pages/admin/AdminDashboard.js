@@ -58,10 +58,15 @@ const AdminDashboard = () => {
         <div className="dashboard-page">
             <div className="container">
                 {/* Welcome Banner */}
-                <div className="welcome-banner fade-in">
+                <div className="welcome-banner slide-in-left">
                     <div className="welcome-content">
                         <div className="welcome-text">
-                            <span className="welcome-greeting">Admin Panel <img src={assets.admin_logo} alt="" style={{ width: '16px', display: 'inline' }} /></span>
+                            <span className="welcome-greeting slide-in-left">
+                                <div className="admin-badge-next">
+                                    <span className="badge-dot"></span>
+                                    ADMIN SYSTEM
+                                </div>
+                            </span>
 
                             <h1>Welcome, {user?.name || 'Admin'}</h1>
                             <p>Platform overview and management tools</p>
@@ -70,9 +75,9 @@ const AdminDashboard = () => {
                 </div>
 
                 {/* Stats */}
-                <div className="dash-stats-grid stagger-children" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))' }}>
+                <div className="dash-stats-grid stagger-children" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '2rem' }}>
                     {statCards.map((stat, i) => (
-                        <div key={i} className={`dash-stat-card card card-glass scale-in ${stat.gradient}`}>
+                        <div key={i} className={`organic-stat-card premium-glass slide-in-right float-organic ${stat.gradient}`} style={{ animationDelay: `${i * 0.1}s` }}>
                             <div className="dash-stat-icon">{stat.icon}</div>
                             <div className="dash-stat-info">
                                 <h3>{stat.value}</h3>
@@ -83,7 +88,7 @@ const AdminDashboard = () => {
                 </div>
 
                 {/* Quick Actions */}
-                <div className="quick-actions-section fade-in">
+                <div className="quick-actions-section slide-in-left">
                     <h2 className="section-title-dash">Management Tools</h2>
                     <div className="quick-actions-grid stagger-children">
                         {quickActions.map((action, i) => (
