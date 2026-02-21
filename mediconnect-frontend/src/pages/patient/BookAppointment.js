@@ -10,6 +10,7 @@ const BookAppointment = () => {
     const [docSlots, setDocSlots] = useState([]);
     const [slotIndex, setSlotIndex] = useState(0);
     const [slotTime, setSlotTime] = useState('');
+    const [bookedSlots, setBookedSlots] = useState([]);
     const [formData, setFormData] = useState({
         reason: '',
     });
@@ -41,6 +42,13 @@ const BookAppointment = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [selectedDoctor]);
 
+    // Fetch booked slots when selected day changes
+    useEffect(() => {
+        if (selectedDoctor && docSlots.length > 0 && docSlots[slotIndex] && docSlots[slotIndex].length > 0) {
+            fetchBookedSlots(docSlots[slotIndex][0].datetime);
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [slotIndex, docSlots]);
 
     const fetchDoctors = async () => {
         try {
@@ -51,42 +59,64 @@ const BookAppointment = () => {
         }
     };
 
+    const fetchBookedSlots = async (dateObj) => {
+        try {
+            const dateStr = dateObj.toISOString().split('T')[0];
+            const response = await api.get(`/patient/doctors/${selectedDoctor._id}/booked-slots?date=${dateStr}`);
+            setBookedSlots(response.data.bookedSlots || []);
+        } catch (error) {
+            console.error('Error fetching booked slots:', error);
+            setBookedSlots([]);
+        }
+    };
 
-    const getAvailableSlots = async () => {
+    const getAvailableSlots = () => {
         const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-        let today = new Date();
-        let slots = [];
+        const today = new Date();
+        const slots = [];
+
+        // Normalize availability: handle both old string[] and new object[] formats
+        let availability = selectedDoctor.availability || [];
+        if (availability.length > 0 && typeof availability[0] === 'string') {
+            availability = availability.map(day => ({ day, startTime: '10:00', endTime: '17:00' }));
+        }
 
         for (let i = 0; i < 14; i++) {
-            let currentDate = new Date(today);
+            const currentDate = new Date(today);
             currentDate.setDate(today.getDate() + i);
 
-            // Only show days that match the doctor's availability
             const dayName = dayNames[currentDate.getDay()];
-            if (!selectedDoctor.availability || !selectedDoctor.availability.includes(dayName)) {
-                continue;
+            const daySlot = availability.find(a => a.day === dayName);
+            if (!daySlot) continue;
+
+            // Parse doctor's start and end hours
+            const [startH, startM] = daySlot.startTime.split(':').map(Number);
+            const [endH, endM] = daySlot.endTime.split(':').map(Number);
+
+            const slotDate = new Date(currentDate);
+            slotDate.setHours(startH, startM, 0, 0);
+
+            const endTime = new Date(currentDate);
+            endTime.setHours(endH, endM, 0, 0);
+
+            // If today, skip past times
+            if (currentDate.toDateString() === today.toDateString()) {
+                const nowPlus = new Date(today);
+                nowPlus.setHours(nowPlus.getHours() + 1);
+                nowPlus.setMinutes(nowPlus.getMinutes() > 30 ? 30 : 0);
+                if (nowPlus > slotDate) {
+                    slotDate.setHours(nowPlus.getHours(), nowPlus.getMinutes(), 0, 0);
+                }
             }
 
-            let endTime = new Date(currentDate);
-            endTime.setHours(21, 0, 0, 0);
-
-            if (today.getDate() === currentDate.getDate() && today.getMonth() === currentDate.getMonth()) {
-                currentDate.setHours(currentDate.getHours() > 10 ? currentDate.getHours() + 1 : 10);
-                currentDate.setMinutes(currentDate.getMinutes() > 30 ? 30 : 0);
-            } else {
-                currentDate.setHours(10);
-                currentDate.setMinutes(0);
-            }
-
-            let timeSlots = [];
-
-            while (currentDate < endTime) {
-                let formattedTime = currentDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            const timeSlots = [];
+            while (slotDate < endTime) {
+                const formattedTime = slotDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
                 timeSlots.push({
-                    datetime: new Date(currentDate),
-                    time: formattedTime
+                    datetime: new Date(slotDate),
+                    time: formattedTime,
                 });
-                currentDate.setMinutes(currentDate.getMinutes() + 30);
+                slotDate.setMinutes(slotDate.getMinutes() + 30);
             }
 
             if (timeSlots.length > 0) {
@@ -94,8 +124,10 @@ const BookAppointment = () => {
             }
         }
         setDocSlots(slots);
+        setSlotIndex(0);
+        setSlotTime('');
+        setBookedSlots([]);
     };
-
 
     const handleDoctorSelect = (e) => {
         const doc = doctors.find(d => d._id === e.target.value);
@@ -196,34 +228,46 @@ const BookAppointment = () => {
                         <div className="booking-slots-container card card-glass p-4">
                             <h3 className="slots-title">Booking slots</h3>
 
-                            <div className="days-scroll">
-                                {docSlots.length > 0 && docSlots.map((item, index) => (
-                                    <div
-                                        key={index}
-                                        onClick={() => setSlotIndex(index)}
-                                        className={`day-slot ${slotIndex === index ? 'active' : ''}`}
-                                    >
-                                        <span className="day-name">
-                                            {item[0] && item[0].datetime.toLocaleDateString([], { weekday: 'short' })}
-                                        </span>
-                                        <span className="day-date">
-                                            {item[0] && item[0].datetime.getDate()}
-                                        </span>
+                            {docSlots.length === 0 ? (
+                                <p style={{ color: 'var(--gray-500)', textAlign: 'center', padding: '2rem' }}>
+                                    No available slots for this doctor in the next 2 weeks.
+                                </p>
+                            ) : (
+                                <>
+                                    <div className="days-scroll">
+                                        {docSlots.map((item, index) => (
+                                            <div
+                                                key={index}
+                                                onClick={() => { setSlotIndex(index); setSlotTime(''); }}
+                                                className={`day-slot ${slotIndex === index ? 'active' : ''}`}
+                                            >
+                                                <span className="day-name">
+                                                    {item[0] && item[0].datetime.toLocaleDateString([], { weekday: 'short' })}
+                                                </span>
+                                                <span className="day-date">
+                                                    {item[0] && item[0].datetime.getDate()}
+                                                </span>
+                                            </div>
+                                        ))}
                                     </div>
-                                ))}
-                            </div>
 
-                            <div className="times-scroll">
-                                {docSlots.length > 0 && docSlots[slotIndex].map((item, index) => (
-                                    <div
-                                        key={index}
-                                        onClick={() => setSlotTime(item.time)}
-                                        className={`time-slot ${item.time === slotTime ? 'active' : ''}`}
-                                    >
-                                        {item.time.toLowerCase()}
+                                    <div className="times-scroll">
+                                        {docSlots[slotIndex].map((item, index) => {
+                                            const isBooked = bookedSlots.includes(item.time);
+                                            return (
+                                                <div
+                                                    key={index}
+                                                    onClick={() => !isBooked && setSlotTime(item.time)}
+                                                    className={`time-slot ${item.time === slotTime ? 'active' : ''} ${isBooked ? 'booked' : ''}`}
+                                                    title={isBooked ? 'This slot is already booked' : ''}
+                                                >
+                                                    {item.time.toLowerCase()}
+                                                </div>
+                                            );
+                                        })}
                                     </div>
-                                ))}
-                            </div>
+                                </>
+                            )}
 
                             <div className="form-group mt-4">
                                 <label className="form-label">Reason for Consultation</label>

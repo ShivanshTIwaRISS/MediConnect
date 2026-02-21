@@ -26,10 +26,21 @@ const doctorSchema = new mongoose.Schema({
         required: [true, 'Please provide consultation fees'],
         min: 0,
     },
-    availability: {
-        type: [String],
-        required: [true, 'Please provide availability'],
-    },
+    availability: [{
+        day: {
+            type: String,
+            enum: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
+            required: true,
+        },
+        startTime: {
+            type: String,
+            required: true,
+        },
+        endTime: {
+            type: String,
+            required: true,
+        },
+    }],
     about: {
         type: String,
         trim: true,

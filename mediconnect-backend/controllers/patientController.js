@@ -22,6 +22,41 @@ exports.getDoctors = async (req, res) => {
     }
 };
 
+// @desc    Get booked slots for a doctor on a specific date
+// @route   GET /api/patient/doctors/:id/booked-slots
+// @access  Private (Patient)
+exports.getBookedSlots = async (req, res) => {
+    try {
+        const { date } = req.query;
+        if (!date) {
+            return res.status(400).json({ success: false, message: 'Date query parameter is required' });
+        }
+
+        const startOfDay = new Date(date);
+        startOfDay.setHours(0, 0, 0, 0);
+        const endOfDay = new Date(date);
+        endOfDay.setHours(23, 59, 59, 999);
+
+        const appointments = await Appointment.find({
+            doctorId: req.params.id,
+            date: { $gte: startOfDay, $lte: endOfDay },
+            status: { $nin: ['cancelled', 'rejected'] },
+        });
+
+        const bookedSlots = appointments.map(a => a.time);
+
+        res.status(200).json({
+            success: true,
+            bookedSlots,
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message,
+        });
+    }
+};
+
 // @desc    Book an appointment
 // @route   POST /api/patient/appointments
 // @access  Private (Patient)

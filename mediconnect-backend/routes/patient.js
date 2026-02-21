@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const {
     getDoctors,
+    getBookedSlots,
     bookAppointment,
     getMyAppointments,
     cancelAppointment,
@@ -15,6 +16,7 @@ router.use(protect);
 router.use(authorize('patient'));
 
 router.get('/doctors', getDoctors);
+router.get('/doctors/:id/booked-slots', getBookedSlots);
 router.post('/appointments', bookAppointment);
 router.get('/appointments', getMyAppointments);
 router.put('/appointments/:id/cancel', cancelAppointment);

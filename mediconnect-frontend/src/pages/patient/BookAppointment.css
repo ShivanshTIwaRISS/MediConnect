@@ -163,6 +163,16 @@
     color: white;
 }
 
+.time-slot.booked {
+    background: #f3f4f6;
+    color: #9ca3af;
+    border-color: #e5e7eb;
+    cursor: not-allowed;
+    text-decoration: line-through;
+    opacity: 0.6;
+    pointer-events: none;
+}
+
 .btn-book {
     margin-top: 2.5rem;
     width: 100%;

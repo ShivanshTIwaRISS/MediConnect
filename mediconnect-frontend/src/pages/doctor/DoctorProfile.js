@@ -27,14 +27,20 @@ const DoctorProfile = () => {
         try {
             const response = await api.get('/doctor/profile');
             if (response.data.doctor) {
+                const doc = response.data.doctor;
+                // Normalize: handle both old string[] and new object[] formats
+                let availability = doc.availability || [];
+                if (availability.length > 0 && typeof availability[0] === 'string') {
+                    availability = availability.map(day => ({ day, startTime: '10:00', endTime: '17:00' }));
+                }
                 setFormData({
-                    specialization: response.data.doctor.specialization || '',
-                    qualifications: response.data.doctor.qualifications || '',
-                    experience: response.data.doctor.experience || '',
-                    fees: response.data.doctor.fees || '',
-                    availability: response.data.doctor.availability || [],
-                    about: response.data.doctor.about || '',
-                    image: response.data.doctor.image || '',
+                    specialization: doc.specialization || '',
+                    qualifications: doc.qualifications || '',
+                    experience: doc.experience || '',
+                    fees: doc.fees || '',
+                    availability,
+                    about: doc.about || '',
+                    image: doc.image || '',
                 });
                 setIsEdit(true);
             }
@@ -53,11 +59,22 @@ const DoctorProfile = () => {
     };
 
     const toggleDay = (day) => {
+        setFormData(prev => {
+            const exists = prev.availability.find(a => a.day === day);
+            if (exists) {
+                return { ...prev, availability: prev.availability.filter(a => a.day !== day) };
+            } else {
+                return { ...prev, availability: [...prev.availability, { day, startTime: '10:00', endTime: '17:00' }] };
+            }
+        });
+    };
+
+    const handleTimeChange = (day, field, value) => {
         setFormData(prev => ({
             ...prev,
-            availability: prev.availability.includes(day)
-                ? prev.availability.filter(d => d !== day)
-                : [...prev.availability, day],
+            availability: prev.availability.map(a =>
+                a.day === day ? { ...a, [field]: value } : a
+            ),
         }));
     };
 
@@ -95,7 +112,7 @@ const DoctorProfile = () => {
                 <div className="welcome-banner fade-in">
                     <div className="welcome-content" style={{ justifyContent: 'center', textAlign: 'center' }}>
                         <div className="welcome-text">
-                            <h1>{isEdit ? 'Edit Profile' : 'Create Profile'} 👨‍⚕️</h1>
+                            <h1>{isEdit ? 'Edit Profile' : 'Create Profile'}</h1>
                             <p>{isEdit ? 'Update your professional information' : 'Set up your doctor profile to start receiving patients'}</p>
                         </div>
                     </div>
@@ -131,7 +148,7 @@ const DoctorProfile = () => {
                                     width: '100px',
                                     height: '100px',
                                 }}>
-                                    👨‍⚕️
+                                    D
                                 </div>
                             )}
                         </div>
@@ -200,19 +217,56 @@ const DoctorProfile = () => {
                         </div>
 
                         <div className="form-group">
-                            <label className="form-label">Availability</label>
+                            <label className="form-label">Availability (select days & set hours)</label>
                             <div className="filter-tabs">
                                 {daysOfWeek.map(day => (
                                     <button
                                         key={day}
                                         type="button"
-                                        className={`filter-tab ${formData.availability.includes(day) ? 'active' : ''}`}
+                                        className={`filter-tab ${formData.availability.find(a => a.day === day) ? 'active' : ''}`}
                                         onClick={() => toggleDay(day)}
                                     >
                                         {day.slice(0, 3)}
                                     </button>
                                 ))}
                             </div>
+
+                            {/* Time range pickers for selected days */}
+                            {formData.availability.length > 0 && (
+                                <div style={{ marginTop: '1rem', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                                    {daysOfWeek.filter(d => formData.availability.find(a => a.day === d)).map(day => {
+                                        const slot = formData.availability.find(a => a.day === day);
+                                        return (
+                                            <div key={day} style={{
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                gap: '0.75rem',
+                                                padding: '0.75rem 1rem',
+                                                background: 'rgba(99, 102, 241, 0.05)',
+                                                borderRadius: 'var(--radius-lg)',
+                                                border: '1px solid rgba(99, 102, 241, 0.1)',
+                                            }}>
+                                                <span style={{ fontWeight: 600, minWidth: '80px', color: 'var(--gray-700)' }}>{day}</span>
+                                                <input
+                                                    type="time"
+                                                    value={slot.startTime}
+                                                    onChange={(e) => handleTimeChange(day, 'startTime', e.target.value)}
+                                                    className="form-input"
+                                                    style={{ width: 'auto', flex: 1 }}
+                                                />
+                                                <span style={{ color: 'var(--gray-400)', fontWeight: 500 }}>to</span>
+                                                <input
+                                                    type="time"
+                                                    value={slot.endTime}
+                                                    onChange={(e) => handleTimeChange(day, 'endTime', e.target.value)}
+                                                    className="form-input"
+                                                    style={{ width: 'auto', flex: 1 }}
+                                                />
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                            )}
                         </div>
 
                         <div className="form-group">
