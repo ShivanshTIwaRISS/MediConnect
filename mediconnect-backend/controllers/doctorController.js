@@ -18,6 +18,12 @@ exports.createProfile = async (req, res) => {
             });
         }
 
+        // Filter out any incomplete availability slots
+        let processedAvailability = availability;
+        if (Array.isArray(availability)) {
+            processedAvailability = availability.filter(a => a.day && a.startTime && a.endTime);
+        }
+
         // Create doctor profile
         const doctor = await Doctor.create({
             userId: req.user.id,
@@ -25,7 +31,7 @@ exports.createProfile = async (req, res) => {
             qualifications,
             experience,
             fees,
-            availability,
+            availability: processedAvailability,
             about,
             image,
         });
@@ -59,9 +65,15 @@ exports.updateProfile = async (req, res) => {
             });
         }
 
+        // Filter out any incomplete availability slots
+        let processedAvailability = availability;
+        if (Array.isArray(availability)) {
+            processedAvailability = availability.filter(a => a.day && a.startTime && a.endTime);
+        }
+
         doctor = await Doctor.findOneAndUpdate(
             { userId: req.user.id },
-            { specialization, qualifications, experience, fees, availability, about, image },
+            { specialization, qualifications, experience, fees, availability: processedAvailability, about, image },
             { new: true, runValidators: true }
         );
 
