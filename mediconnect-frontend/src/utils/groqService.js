@@ -1,11 +1,22 @@
-import api from './api';
+import axios from 'axios';
 
 const groqService = {
     async getChatCompletion(messages) {
+        console.log('Sending message to backend AI:', messages);
         try {
-            // Now that we've fixed the backend model and port issues, 
-            // we can safely use the standardized 'api' instance.
-            const response = await api.post('/ai/chat', { messages });
+            // HARDCODED URL to bypass any environment variable or instance issues
+            // This ensures we hit the backend on port 5001 directly
+            const response = await axios.post('http://localhost:5001/api/ai/chat', 
+                { messages }, 
+                {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                        'Content-Type': 'application/json'
+                    }
+                }
+            );
+            
+            console.log('Backend response:', response.data);
             
             if (response.data.success) {
                 return response.data.content;
@@ -14,6 +25,8 @@ const groqService = {
             }
         } catch (error) {
             console.error('Error calling Backend AI Service:', error);
+            // Alerting the error for visibility
+            alert('AI Error: ' + (error.response?.data?.message || error.message));
             throw error;
         }
     },
