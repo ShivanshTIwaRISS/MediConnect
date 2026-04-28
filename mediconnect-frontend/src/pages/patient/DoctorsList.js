@@ -131,7 +131,7 @@ const DoctorsList = () => {
                                         <span className="dlc-detail-label">📅 Available</span>
                                         <span className="dlc-detail-value">
                                             {Array.isArray(doctor.availability) && doctor.availability.length > 0
-                                                ? doctor.availability.slice(0, 3).join(', ')
+                                                ? doctor.availability.slice(0, 2).map(a => `${a.day}: ${a.startTime}-${a.endTime}`).join(', ')
                                                 : (typeof doctor.availability === 'string' ? doctor.availability : 'Contact for schedule')}
                                         </span>
                                     </div>

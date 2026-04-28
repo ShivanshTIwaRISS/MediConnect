@@ -6,8 +6,10 @@ const User = require('../models/User');
 // @route   GET /api/patient/doctors
 // @access  Private (Patient)
 exports.getDoctors = async (req, res) => {
+    console.log('GET /api/patient/doctors - Fetching doctors...');
     try {
         const doctors = await Doctor.find({ status: 'approved' }).populate('userId', 'name email');
+        console.log(`Found ${doctors.length} approved doctors.`);
 
         res.status(200).json({
             success: true,
