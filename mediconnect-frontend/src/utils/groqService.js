@@ -2,12 +2,10 @@ import api from './api';
 
 const groqService = {
     async getChatCompletion(messages) {
-        console.log('Sending message to backend AI:', messages);
         try {
-            // Using our configured 'api' instance which handles the base URL and auth tokens
+            // Now that we've fixed the backend model and port issues, 
+            // we can safely use the standardized 'api' instance.
             const response = await api.post('/ai/chat', { messages });
-            
-            console.log('Backend response:', response.data);
             
             if (response.data.success) {
                 return response.data.content;

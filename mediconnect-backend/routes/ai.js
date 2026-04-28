@@ -44,7 +44,7 @@ router.post('/chat', async (req, res) => {
         const response = await axios.post(
             GROQ_API_URL,
             {
-                model: 'llama3-8b-8192',
+                model: 'llama-3.1-8b-instant',
                 messages: updatedMessages,
                 temperature: 0.7,
                 max_tokens: 1024,
