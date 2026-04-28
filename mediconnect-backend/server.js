@@ -13,6 +13,12 @@ const aiRoutes = require('./routes/ai');
 // Initialize express app
 const app = express();
 
+// Global request logger
+app.use((req, res, next) => {
+    console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
+    next();
+});
+
 // Connect to database
 connectDB();
 
