@@ -31,6 +31,8 @@ import ManageDoctors from './pages/admin/ManageDoctors';
 import ManageUsers from './pages/admin/ManageUsers';
 import ManageAppointments from './pages/admin/ManageAppointments';
 
+import ChatAgent from './components/ChatAgent';
+
 function App() {
     return (
         <AuthProvider>
@@ -161,6 +163,7 @@ function App() {
                         </Routes>
                     </main>
                     <Footer />
+                    <ChatAgent />
                 </div>
             </Router>
         </AuthProvider>
