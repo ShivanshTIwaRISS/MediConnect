@@ -1,7 +1,10 @@
 import axios from 'axios';
 
+// The base URL for the API. In development, it points to localhost:5001.
+// In production (Vercel), you must set the REACT_APP_API_URL environment variable 
+// to your backend service URL (e.g., https://mediconnect-backend.render.com/api).
 const api = axios.create({
-    baseURL: 'http://localhost:5001/api',
+    baseURL: process.env.REACT_APP_API_URL || 'http://localhost:5001/api',
     headers: {
         'Content-Type': 'application/json',
     },
