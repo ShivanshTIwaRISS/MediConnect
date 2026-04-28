@@ -3,13 +3,17 @@ import axios from 'axios';
 const GROQ_API_URL = 'https://api.groq.com/openai/v1/chat/completions';
 const API_KEY = process.env.REACT_APP_GROQ_API_KEY;
 
+if (!API_KEY) {
+    console.error('REACT_APP_GROQ_API_KEY is missing from .env file!');
+}
+
 const groqService = {
     async getChatCompletion(messages) {
         try {
             const response = await axios.post(
                 GROQ_API_URL,
                 {
-                    model: 'llama-3.3-70b-versatile', // or 'llama3-8b-8192'
+                    model: 'llama3-8b-8192',
                     messages: messages,
                     temperature: 0.7,
                     max_tokens: 1024,
