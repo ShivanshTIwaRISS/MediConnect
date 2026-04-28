@@ -1,33 +1,16 @@
-import axios from 'axios';
-
-const GROQ_API_URL = 'https://api.groq.com/openai/v1/chat/completions';
-const API_KEY = process.env.REACT_APP_GROQ_API_KEY;
-
-if (!API_KEY) {
-    console.error('REACT_APP_GROQ_API_KEY is missing from .env file!');
-}
+import api from './api';
 
 const groqService = {
     async getChatCompletion(messages) {
         try {
-            const response = await axios.post(
-                GROQ_API_URL,
-                {
-                    model: 'llama3-8b-8192',
-                    messages: messages,
-                    temperature: 0.7,
-                    max_tokens: 1024,
-                },
-                {
-                    headers: {
-                        'Authorization': `Bearer ${API_KEY}`,
-                        'Content-Type': 'application/json',
-                    },
-                }
-            );
-            return response.data.choices[0].message.content;
+            const response = await api.post('/ai/chat', { messages });
+            if (response.data.success) {
+                return response.data.content;
+            } else {
+                throw new Error(response.data.message || 'Failed to get response from AI');
+            }
         } catch (error) {
-            console.error('Error calling Groq API:', error);
+            console.error('Error calling Backend AI Service:', error);
             throw error;
         }
     },
