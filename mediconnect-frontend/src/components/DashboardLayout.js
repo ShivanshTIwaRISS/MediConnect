@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { useTheme } from '../context/ThemeContext';
 import Icon from './Icons';
 
 const NAV_CONFIG = {
@@ -10,13 +9,13 @@ const NAV_CONFIG = {
         { to: '/patient/doctors', label: 'Find Doctors', icon: 'search' },
         { to: '/patient/book-appointment', label: 'Book Appointment', icon: 'calendar' },
         { to: '/patient/appointments', label: 'My Appointments', icon: 'clock' },
-        { to: '/patient/profile', label: 'Profile', icon: 'user' },
+        { to: '/patient/profile', label: 'Profile & Settings', icon: 'user' },
     ],
     doctor: [
         { to: '/doctor/dashboard', label: 'Dashboard', icon: 'dashboard' },
         { to: '/doctor/appointments', label: 'Appointment Requests', icon: 'fileText' },
         { to: '/doctor/history', label: 'Consultation History', icon: 'clock' },
-        { to: '/doctor/profile', label: 'My Profile', icon: 'user' },
+        { to: '/doctor/profile', label: 'Profile & Settings', icon: 'user' },
     ],
     admin: [
         { to: '/admin/dashboard', label: 'Dashboard', icon: 'dashboard' },
@@ -31,11 +30,11 @@ const PAGE_TITLES = {
     '/patient/doctors': 'Find Specialists',
     '/patient/book-appointment': 'Book Appointment',
     '/patient/appointments': 'My Appointments',
-    '/patient/profile': 'My Profile',
+    '/patient/profile': 'Profile & Settings',
     '/doctor/dashboard': 'Doctor Dashboard',
     '/doctor/appointments': 'Appointment Requests',
     '/doctor/history': 'Consultation History',
-    '/doctor/profile': 'Doctor Profile',
+    '/doctor/profile': 'Profile & Settings',
     '/admin/dashboard': 'Admin Command Center',
     '/admin/doctors': 'Manage Doctors',
     '/admin/users': 'Manage Users',
@@ -49,14 +48,14 @@ const ROLE_COLORS = {
 };
 
 const DashboardLayout = ({ children }) => {
-    const { user, logout } = useAuth();
-    const { theme, toggleTheme } = useTheme();
+    const { user } = useAuth();
     const location = useLocation();
     const [sidebarOpen, setSidebarOpen] = useState(false);
 
     const navLinks = NAV_CONFIG[user?.role] || [];
     const pageTitle = PAGE_TITLES[location.pathname] || 'Dashboard';
     const homeUrl = user?.role ? `/${user.role}/dashboard` : '/';
+    const profileUrl = user?.role === 'admin' ? '/admin/dashboard' : `/${user?.role}/profile`;
 
     useEffect(() => {
         setSidebarOpen(false);
@@ -120,7 +119,7 @@ const DashboardLayout = ({ children }) => {
 
                 {/* User Profile Footer */}
                 <div className="sidebar-footer">
-                    <div className="sidebar-user-card">
+                    <Link to={profileUrl} className="sidebar-user-card" title="View Profile & Settings">
                         <div
                             className="avatar avatar-sm"
                             style={{ background: ROLE_COLORS[user?.role] || 'var(--gradient-primary)' }}
@@ -131,7 +130,10 @@ const DashboardLayout = ({ children }) => {
                             <span className="sidebar-user-name">{user?.name || 'User'}</span>
                             <span className="sidebar-user-role">{user?.role}</span>
                         </div>
-                    </div>
+                        <span style={{ color: 'var(--text-muted)', marginLeft: 'auto' }}>
+                            <Icon name="chevronRight" size={14} />
+                        </span>
+                    </Link>
                 </div>
             </aside>
 
@@ -171,21 +173,15 @@ const DashboardLayout = ({ children }) => {
                             {getGreeting()}, <strong style={{ color: 'var(--text-primary)' }}>{user?.name?.split(' ')[0] || 'there'}</strong>
                         </span>
 
-                        {/* Theme Toggle Button */}
-                        <button
-                            className="theme-toggle-btn"
-                            onClick={toggleTheme}
-                            aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
-                            title={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
+                        <Link
+                            to={profileUrl}
+                            className="header-logout-btn"
+                            style={{ textDecoration: 'none' }}
+                            title="Profile & Settings"
                         >
-                            <Icon name={theme === 'dark' ? 'sun' : 'moon'} size={18} />
-                        </button>
-
-                        {/* Logout Button */}
-                        <button className="header-logout-btn" onClick={logout}>
-                            <Icon name="logout" size={16} />
-                            <span>Sign Out</span>
-                        </button>
+                            <Icon name="user" size={16} />
+                            <span>Settings</span>
+                        </Link>
                     </div>
                 </header>
 

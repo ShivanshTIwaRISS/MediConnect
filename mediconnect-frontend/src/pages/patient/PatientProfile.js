@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import api from '../../utils/api';
 import { useAuth } from '../../context/AuthContext';
+import { useTheme } from '../../context/ThemeContext';
 import Icon from '../../components/Icons';
 
 const PatientProfile = () => {
-    const { user } = useAuth();
+    const { user, logout } = useAuth();
+    const { theme, toggleTheme } = useTheme();
     const [formData, setFormData] = useState({ name: '', email: '' });
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
@@ -51,7 +53,7 @@ const PatientProfile = () => {
     }
 
     return (
-        <div style={{ maxWidth: '640px', margin: '0 auto' }}>
+        <div style={{ maxWidth: '680px', margin: '0 auto' }}>
             {/* Header */}
             <div style={{ marginBottom: '2rem' }} className="anim-fade-up">
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.25rem' }}>
@@ -62,15 +64,15 @@ const PatientProfile = () => {
                     }}>
                         <Icon name="user" size={20} />
                     </div>
-                    <h1 style={{ margin: 0, fontSize: '1.5rem' }}>Personal Profile</h1>
+                    <h1 style={{ margin: 0, fontSize: '1.5rem' }}>Profile & Settings</h1>
                 </div>
                 <p style={{ color: 'var(--text-muted)', margin: 0, fontSize: '0.875rem' }}>
-                    Update your personal account credentials and contact information.
+                    Manage your account details, portal theme preferences, and security.
                 </p>
             </div>
 
-            <div className="card anim-fade-up anim-d1" style={{ padding: '2rem' }}>
-                {/* Avatar Section */}
+            {/* Main Profile Info Card */}
+            <div className="card anim-fade-up anim-d1" style={{ padding: '2rem', marginBottom: '1.5rem' }}>
                 <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
                     <div className="avatar avatar-xl" style={{
                         margin: '0 auto 1rem',
@@ -122,12 +124,49 @@ const PatientProfile = () => {
                     <button
                         type="submit"
                         className="btn btn-primary btn-full"
-                        style={{ marginTop: '1rem', justifyContent: 'center' }}
+                        style={{ marginTop: '0.5rem', justifyContent: 'center' }}
                         disabled={saving}
                     >
                         {saving ? 'Saving changes…' : 'Save Changes'}
                     </button>
                 </form>
+            </div>
+
+            {/* Appearance & Preferences Card */}
+            <div className="card anim-fade-up anim-d2" style={{ padding: '1.75rem', marginBottom: '1.5rem' }}>
+                <h3 style={{ fontSize: '1.1rem', marginBottom: '1rem', color: 'var(--text-primary)' }}>Interface Appearance</h3>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
+                    <div>
+                        <div style={{ fontWeight: 600, color: 'var(--text-primary)', fontSize: '0.95rem' }}>Theme Mode</div>
+                        <div style={{ color: 'var(--text-muted)', fontSize: '0.825rem' }}>
+                            Currently active: <strong style={{ color: 'var(--primary)', textTransform: 'capitalize' }}>{theme} mode</strong>
+                        </div>
+                    </div>
+                    <button
+                        onClick={toggleTheme}
+                        className="btn btn-outline"
+                        style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem' }}
+                    >
+                        <Icon name={theme === 'dark' ? 'sun' : 'moon'} size={18} />
+                        <span>Switch to {theme === 'dark' ? 'Light' : 'Dark'} Mode</span>
+                    </button>
+                </div>
+            </div>
+
+            {/* Account & Session Security Card */}
+            <div className="card anim-fade-up anim-d3" style={{ padding: '1.75rem', borderColor: 'var(--error-border)' }}>
+                <h3 style={{ fontSize: '1.1rem', marginBottom: '0.5rem', color: 'var(--error)' }}>Account Session</h3>
+                <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', marginBottom: '1.25rem' }}>
+                    Sign out of your active session on this device.
+                </p>
+                <button
+                    onClick={logout}
+                    className="btn btn-error"
+                    style={{ width: '100%', justifyContent: 'center' }}
+                >
+                    <Icon name="logout" size={16} />
+                    <span>Sign Out of Account</span>
+                </button>
             </div>
         </div>
     );

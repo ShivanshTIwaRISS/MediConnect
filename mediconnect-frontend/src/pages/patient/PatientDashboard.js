@@ -14,7 +14,7 @@ const CLINICAL_INSIGHTS = [
 
 const PatientDashboard = () => {
     const { user } = useAuth();
-    const [stats, setStats] = useState({ total: 0, pending: 0, approved: 0 });
+    const [stats, setStats] = useState({ total: 0, pending: 0, approved: 0, specialistsCount: 0 });
     const [recentAppointments, setRecentAppointments] = useState([]);
     const [loading, setLoading] = useState(true);
     const [insightIndex] = useState(() => Math.floor(Math.random() * CLINICAL_INSIGHTS.length));
@@ -24,10 +24,13 @@ const PatientDashboard = () => {
             try {
                 const res = await api.get('/patient/appointments');
                 const appointments = res.data.appointments || [];
+                const uniqueDoctors = new Set(appointments.map(a => a.doctorId?._id).filter(Boolean));
+
                 setStats({
                     total: appointments.length,
                     pending: appointments.filter(a => a.status === 'pending').length,
                     approved: appointments.filter(a => a.status === 'approved').length,
+                    specialistsCount: uniqueDoctors.size,
                 });
                 setRecentAppointments(appointments.slice(0, 4));
             } catch (error) {
@@ -52,14 +55,14 @@ const PatientDashboard = () => {
         { color: 'blue', iconName: 'calendar', label: 'Total Appointments', value: stats.total },
         { color: 'amber', iconName: 'clockAlert', label: 'Pending Review', value: stats.pending },
         { color: 'green', iconName: 'checkCircle', label: 'Confirmed Visits', value: stats.approved },
-        { color: 'purple', iconName: 'heartPulse', label: 'Health Score', value: '98%' },
+        { color: 'purple', iconName: 'stethoscope', label: 'Specialists Consulted', value: stats.specialistsCount },
     ];
 
     const quickActions = [
         { iconName: 'search', title: 'Find Doctors', desc: 'Browse credentialed specialists', to: '/patient/doctors' },
         { iconName: 'calendar', title: 'Book Appointment', desc: 'Schedule a new clinical consultation', to: '/patient/book-appointment' },
         { iconName: 'clock', title: 'My Appointments', desc: 'Review scheduled and past visits', to: '/patient/appointments' },
-        { iconName: 'user', title: 'Patient Profile', desc: 'Update your personal medical profile', to: '/patient/profile' },
+        { iconName: 'user', title: 'Profile & Settings', desc: 'Manage account preferences & theme', to: '/patient/profile' },
     ];
 
     return (

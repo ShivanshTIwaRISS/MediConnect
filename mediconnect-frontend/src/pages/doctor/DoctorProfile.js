@@ -1,8 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import api from '../../utils/api';
+import { useAuth } from '../../context/AuthContext';
+import { useTheme } from '../../context/ThemeContext';
 import Icon from '../../components/Icons';
 
 const DoctorProfile = () => {
+    const { logout } = useAuth();
+    const { theme, toggleTheme } = useTheme();
     const [formData, setFormData] = useState({
         specialization: '',
         qualifications: '',
@@ -117,14 +121,14 @@ const DoctorProfile = () => {
                     }}>
                         <Icon name="stethoscope" size={20} />
                     </div>
-                    <h1 style={{ margin: 0, fontSize: '1.5rem' }}>{isEdit ? 'Clinical Credentials & Schedule' : 'Physician Registration Profile'}</h1>
+                    <h1 style={{ margin: 0, fontSize: '1.5rem' }}>{isEdit ? 'Clinical Profile & Settings' : 'Physician Registration'}</h1>
                 </div>
                 <p style={{ color: 'var(--text-muted)', margin: 0, fontSize: '0.875rem' }}>
-                    {isEdit ? 'Update your clinical credentials, fee schedule, and available consultation hours.' : 'Complete your practitioner profile to begin accepting patient consultations.'}
+                    {isEdit ? 'Update clinical credentials, consultation hours, and interface preferences.' : 'Complete your practitioner profile to begin accepting patient consultations.'}
                 </p>
             </div>
 
-            <div className="card anim-fade-up anim-d1" style={{ padding: '2rem' }}>
+            <div className="card anim-fade-up anim-d1" style={{ padding: '2rem', marginBottom: '1.5rem' }}>
                 {message.text && (
                     <div className={`alert alert-${message.type}`} style={{ marginBottom: '1.5rem' }}>
                         <Icon name={message.type === 'success' ? 'checkCircle' : 'alertTriangle'} size={18} />
@@ -297,13 +301,50 @@ const DoctorProfile = () => {
                     <button
                         type="submit"
                         className="btn btn-primary btn-full"
-                        style={{ marginTop: '1rem', justifyContent: 'center' }}
+                        style={{ marginTop: '0.5rem', justifyContent: 'center' }}
                         disabled={saving}
                     >
                         <Icon name="check" size={16} />
                         {saving ? 'Updating records…' : (isEdit ? 'Save Clinical Profile' : 'Submit Credentials')}
                     </button>
                 </form>
+            </div>
+
+            {/* Appearance & Preferences Card */}
+            <div className="card anim-fade-up anim-d2" style={{ padding: '1.75rem', marginBottom: '1.5rem' }}>
+                <h3 style={{ fontSize: '1.1rem', marginBottom: '1rem', color: 'var(--text-primary)' }}>Interface Appearance</h3>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
+                    <div>
+                        <div style={{ fontWeight: 600, color: 'var(--text-primary)', fontSize: '0.95rem' }}>Theme Mode</div>
+                        <div style={{ color: 'var(--text-muted)', fontSize: '0.825rem' }}>
+                            Currently active: <strong style={{ color: 'var(--primary)', textTransform: 'capitalize' }}>{theme} mode</strong>
+                        </div>
+                    </div>
+                    <button
+                        onClick={toggleTheme}
+                        className="btn btn-outline"
+                        style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem' }}
+                    >
+                        <Icon name={theme === 'dark' ? 'sun' : 'moon'} size={18} />
+                        <span>Switch to {theme === 'dark' ? 'Light' : 'Dark'} Mode</span>
+                    </button>
+                </div>
+            </div>
+
+            {/* Account & Session Security Card */}
+            <div className="card anim-fade-up anim-d3" style={{ padding: '1.75rem', borderColor: 'var(--error-border)' }}>
+                <h3 style={{ fontSize: '1.1rem', marginBottom: '0.5rem', color: 'var(--error)' }}>Account Session</h3>
+                <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', marginBottom: '1.25rem' }}>
+                    Sign out of your physician session on this device.
+                </p>
+                <button
+                    onClick={logout}
+                    className="btn btn-error"
+                    style={{ width: '100%', justifyContent: 'center' }}
+                >
+                    <Icon name="logout" size={16} />
+                    <span>Sign Out of Account</span>
+                </button>
             </div>
         </div>
     );

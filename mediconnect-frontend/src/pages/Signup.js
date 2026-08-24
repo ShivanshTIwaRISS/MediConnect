@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import Icon from '../components/Icons';
 import './Auth.css';
 
 const Signup = () => {
@@ -60,7 +61,7 @@ const Signup = () => {
 
         if (result.success) {
             navigate('/login', {
-                state: { message: 'Registration successful! Please login.' },
+                state: { message: 'Registration successful! Please sign in.' },
             });
         } else {
             setError(result.message);
@@ -76,21 +77,32 @@ const Signup = () => {
                 {/* Illustration Panel */}
                 <div className="auth-panel-left">
                     <div className="auth-panel-content">
-                        <div className="auth-panel-icon">🏥</div>
+                        <div className="auth-panel-icon" style={{ display: 'inline-flex', marginBottom: '1.5rem', color: '#ffffff' }}>
+                            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" />
+                                <path d="M3.22 12H9.5l.5-1 2 4.5 2-7 1.5 3.5h5.27" />
+                            </svg>
+                        </div>
                         <h2>Join MediConnect</h2>
-                        <p>Create your account and start your healthcare journey with us today.</p>
+                        <p>Create your verified account to schedule clinical consultations, track treatments, and communicate with providers.</p>
                         <div className="auth-panel-features">
                             <div className="auth-feature-item">
-                                <span className="auth-feature-check">✓</span>
-                                <span>Free to sign up</span>
+                                <span className="auth-feature-check">
+                                    <Icon name="check" size={14} color="white" />
+                                </span>
+                                <span>Fast Registration</span>
                             </div>
                             <div className="auth-feature-item">
-                                <span className="auth-feature-check">✓</span>
-                                <span>Book appointments instantly</span>
+                                <span className="auth-feature-check">
+                                    <Icon name="check" size={14} color="white" />
+                                </span>
+                                <span>Real-Time Appointment Scheduling</span>
                             </div>
                             <div className="auth-feature-item">
-                                <span className="auth-feature-check">✓</span>
-                                <span>Access 500+ doctors</span>
+                                <span className="auth-feature-check">
+                                    <Icon name="check" size={14} color="white" />
+                                </span>
+                                <span>Accredited Medical Network</span>
                             </div>
                         </div>
                     </div>
@@ -101,31 +113,37 @@ const Signup = () => {
                     <div className="auth-form-wrapper fade-in">
                         <div className="auth-header">
                             <Link to="/" className="auth-logo">
-                                <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
-                                    <rect width="28" height="28" rx="8" fill="url(#signupGrad)" />
-                                    <path d="M8 14h12M14 8v12" stroke="white" strokeWidth="2.5" strokeLinecap="round" />
+                                <svg width="34" height="34" viewBox="0 0 32 32" fill="none">
+                                    <rect width="32" height="32" rx="10" fill="url(#signupGradBrand)" />
+                                    <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" transform="scale(0.8) translate(4, 4)" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+                                    <path d="M3.22 12H9.5l.5-1 2 4.5 2-7 1.5 3.5h5.27" transform="scale(0.8) translate(4, 4)" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
                                     <defs>
-                                        <linearGradient id="signupGrad" x1="0" y1="0" x2="28" y2="28">
-                                            <stop stopColor="#667eea" />
-                                            <stop offset="1" stopColor="#764ba2" />
+                                        <linearGradient id="signupGradBrand" x1="0" y1="0" x2="32" y2="32">
+                                            <stop stopColor="#0284c7" />
+                                            <stop offset="1" stopColor="#2563eb" />
                                         </linearGradient>
                                     </defs>
                                 </svg>
                                 <span>MediConnect</span>
                             </Link>
                             <h2>Create Account</h2>
-                            <p>Fill in your details to get started</p>
+                            <p>Fill in your credentials to get started</p>
                         </div>
 
                         {error && (
-                            <div className="alert alert-error">{error}</div>
+                            <div className="alert alert-error" style={{ marginBottom: '1rem' }}>
+                                <Icon name="alertTriangle" size={16} />
+                                <span>{error}</span>
+                            </div>
                         )}
 
                         <form onSubmit={handleSubmit} className="auth-form">
                             <div className="form-group">
                                 <label htmlFor="name" className="form-label">Full Name</label>
                                 <div className="input-icon-wrap">
-                                    <span className="input-icon">👤</span>
+                                    <span className="input-icon">
+                                        <Icon name="user" size={16} color="var(--text-muted)" />
+                                    </span>
                                     <input
                                         type="text"
                                         id="name"
@@ -142,7 +160,9 @@ const Signup = () => {
                             <div className="form-group">
                                 <label htmlFor="email" className="form-label">Email Address</label>
                                 <div className="input-icon-wrap">
-                                    <span className="input-icon">📧</span>
+                                    <span className="input-icon">
+                                        <Icon name="fileText" size={16} color="var(--text-muted)" />
+                                    </span>
                                     <input
                                         type="email"
                                         id="email"
@@ -160,13 +180,15 @@ const Signup = () => {
                                 <div className="form-group">
                                     <label htmlFor="password" className="form-label">Password</label>
                                     <div className="input-icon-wrap">
-                                        <span className="input-icon">🔒</span>
+                                        <span className="input-icon">
+                                            <Icon name="lock" size={16} color="var(--text-muted)" />
+                                        </span>
                                         <input
                                             type={showPassword ? 'text' : 'password'}
                                             id="password"
                                             name="password"
                                             className="form-input input-with-icon"
-                                            placeholder="Min 6 characters"
+                                            placeholder="Min 6 chars"
                                             value={formData.password}
                                             onChange={handleChange}
                                             required
@@ -176,7 +198,7 @@ const Signup = () => {
                                             className="password-toggle"
                                             onClick={() => setShowPassword(!showPassword)}
                                         >
-                                            {showPassword ? '🙈' : '👁️'}
+                                            <Icon name={showPassword ? "x" : "search"} size={14} color="var(--text-muted)" />
                                         </button>
                                     </div>
                                     {formData.password && (
@@ -188,7 +210,7 @@ const Signup = () => {
                                                         width: `${(strength.level / 4) * 100}%`,
                                                         background: strength.color,
                                                     }}
-                                                ></div>
+                                                />
                                             </div>
                                             <span className="strength-label" style={{ color: strength.color }}>
                                                 {strength.label}
@@ -198,15 +220,17 @@ const Signup = () => {
                                 </div>
 
                                 <div className="form-group">
-                                    <label htmlFor="confirmPassword" className="form-label">Confirm Password</label>
+                                    <label htmlFor="confirmPassword" className="form-label">Confirm</label>
                                     <div className="input-icon-wrap">
-                                        <span className="input-icon">🔒</span>
+                                        <span className="input-icon">
+                                            <Icon name="lock" size={16} color="var(--text-muted)" />
+                                        </span>
                                         <input
                                             type={showPassword ? 'text' : 'password'}
                                             id="confirmPassword"
                                             name="confirmPassword"
                                             className="form-input input-with-icon"
-                                            placeholder="Confirm password"
+                                            placeholder="Confirm"
                                             value={formData.confirmPassword}
                                             onChange={handleChange}
                                             required
@@ -216,7 +240,7 @@ const Signup = () => {
                             </div>
 
                             <div className="form-group">
-                                <label htmlFor="role" className="form-label">Register As</label>
+                                <label className="form-label">Register As</label>
                                 <div className="role-selector">
                                     <label className={`role-option ${formData.role === 'patient' ? 'active' : ''}`}>
                                         <input
@@ -226,7 +250,9 @@ const Signup = () => {
                                             checked={formData.role === 'patient'}
                                             onChange={handleChange}
                                         />
-                                        <span className="role-icon">🧑‍💉</span>
+                                        <div style={{ color: formData.role === 'patient' ? 'var(--primary)' : 'var(--text-muted)' }}>
+                                            <Icon name="user" size={24} />
+                                        </div>
                                         <span className="role-label">Patient</span>
                                     </label>
                                     <label className={`role-option ${formData.role === 'doctor' ? 'active' : ''}`}>
@@ -237,7 +263,9 @@ const Signup = () => {
                                             checked={formData.role === 'doctor'}
                                             onChange={handleChange}
                                         />
-                                        <span className="role-icon">👨‍⚕️</span>
+                                        <div style={{ color: formData.role === 'doctor' ? 'var(--primary)' : 'var(--text-muted)' }}>
+                                            <Icon name="stethoscope" size={24} />
+                                        </div>
                                         <span className="role-label">Doctor</span>
                                     </label>
                                 </div>
@@ -247,10 +275,11 @@ const Signup = () => {
                                 type="submit"
                                 className="btn btn-primary btn-full"
                                 disabled={loading}
+                                style={{ marginTop: '0.5rem', justifyContent: 'center' }}
                             >
                                 {loading ? (
                                     <span className="btn-loading">
-                                        <span className="spinner" style={{ width: 20, height: 20, borderWidth: 2 }}></span>
+                                        <span className="spinner" style={{ width: 18, height: 18, borderWidth: 2 }} />
                                         Creating Account...
                                     </span>
                                 ) : 'Create Account'}
