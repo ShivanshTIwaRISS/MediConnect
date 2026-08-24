@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
+import Icon from './Icons';
 import './Navbar.css';
 
 const Navbar = () => {
@@ -20,6 +21,8 @@ const Navbar = () => {
     useEffect(() => {
         setMobileMenuOpen(false);
     }, [location]);
+
+    const homeUrl = isAuthenticated && user?.role ? `/${user.role}/dashboard` : '/';
 
     const getNavLinks = () => {
         if (!user) return [];
@@ -61,15 +64,16 @@ const Navbar = () => {
             <nav className={`navbar ${scrolled ? 'navbar-scrolled' : ''}`}>
                 <div className="container">
                     <div className="navbar-content">
-                        <Link to="/" className="navbar-brand">
+                        <Link to={homeUrl} className="navbar-brand">
                             <div className="brand-logo">
-                                <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+                                <svg width="34" height="34" viewBox="0 0 32 32" fill="none">
                                     <rect width="32" height="32" rx="10" fill="url(#navGrad)" />
-                                    <path d="M9 16h14M16 9v14" stroke="white" strokeWidth="2.5" strokeLinecap="round" />
+                                    <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" transform="scale(0.8) translate(4, 4)" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+                                    <path d="M3.22 12H9.5l.5-1 2 4.5 2-7 1.5 3.5h5.27" transform="scale(0.8) translate(4, 4)" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
                                     <defs>
                                         <linearGradient id="navGrad" x1="0" y1="0" x2="32" y2="32">
-                                            <stop stopColor="#0ea5e9" />
-                                            <stop offset="1" stopColor="#7c3aed" />
+                                            <stop stopColor="#0284c7" />
+                                            <stop offset="1" stopColor="#2563eb" />
                                         </linearGradient>
                                     </defs>
                                 </svg>
@@ -93,11 +97,12 @@ const Navbar = () => {
                         <div className="navbar-end">
                             {/* Theme Toggle */}
                             <button
-                                className="theme-toggle"
+                                className="theme-toggle-btn"
                                 onClick={toggleTheme}
                                 aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
+                                title={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
                             >
-                                {theme === 'dark' ? '☀️' : '🌙'}
+                                <Icon name={theme === 'dark' ? 'sun' : 'moon'} size={18} />
                             </button>
 
                             {isAuthenticated ? (
@@ -112,13 +117,14 @@ const Navbar = () => {
                                         </div>
                                     </div>
                                     <button onClick={logout} className="btn btn-sm btn-outline logout-btn">
-                                        Logout
+                                        <Icon name="logout" size={14} />
+                                        <span>Logout</span>
                                     </button>
                                 </div>
                             ) : (
                                 <div className="auth-buttons">
-                                    <Link to="/login" className="btn btn-sm btn-ghost">Login</Link>
-                                    <Link to="/signup" className="btn btn-sm btn-primary">Sign Up</Link>
+                                    <Link to="/login" className="btn btn-sm btn-ghost">Sign In</Link>
+                                    <Link to="/signup" className="btn btn-sm btn-primary">Get Started</Link>
                                 </div>
                             )}
 
@@ -169,14 +175,14 @@ const Navbar = () => {
                                 </Link>
                             ))}
                             <button onClick={logout} className="mobile-nav-link mobile-logout">
-                                Logout
+                                Sign Out
                             </button>
                         </>
                     ) : (
                         <>
                             <Link to="/" className="mobile-nav-link">Home</Link>
-                            <Link to="/login" className="mobile-nav-link">Login</Link>
-                            <Link to="/signup" className="mobile-nav-link">Sign Up</Link>
+                            <Link to="/login" className="mobile-nav-link">Sign In</Link>
+                            <Link to="/signup" className="mobile-nav-link">Get Started</Link>
                         </>
                     )}
                 </div>

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import api from '../../utils/api';
+import Icon from '../../components/Icons';
 
 const ManageDoctors = () => {
     const [doctors, setDoctors] = useState([]);
@@ -29,7 +30,7 @@ const ManageDoctors = () => {
     };
 
     const handleBlock = async (id) => {
-        if (!window.confirm('Are you sure you want to block this doctor?')) return;
+        if (!window.confirm('Are you sure you want to suspend this doctor account?')) return;
         try {
             await api.put(`/admin/doctors/${id}/block`);
             fetchDoctors();
@@ -42,7 +43,7 @@ const ManageDoctors = () => {
     const filterCounts = { all: doctors.length, pending: 0, approved: 0, blocked: 0 };
     doctors.forEach(d => { if (filterCounts[d.status] !== undefined) filterCounts[d.status]++; });
 
-    if (loading) return <div className="loading-container"><div className="spinner" /><p>Loading doctors…</p></div>;
+    if (loading) return <div className="loading-container"><div className="spinner" /><p>Loading medical staff records…</p></div>;
 
     return (
         <div>
@@ -51,25 +52,29 @@ const ManageDoctors = () => {
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.25rem' }}>
                     <div style={{
                         width: 40, height: 40, borderRadius: 'var(--radius-lg)',
-                        background: 'var(--stat-green-bg)', border: '1px solid var(--stat-green-border)',
-                        display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.2rem'
-                    }}>👨‍⚕️</div>
+                        background: 'var(--primary-light)', border: '1px solid var(--border-subtle)',
+                        color: 'var(--primary)', display: 'flex', alignItems: 'center', justifyContent: 'center'
+                    }}>
+                        <Icon name="stethoscope" size={20} />
+                    </div>
                     <h1 style={{ margin: 0, fontSize: '1.5rem' }}>Manage Doctors</h1>
                 </div>
                 <p style={{ color: 'var(--text-muted)', margin: 0, fontSize: '0.875rem' }}>
-                    Approve, manage, or block doctor accounts on the platform.
+                    Verify practitioner credentials, approve registrations, and manage clinical privileges.
                 </p>
             </div>
 
             {/* Pending alert */}
             {filterCounts.pending > 0 && (
                 <div className="alert alert-warning anim-fade-up" style={{ marginBottom: '1.5rem' }}>
-                    ⚠️ <strong>{filterCounts.pending}</strong> doctor{filterCounts.pending > 1 ? 's' : ''} awaiting approval
+                    <Icon name="alertTriangle" size={18} />
+                    <span><strong>{filterCounts.pending}</strong> doctor application{filterCounts.pending > 1 ? 's' : ''} awaiting approval</span>
                     <button
                         onClick={() => setFilter('pending')}
-                        style={{ marginLeft: 'auto', background: 'none', border: 'none', cursor: 'pointer', color: 'var(--warning)', fontWeight: 700, fontSize: '0.8rem', fontFamily: 'var(--font-family)' }}
+                        style={{ marginLeft: 'auto', background: 'none', border: 'none', cursor: 'pointer', color: 'var(--warning)', fontWeight: 700, fontSize: '0.825rem', fontFamily: 'var(--font-sans)', display: 'inline-flex', alignItems: 'center', gap: '0.25rem' }}
                     >
-                        Review →
+                        Filter Pending
+                        <Icon name="chevronRight" size={14} />
                     </button>
                 </div>
             )}
@@ -82,8 +87,8 @@ const ManageDoctors = () => {
                         className={`filter-tab ${filter === status ? 'active' : ''}`}
                         onClick={() => setFilter(status)}
                     >
-                        {status === 'all' ? 'All' : status.charAt(0).toUpperCase() + status.slice(1)}
-                        <span style={{ marginLeft: '0.35rem', opacity: 0.7 }}>({filterCounts[status] ?? 0})</span>
+                        {status === 'all' ? 'All Providers' : status.charAt(0).toUpperCase() + status.slice(1)}
+                        <span style={{ marginLeft: '0.35rem', opacity: 0.75 }}>({filterCounts[status] ?? 0})</span>
                     </button>
                 ))}
             </div>
@@ -92,9 +97,11 @@ const ManageDoctors = () => {
             {filtered.length === 0 ? (
                 <div className="card" style={{ padding: 0 }}>
                     <div className="empty-state">
-                        <div className="empty-state-icon">👨‍⚕️</div>
-                        <h3>No Doctors Found</h3>
-                        <p>{filter === 'all' ? 'No doctors registered yet.' : `No ${filter} doctors.`}</p>
+                        <div className="empty-state-icon">
+                            <Icon name="stethoscope" size={24} />
+                        </div>
+                        <h3>No Providers Found</h3>
+                        <p>{filter === 'all' ? 'No registered doctors on file.' : `No doctors found with status "${filter}".`}</p>
                     </div>
                 </div>
             ) : (
@@ -104,11 +111,16 @@ const ManageDoctors = () => {
                             <div className="doctor-card-header">
                                 <div
                                     className="avatar avatar-lg"
-                                    style={{ borderRadius: 'var(--radius-xl)', background: doctor.status === 'approved' ? 'var(--gradient-success)' : doctor.status === 'blocked' ? 'var(--gradient-rose)' : 'var(--gradient-primary)' }}
+                                    style={{
+                                        borderRadius: 'var(--radius-xl)',
+                                        background: doctor.status === 'approved' ? 'var(--gradient-primary)' : 'var(--bg-glass)',
+                                        color: doctor.status === 'approved' ? '#ffffff' : 'var(--text-primary)',
+                                        border: '1px solid var(--border-default)'
+                                    }}
                                 >
                                     {(doctor.userId?.name || 'D').charAt(0)}
                                 </div>
-                                <div>
+                                <div style={{ minWidth: 0, flex: 1 }}>
                                     <div className="doctor-card-name">{doctor.userId?.name || 'Doctor'}</div>
                                     <span className="doctor-card-spec">{doctor.specialization}</span>
                                     <span className="doctor-card-qual">{doctor.userId?.email}</span>
@@ -117,17 +129,17 @@ const ManageDoctors = () => {
 
                             <div className="detail-divider" />
 
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem', marginBottom: '1rem' }}>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginBottom: '1.25rem' }}>
                                 <div className="detail-row">
-                                    <span className="detail-row-label">Experience</span>
-                                    <span className="detail-row-value">{doctor.experience} yrs</span>
+                                    <span className="detail-row-label">Clinical Experience</span>
+                                    <span className="detail-row-value">{doctor.experience} Years</span>
                                 </div>
                                 <div className="detail-row">
-                                    <span className="detail-row-label">Consultation Fee</span>
+                                    <span className="detail-row-label">Consultation Rate</span>
                                     <span className="detail-row-value brand">${doctor.fees}</span>
                                 </div>
                                 <div className="detail-row">
-                                    <span className="detail-row-label">Status</span>
+                                    <span className="detail-row-label">Account Status</span>
                                     <span className={`badge badge-${doctor.status}`}>{doctor.status}</span>
                                 </div>
                             </div>
@@ -139,7 +151,8 @@ const ManageDoctors = () => {
                                         className="btn btn-sm btn-success"
                                         style={{ flex: 1 }}
                                     >
-                                        ✓ Approve
+                                        <Icon name="check" size={14} />
+                                        Approve
                                     </button>
                                 )}
                                 {doctor.status !== 'blocked' && (
@@ -148,7 +161,8 @@ const ManageDoctors = () => {
                                         className="btn btn-sm btn-error"
                                         style={{ flex: 1 }}
                                     >
-                                        ✕ Block
+                                        <Icon name="ban" size={14} />
+                                        Suspend
                                     </button>
                                 )}
                             </div>

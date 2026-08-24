@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import api from '../../utils/api';
+import Icon from '../../components/Icons';
 
 const ManageAppointments = () => {
     const [appointments, setAppointments] = useState([]);
@@ -31,7 +32,7 @@ const ManageAppointments = () => {
     const statusCounts = { all: appointments.length, pending: 0, approved: 0, rejected: 0, cancelled: 0 };
     appointments.forEach(a => { if (statusCounts[a.status] !== undefined) statusCounts[a.status]++; });
 
-    if (loading) return <div className="loading-container"><div className="spinner" /><p>Loading appointments…</p></div>;
+    if (loading) return <div className="loading-container"><div className="spinner" /><p>Loading platform appointments…</p></div>;
 
     return (
         <div>
@@ -40,30 +41,32 @@ const ManageAppointments = () => {
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.25rem' }}>
                     <div style={{
                         width: 40, height: 40, borderRadius: 'var(--radius-lg)',
-                        background: 'var(--stat-purple-bg)', border: '1px solid var(--stat-purple-border)',
-                        display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.2rem'
-                    }}>📋</div>
-                    <h1 style={{ margin: 0, fontSize: '1.5rem' }}>All Appointments</h1>
+                        background: 'var(--primary-light)', border: '1px solid var(--border-subtle)',
+                        color: 'var(--primary)', display: 'flex', alignItems: 'center', justifyContent: 'center'
+                    }}>
+                        <Icon name="fileText" size={20} />
+                    </div>
+                    <h1 style={{ margin: 0, fontSize: '1.5rem' }}>Global Consultations</h1>
                 </div>
                 <p style={{ color: 'var(--text-muted)', margin: 0, fontSize: '0.875rem' }}>
-                    View and monitor all appointments across the platform.
+                    Complete audit and tracking of all medical consultations booked across the system.
                 </p>
             </div>
 
             {/* Search + Filter */}
             <div className="card anim-fade-up" style={{ marginBottom: '1.5rem', padding: '1.25rem' }}>
-                <div style={{ marginBottom: '1rem' }}>
-                    <div style={{ position: 'relative' }}>
-                        <span style={{ position: 'absolute', left: '0.875rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }}>🔍</span>
-                        <input
-                            type="text"
-                            className="form-input"
-                            placeholder="Search by patient or doctor name…"
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                            style={{ paddingLeft: '2.25rem' }}
-                        />
+                <div style={{ marginBottom: '1rem', position: 'relative' }}>
+                    <div style={{ position: 'absolute', left: '0.875rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)', display: 'flex' }}>
+                        <Icon name="search" size={18} />
                     </div>
+                    <input
+                        type="text"
+                        className="form-input"
+                        placeholder="Search by patient or doctor name…"
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        style={{ paddingLeft: '2.5rem' }}
+                    />
                 </div>
                 <div className="filter-tabs" style={{ marginBottom: 0 }}>
                     {['all', 'pending', 'approved', 'rejected', 'cancelled'].map(status => (
@@ -73,22 +76,24 @@ const ManageAppointments = () => {
                             onClick={() => setFilter(status)}
                         >
                             {status === 'all' ? 'All' : status.charAt(0).toUpperCase() + status.slice(1)}
-                            <span style={{ marginLeft: '0.35rem', opacity: 0.7 }}>({statusCounts[status] ?? 0})</span>
+                            <span style={{ marginLeft: '0.35rem', opacity: 0.75 }}>({statusCounts[status] ?? 0})</span>
                         </button>
                     ))}
                 </div>
             </div>
 
-            <p style={{ color: 'var(--text-muted)', marginBottom: '1rem', fontSize: '0.8rem' }}>
-                Showing <strong style={{ color: 'var(--text-secondary)' }}>{filtered.length}</strong> appointment{filtered.length !== 1 ? 's' : ''}
+            <p style={{ color: 'var(--text-muted)', marginBottom: '1rem', fontSize: '0.825rem' }}>
+                Showing <strong style={{ color: 'var(--text-primary)' }}>{filtered.length}</strong> consultation record{filtered.length !== 1 ? 's' : ''}
             </p>
 
             {filtered.length === 0 ? (
                 <div className="card" style={{ padding: 0 }}>
                     <div className="empty-state">
-                        <div className="empty-state-icon">📋</div>
+                        <div className="empty-state-icon">
+                            <Icon name="fileText" size={24} />
+                        </div>
                         <h3>No Appointments Found</h3>
-                        <p>{filter === 'all' ? 'No appointments on the platform yet.' : `No ${filter} appointments.`}</p>
+                        <p>{filter === 'all' ? 'No appointments recorded on the network.' : `No ${filter} consultations found.`}</p>
                     </div>
                 </div>
             ) : (

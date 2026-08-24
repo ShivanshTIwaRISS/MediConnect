@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import api from '../../utils/api';
+import Icon from '../../components/Icons';
 
 const DoctorProfile = () => {
     const [formData, setFormData] = useState({
@@ -84,10 +85,10 @@ const DoctorProfile = () => {
         try {
             if (isEdit) {
                 await api.put('/doctor/profile', formData);
-                setMessage({ type: 'success', text: 'Profile updated successfully!' });
+                setMessage({ type: 'success', text: 'Clinical profile updated successfully.' });
             } else {
                 await api.post('/doctor/profile', formData);
-                setMessage({ type: 'success', text: 'Profile created successfully! Awaiting admin approval.' });
+                setMessage({ type: 'success', text: 'Profile submitted for credential verification.' });
                 setIsEdit(true);
             }
         } catch (error) {
@@ -101,7 +102,7 @@ const DoctorProfile = () => {
     };
 
     if (loading) {
-        return <div className="loading-container"><div className="spinner"></div><p>Loading profile…</p></div>;
+        return <div className="loading-container"><div className="spinner" /><p>Loading physician record…</p></div>;
     }
 
     return (
@@ -111,20 +112,23 @@ const DoctorProfile = () => {
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.25rem' }}>
                     <div style={{
                         width: 40, height: 40, borderRadius: 'var(--radius-lg)',
-                        background: 'var(--stat-green-bg)', border: '1px solid var(--stat-green-border)',
-                        display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.2rem'
-                    }}>👨‍⚕️</div>
-                    <h1 style={{ margin: 0, fontSize: '1.5rem' }}>{isEdit ? 'Edit Doctor Profile' : 'Create Doctor Profile'}</h1>
+                        background: 'var(--primary-light)', border: '1px solid var(--border-subtle)',
+                        color: 'var(--primary)', display: 'flex', alignItems: 'center', justifyContent: 'center'
+                    }}>
+                        <Icon name="stethoscope" size={20} />
+                    </div>
+                    <h1 style={{ margin: 0, fontSize: '1.5rem' }}>{isEdit ? 'Clinical Credentials & Schedule' : 'Physician Registration Profile'}</h1>
                 </div>
                 <p style={{ color: 'var(--text-muted)', margin: 0, fontSize: '0.875rem' }}>
-                    {isEdit ? 'Update your clinical details and patient schedule.' : 'Set up your professional credentials to receive patient bookings.'}
+                    {isEdit ? 'Update your clinical credentials, fee schedule, and available consultation hours.' : 'Complete your practitioner profile to begin accepting patient consultations.'}
                 </p>
             </div>
 
             <div className="card anim-fade-up anim-d1" style={{ padding: '2rem' }}>
                 {message.text && (
                     <div className={`alert alert-${message.type}`} style={{ marginBottom: '1.5rem' }}>
-                        {message.type === 'success' ? '✓ ' : '✕ '} {message.text}
+                        <Icon name={message.type === 'success' ? 'checkCircle' : 'alertTriangle'} size={18} />
+                        <span>{message.text}</span>
                     </div>
                 )}
 
@@ -136,75 +140,76 @@ const DoctorProfile = () => {
                                 src={formData.image}
                                 alt="Profile"
                                 style={{
-                                    width: '100px', height: '100px',
+                                    width: '96px', height: '96px',
                                     borderRadius: 'var(--radius-2xl)',
                                     objectFit: 'cover',
                                     margin: '0 auto 0.75rem',
                                     display: 'block',
-                                    border: '3px solid var(--primary-light)',
+                                    border: '3px solid var(--primary)',
                                     boxShadow: 'var(--shadow-md)',
                                 }}
                             />
                         ) : (
                             <div className="avatar avatar-xl" style={{
                                 margin: '0 auto 0.75rem',
-                                fontSize: '2.5rem',
-                                width: '90px',
-                                height: '90px',
-                                background: 'var(--gradient-success)',
+                                width: '88px',
+                                height: '88px',
+                                background: 'var(--gradient-primary)',
                                 borderRadius: 'var(--radius-2xl)',
                                 boxShadow: 'var(--shadow-md)',
                             }}>
-                                👨‍⚕️
+                                <Icon name="stethoscope" size={36} color="white" />
                             </div>
                         )}
-                        <span className="badge badge-approved" style={{ fontSize: '0.75rem' }}>Doctor Profile</span>
+                        <span className="badge badge-approved" style={{ fontSize: '0.75rem' }}>
+                            <Icon name="checkCircle" size={12} /> Certified Provider
+                        </span>
                     </div>
 
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.25rem' }}>
                         <div className="form-group">
-                            <label className="form-label">Specialization</label>
+                            <label className="form-label">Clinical Specialization</label>
                             <input
                                 type="text"
                                 name="specialization"
                                 className="form-input"
-                                placeholder="e.g., Cardiologist"
+                                placeholder="e.g., Cardiologist, Neurologist"
                                 value={formData.specialization}
                                 onChange={handleChange}
                                 required
                             />
                         </div>
                         <div className="form-group">
-                            <label className="form-label">Qualifications</label>
+                            <label className="form-label">Medical Degrees & Qualifications</label>
                             <input
                                 type="text"
                                 name="qualifications"
                                 className="form-input"
-                                placeholder="e.g., MBBS, MD"
+                                placeholder="e.g., MBBS, MD, FACC"
                                 value={formData.qualifications}
                                 onChange={handleChange}
                                 required
                             />
                         </div>
                         <div className="form-group">
-                            <label className="form-label">Experience (years)</label>
+                            <label className="form-label">Clinical Experience (Years)</label>
                             <input
                                 type="number"
                                 name="experience"
                                 className="form-input"
-                                placeholder="e.g., 10"
+                                placeholder="e.g., 12"
                                 value={formData.experience}
                                 onChange={handleChange}
                                 required
                             />
                         </div>
                         <div className="form-group">
-                            <label className="form-label">Consultation Fee ($)</label>
+                            <label className="form-label">Consultation Rate ($ USD)</label>
                             <input
                                 type="number"
                                 name="fees"
                                 className="form-input"
-                                placeholder="e.g., 100"
+                                placeholder="e.g., 120"
                                 value={formData.fees}
                                 onChange={handleChange}
                                 required
@@ -218,14 +223,14 @@ const DoctorProfile = () => {
                             type="url"
                             name="image"
                             className="form-input"
-                            placeholder="https://example.com/photo.jpg"
+                            placeholder="https://example.com/provider-photo.jpg"
                             value={formData.image}
                             onChange={handleChange}
                         />
                     </div>
 
                     <div className="form-group">
-                        <label className="form-label">Availability Schedule (Select Days)</label>
+                        <label className="form-label">Weekly Consultation Schedule (Select Days & Active Hours)</label>
                         <div className="filter-tabs" style={{ marginBottom: '1rem' }}>
                             {daysOfWeek.map(day => (
                                 <button
@@ -248,12 +253,12 @@ const DoctorProfile = () => {
                                             display: 'flex',
                                             alignItems: 'center',
                                             gap: '0.75rem',
-                                            padding: '0.75rem 1rem',
+                                            padding: '0.75rem 1.25rem',
                                             background: 'var(--bg-glass)',
                                             borderRadius: 'var(--radius-lg)',
                                             border: '1px solid var(--border-subtle)',
                                         }}>
-                                            <span style={{ fontWeight: 600, minWidth: '85px', color: 'var(--text-primary)', fontSize: '0.875rem' }}>{day}</span>
+                                            <span style={{ fontWeight: 600, minWidth: '90px', color: 'var(--text-primary)', fontSize: '0.875rem' }}>{day}</span>
                                             <input
                                                 type="time"
                                                 value={slot.startTime}
@@ -277,16 +282,16 @@ const DoctorProfile = () => {
                     </div>
 
                     <div className="form-group">
-                        <label className="form-label">About / Biography</label>
+                        <label className="form-label">Professional Biography & Clinical Approach</label>
                         <textarea
                             name="about"
                             className="form-input"
-                            placeholder="Tell patients about your background, expertise, and approach..."
+                            placeholder="Detail your clinical training, areas of clinical focus, and patient care approach..."
                             value={formData.about}
                             onChange={handleChange}
                             rows="4"
                             style={{ resize: 'vertical' }}
-                        ></textarea>
+                        />
                     </div>
 
                     <button
@@ -295,7 +300,8 @@ const DoctorProfile = () => {
                         style={{ marginTop: '1rem', justifyContent: 'center' }}
                         disabled={saving}
                     >
-                        {saving ? 'Saving changes…' : (isEdit ? 'Update Profile' : 'Create Profile')}
+                        <Icon name="check" size={16} />
+                        {saving ? 'Updating records…' : (isEdit ? 'Save Clinical Profile' : 'Submit Credentials')}
                     </button>
                 </form>
             </div>

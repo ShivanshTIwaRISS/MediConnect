@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { assets, specialityData } from '../assets/assets_frontend/assets';
+import { specialityData } from '../assets/assets_frontend/assets';
+import Icon from '../components/Icons';
 import './Home.css';
-
 
 const Counter = ({ end, suffix = '', duration = 2000 }) => {
     const [count, setCount] = useState(0);
@@ -52,28 +52,61 @@ const Home = () => {
     };
 
     const specialties = specialityData.map(item => ({
-        icon: <img src={item.image} alt={item.speciality} style={{ width: '32px', height: '32px' }} />,
+        icon: <img src={item.image} alt={item.speciality} style={{ width: '36px', height: '36px', objectFit: 'contain' }} />,
         name: item.speciality
     }));
 
     const testimonials = [
         {
             name: 'Sarah Johnson',
-            role: 'Patient',
-            text: 'MediConnect made finding a specialist so easy. I booked my appointment in minutes and the doctor was incredibly professional.',
+            role: 'Verified Patient',
+            text: 'MediConnect made finding an accredited cardiologist immediate and painless. The consultation was thorough and completely on schedule.',
             rating: 5,
         },
         {
             name: 'Dr. Michael Chen',
-            role: 'Cardiologist',
-            text: 'As a doctor, this platform helps me manage my appointments efficiently. The interface is clean and my patients love it.',
+            role: 'Chief of Cardiology',
+            text: 'The provider management suite streamlines clinical workflows effortlessly. Our patient response rates improved by over 40%.',
             rating: 5,
         },
         {
             name: 'Emily Rivera',
-            role: 'Patient',
-            text: 'I love how transparent the pricing is. No hidden fees, and the booking process is seamless. Highly recommend!',
+            role: 'Verified Patient',
+            text: 'Transparent pricing with upfront consultation fees. No surprises, no waiting room friction. An essential healthcare platform.',
             rating: 5,
+        },
+    ];
+
+    const features = [
+        {
+            iconName: 'stethoscope',
+            title: 'Verified Specialists',
+            desc: 'Connect with credentialed medical specialists across 50+ clinical disciplines.'
+        },
+        {
+            iconName: 'calendar',
+            title: 'Instant Booking',
+            desc: 'Real-time appointment slot booking with immediate clinical confirmation.'
+        },
+        {
+            iconName: 'lock',
+            title: 'Encrypted & Private',
+            desc: 'Enterprise-grade encryption protecting your personal consultation records.'
+        },
+        {
+            iconName: 'zap',
+            title: 'Fast Response',
+            desc: 'Direct consultation responses and confirmations with zero administrative delay.'
+        },
+        {
+            iconName: 'dollarSign',
+            title: 'Upfront Pricing',
+            desc: '100% transparent consultation fees with zero hidden charges.'
+        },
+        {
+            iconName: 'smartphone',
+            title: 'Anywhere Access',
+            desc: 'Optimized telemedicine portal accessible on desktop, tablet, and mobile devices.'
         },
     ];
 
@@ -82,22 +115,19 @@ const Home = () => {
             {/* Hero Section */}
             <section className="hero">
                 <div className="hero-decorations">
-                    <div className="hero-circle hero-circle-1"></div>
-                    <div className="hero-circle hero-circle-2"></div>
-                    <div className="hero-circle hero-circle-3"></div>
-                    <div className="floating-icon fi-1"><img src={assets.info_icon} alt="" style={{ width: '24px' }} /></div>
-                    <div className="floating-icon fi-2"><img src={assets.verified_icon} alt="" style={{ width: '24px' }} /></div>
-                    <div className="floating-icon fi-3"><img src={assets.logo} alt="" style={{ width: '24px' }} /></div>
-                    <div className="floating-icon fi-4">✨</div>
+                    <div className="hero-circle hero-circle-1" />
+                    <div className="hero-circle hero-circle-2" />
+                    <div className="hero-circle hero-circle-3" />
                 </div>
                 <div className="container">
-                    <div className="hero-content fade-in">
+                    <div className="hero-content anim-fade-up">
                         <div className="hero-badge">
-                            <span className="hero-badge-dot"></span>
-                            Trusted by 10,000+ patients
+                            <span className="hero-badge-dot" />
+                            <span>Accredited Healthcare Network</span>
                         </div>
                         <h1 className="hero-title">
-                            Your Health, Our <span className="gradient-text-hero">Priority</span>
+                            Next-Generation <br />
+                            <span className="gradient-text-hero">Healthcare Management</span>
                         </h1>
                         <p className="hero-subtitle">
                             Connect with world-class doctors, book appointments instantly,
@@ -106,15 +136,17 @@ const Home = () => {
                         <div className="hero-actions">
                             {isAuthenticated ? (
                                 <Link to={getDashboardLink()} className="btn btn-lg btn-primary hero-btn">
-                                    Go to Dashboard →
+                                    Access Portal
+                                    <Icon name="chevronRight" size={18} />
                                 </Link>
                             ) : (
                                 <>
                                     <Link to="/signup" className="btn btn-lg btn-primary hero-btn">
-                                        Get Started Free →
+                                        Get Started Free
+                                        <Icon name="chevronRight" size={18} />
                                     </Link>
                                     <Link to="/login" className="btn btn-lg btn-outline hero-btn-outline">
-                                        Login
+                                        Sign In
                                     </Link>
                                 </>
                             )}
@@ -126,22 +158,22 @@ const Home = () => {
             {/* Stats Section */}
             <section className="stats-section">
                 <div className="container">
-                    <div className="stats-bar card card-glass">
+                    <div className="stats-bar card">
                         <div className="stat-item">
                             <h3><Counter end={500} suffix="+" /></h3>
-                            <p>Expert Doctors</p>
+                            <p>Certified Doctors</p>
                         </div>
-                        <div className="stat-divider"></div>
+                        <div className="stat-divider" />
                         <div className="stat-item">
                             <h3><Counter end={10} suffix="K+" /></h3>
-                            <p>Happy Patients</p>
+                            <p>Active Patients</p>
                         </div>
-                        <div className="stat-divider"></div>
+                        <div className="stat-divider" />
                         <div className="stat-item">
                             <h3><Counter end={25} suffix="K+" /></h3>
-                            <p>Appointments</p>
+                            <p>Consultations</p>
                         </div>
-                        <div className="stat-divider"></div>
+                        <div className="stat-divider" />
                         <div className="stat-item">
                             <h3><Counter end={50} suffix="+" /></h3>
                             <p>Specialties</p>
@@ -150,17 +182,17 @@ const Home = () => {
                 </div>
             </section>
 
-            {/* Specialties */}
+            {/* Specialties Section */}
             <section className="specialties-section">
                 <div className="container">
                     <div className="section-header">
-                        <span className="section-tag">Specialties</span>
+                        <span className="section-tag">Clinical Departments</span>
                         <h2 className="section-title-home">Browse by Specialty</h2>
-                        <p className="section-desc">Find the right specialist for your needs</p>
+                        <p className="section-desc">Explore care across specialized departments</p>
                     </div>
                     <div className="specialties-grid">
                         {specialties.map((spec, i) => (
-                            <div key={i} className="specialty-card card card-glass" style={{ animationDelay: `${i * 0.05}s` }}>
+                            <div key={i} className="specialty-card card">
                                 <span className="specialty-icon">{spec.icon}</span>
                                 <span className="specialty-name">{spec.name}</span>
                             </div>
@@ -173,41 +205,20 @@ const Home = () => {
             <section className="features-section">
                 <div className="container">
                     <div className="section-header">
-                        <span className="section-tag">Why Choose Us</span>
+                        <span className="section-tag">Platform Excellence</span>
                         <h2 className="section-title-home">Why MediConnect?</h2>
-                        <p className="section-desc">We make healthcare accessible, affordable, and efficient</p>
+                        <p className="section-desc">Clinical precision and care management at every step</p>
                     </div>
-                    <div className="features-grid stagger-children">
-                        <div className="feature-card card card-glass slide-up">
-                            <div className="feature-icon-wrap gradient-1"><img src={assets.info_icon} alt="" style={{ width: '24px', filter: 'brightness(0) invert(1)' }} /></div>
-                            <h3>Qualified Doctors</h3>
-                            <p>Connect with verified and experienced medical professionals across 50+ specialties</p>
-                        </div>
-                        <div className="feature-card card card-glass slide-up">
-                            <div className="feature-icon-wrap gradient-2">📅</div>
-                            <h3>Easy Booking</h3>
-                            <p>Schedule appointments at your convenience with just a few clicks, 24/7</p>
-                        </div>
-                        <div className="feature-card card card-glass slide-up">
-                            <div className="feature-icon-wrap gradient-3">🔒</div>
-                            <h3>Secure & Private</h3>
-                            <p>Your health data is protected with industry-standard encryption and security</p>
-                        </div>
-                        <div className="feature-card card card-glass slide-up">
-                            <div className="feature-icon-wrap gradient-4">⚡</div>
-                            <h3>Quick Response</h3>
-                            <p>Get timely responses from doctors — most appointments confirmed within hours</p>
-                        </div>
-                        <div className="feature-card card card-glass slide-up">
-                            <div className="feature-icon-wrap gradient-5">💰</div>
-                            <h3>Transparent Pricing</h3>
-                            <p>Know consultation fees upfront with no hidden charges or surprise bills</p>
-                        </div>
-                        <div className="feature-card card card-glass slide-up">
-                            <div className="feature-icon-wrap gradient-6">📱</div>
-                            <h3>Access Anywhere</h3>
-                            <p>Access healthcare from anywhere, anytime on any device — phone, tablet, or desktop</p>
-                        </div>
+                    <div className="features-grid">
+                        {features.map((feat, i) => (
+                            <div key={i} className="feature-card card">
+                                <div className="feature-icon-wrap">
+                                    <Icon name={feat.iconName} size={24} />
+                                </div>
+                                <h3>{feat.title}</h3>
+                                <p>{feat.desc}</p>
+                            </div>
+                        ))}
                     </div>
                 </div>
             </section>
@@ -216,23 +227,24 @@ const Home = () => {
             <section className="how-it-works-section">
                 <div className="container">
                     <div className="section-header">
-                        <span className="section-tag">How It Works</span>
-                        <h2 className="section-title-home">Get Started in 4 Steps</h2>
-                        <p className="section-desc">Simple and seamless healthcare experience</p>
+                        <span className="section-tag">Patient Experience</span>
+                        <h2 className="section-title-home">4 Simple Steps to Care</h2>
+                        <p className="section-desc">Streamlined access from registration to consultation</p>
                     </div>
                     <div className="steps-grid">
                         {[
-                            { num: '01', title: 'Create Account', desc: 'Sign up as a patient or doctor in just a few seconds', icon: '👤' },
-                            { num: '02', title: 'Find a Doctor', desc: 'Browse through our qualified doctors and specializations', icon: '🔍' },
-                            { num: '03', title: 'Book Appointment', desc: 'Select a convenient date and time for your consultation', icon: <img src={assets.chats_icon} alt="" style={{ width: '40px' }} /> },
-                            { num: '04', title: 'Get Consultation', desc: 'Receive expert medical advice and treatment plans', icon: <img src={assets.verified_icon} alt="" style={{ width: '40px' }} /> },
+                            { num: '01', title: 'Register Account', desc: 'Sign up securely as a patient or clinical provider in seconds.', icon: 'user' },
+                            { num: '02', title: 'Select Specialist', desc: 'Filter through certified doctors by expertise, fees, and availability.', icon: 'search' },
+                            { num: '03', title: 'Reserve Slot', desc: 'Pick your preferred consultation date and available time slot.', icon: 'calendar' },
+                            { num: '04', title: 'Consultation', desc: 'Receive dedicated professional healthcare advice and treatment plans.', icon: 'checkCircle' },
                         ].map((step, i) => (
                             <div key={i} className="step-card">
                                 <div className="step-number-badge">{step.num}</div>
-                                <div className="step-icon-large">{step.icon}</div>
+                                <div className="step-icon-wrap">
+                                    <Icon name={step.icon} size={28} />
+                                </div>
                                 <h3>{step.title}</h3>
                                 <p>{step.desc}</p>
-                                {i < 3 && <div className="step-connector"></div>}
                             </div>
                         ))}
                     </div>
@@ -243,19 +255,25 @@ const Home = () => {
             <section className="testimonials-section">
                 <div className="container">
                     <div className="section-header">
-                        <span className="section-tag">Testimonials</span>
-                        <h2 className="section-title-home">What People Say</h2>
-                        <p className="section-desc">Hear from our happy patients and doctors</p>
+                        <span className="section-tag">Patient & Doctor Reviews</span>
+                        <h2 className="section-title-home">Trusted Healthcare Voices</h2>
+                        <p className="section-desc">Real experiences from patients and clinical professionals</p>
                     </div>
                     <div className="testimonials-grid">
                         {testimonials.map((t, i) => (
-                            <div key={i} className="testimonial-card card card-glass">
+                            <div key={i} className="testimonial-card card">
                                 <div className="testimonial-stars">
-                                    {'★'.repeat(t.rating)}
+                                    {[...Array(t.rating)].map((_, starI) => (
+                                        <svg key={starI} width="16" height="16" viewBox="0 0 24 24" fill="#f59e0b">
+                                            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                                        </svg>
+                                    ))}
                                 </div>
                                 <p className="testimonial-text">"{t.text}"</p>
                                 <div className="testimonial-author">
-                                    <div className="avatar">{t.name.charAt(0)}</div>
+                                    <div className="avatar avatar-md" style={{ background: 'var(--gradient-primary)' }}>
+                                        {t.name.charAt(0)}
+                                    </div>
                                     <div>
                                         <strong>{t.name}</strong>
                                         <span className="testimonial-role">{t.role}</span>
@@ -273,14 +291,15 @@ const Home = () => {
                     <div className="container">
                         <div className="cta-card">
                             <div className="cta-content">
-                                <h2>Ready to Take Control of Your Health?</h2>
-                                <p>Join thousands of users who trust MediConnect for their healthcare needs. Sign up today — it's free.</p>
+                                <h2>Experience Modern Healthcare Today</h2>
+                                <p>Join thousands of patients and doctors trusting MediConnect for simplified, secure clinical care.</p>
                                 <div className="cta-actions">
                                     <Link to="/signup" className="btn btn-lg btn-primary hero-btn">
-                                        Create Free Account →
+                                        Create Free Account
+                                        <Icon name="chevronRight" size={18} />
                                     </Link>
                                     <Link to="/login" className="btn btn-lg btn-outline hero-btn-outline">
-                                        Login Instead
+                                        Sign In
                                     </Link>
                                 </div>
                             </div>

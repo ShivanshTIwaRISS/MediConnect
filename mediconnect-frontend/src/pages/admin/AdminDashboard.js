@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../../utils/api';
 import { useAuth } from '../../context/AuthContext';
+import Icon from '../../components/Icons';
 
 const AdminDashboard = () => {
     const { user } = useAuth();
@@ -37,45 +38,41 @@ const AdminDashboard = () => {
         return (
             <div className="loading-container">
                 <div className="spinner" />
-                <p>Loading platform data…</p>
+                <p>Loading administration data…</p>
             </div>
         );
     }
 
     const statCards = [
-        { color: 'blue', icon: '👥', label: 'Total Users', value: stats.totalUsers },
-        { color: 'green', icon: '👨‍⚕️', label: 'Total Doctors', value: stats.totalDoctors },
-        { color: 'amber', icon: '⏳', label: 'Pending Approvals', value: stats.pendingApprovals },
-        { color: 'purple', icon: '🗓', label: 'All Appointments', value: stats.totalAppointments },
+        { color: 'blue', iconName: 'users', label: 'Registered Users', value: stats.totalUsers },
+        { color: 'green', iconName: 'stethoscope', label: 'Clinical Providers', value: stats.totalDoctors },
+        { color: 'amber', iconName: 'clockAlert', label: 'Pending Approvals', value: stats.pendingApprovals },
+        { color: 'purple', iconName: 'fileText', label: 'Total Consultations', value: stats.totalAppointments },
     ];
 
     const managementTools = [
         {
-            icon: '👨‍⚕️',
+            iconName: 'stethoscope',
             title: 'Manage Doctors',
-            desc: 'Approve, block, or review doctor profiles',
+            desc: 'Review credentials, approve applications, or block provider accounts',
             to: '/admin/doctors',
             color: 'green',
         },
         {
-            icon: '👥',
+            iconName: 'users',
             title: 'Manage Users',
-            desc: 'View and manage all registered users',
+            desc: 'Audit patient and administrator accounts across the network',
             to: '/admin/users',
             color: 'blue',
         },
         {
-            icon: '📋',
-            title: 'All Appointments',
-            desc: 'View every appointment across the platform',
+            iconName: 'fileText',
+            title: 'Platform Appointments',
+            desc: 'Global monitoring of all active and completed consultations',
             to: '/admin/appointments',
             color: 'purple',
         },
     ];
-
-    const alerts = stats.pendingApprovals > 0
-        ? [{ type: 'amber', icon: '⚠️', message: `${stats.pendingApprovals} doctor${stats.pendingApprovals > 1 ? 's' : ''} awaiting approval` }]
-        : [];
 
     return (
         <div>
@@ -83,46 +80,49 @@ const AdminDashboard = () => {
             <div className="welcome-hero anim-fade-up">
                 <div className="welcome-hero-inner">
                     <div>
-                        <div className="welcome-greeting">
-                            <span className="welcome-greeting-dot" />
-                            Admin Control Panel
+                        <div className="welcome-tag">
+                            <span className="welcome-tag-dot" />
+                            System Administration Center
                         </div>
-                        <h1>Welcome, {user?.name || 'Admin'} 🛡</h1>
-                        <p style={{ marginBottom: 0 }}>Platform overview and management tools.</p>
+                        <h1>Administrator Overview</h1>
+                        <p style={{ marginBottom: 0 }}>System metrics, credential review queues, and network oversight.</p>
                     </div>
                     <div style={{
-                        padding: '0.875rem 1.5rem',
-                        background: 'var(--stat-rose-bg)',
-                        border: '1px solid var(--stat-rose-border)',
+                        padding: '0.85rem 1.5rem',
+                        background: 'var(--bg-glass)',
+                        border: '1px solid var(--border-subtle)',
                         borderRadius: 'var(--radius-xl)',
                         textAlign: 'center',
                     }}>
-                        <div style={{ fontSize: '0.7rem', color: 'var(--error)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.8px', marginBottom: '0.25rem' }}>
-                            Admin Access
+                        <div style={{ fontSize: '0.72rem', color: 'var(--primary)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '0.2rem' }}>
+                            Security Clearance
                         </div>
-                        <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', fontWeight: 600 }}>
-                            {new Date().toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}
+                        <div style={{ fontSize: '0.85rem', color: 'var(--text-primary)', fontWeight: 600 }}>
+                            {user?.name || 'Administrator'}
                         </div>
                     </div>
                 </div>
             </div>
 
-            {/* Alerts */}
-            {alerts.map((alert, i) => (
-                <div key={i} className={`alert alert-warning anim-fade-up`} style={{ marginBottom: '1.5rem' }}>
-                    <span>{alert.icon}</span>
-                    <span>{alert.message}</span>
-                    <Link to="/admin/doctors" style={{ marginLeft: 'auto', color: 'var(--warning)', fontWeight: 700, fontSize: '0.8rem' }}>
-                        Review →
+            {/* Pending alert */}
+            {stats.pendingApprovals > 0 && (
+                <div className="alert alert-warning anim-fade-up" style={{ marginBottom: '1.5rem' }}>
+                    <Icon name="alertTriangle" size={18} />
+                    <span><strong>{stats.pendingApprovals}</strong> doctor registration application{stats.pendingApprovals > 1 ? 's' : ''} awaiting credential verification</span>
+                    <Link to="/admin/doctors" style={{ marginLeft: 'auto', color: 'var(--warning)', fontWeight: 700, fontSize: '0.825rem', display: 'inline-flex', alignItems: 'center', gap: '0.25rem' }}>
+                        Review Queue
+                        <Icon name="chevronRight" size={14} />
                     </Link>
                 </div>
-            ))}
+            )}
 
             {/* Stats */}
             <div className="stats-grid">
                 {statCards.map((s, i) => (
                     <div key={i} className={`stat-card ${s.color} anim-fade-up anim-d${i + 1}`}>
-                        <div className="stat-icon">{s.icon}</div>
+                        <div className="stat-icon-wrap">
+                            <Icon name={s.iconName} size={22} />
+                        </div>
                         <div className="stat-info">
                             <div className="stat-value">{s.value}</div>
                             <div className="stat-label">{s.label}</div>
@@ -132,24 +132,15 @@ const AdminDashboard = () => {
             </div>
 
             {/* Management Tools */}
-            <div className="anim-fade-up anim-d2">
-                <div className="section-header">
-                    <h2 className="section-title">Management Tools</h2>
+            <div className="anim-fade-up anim-d2" style={{ marginBottom: '2rem' }}>
+                <div className="section-header-bar">
+                    <h2 className="section-title">Administrative Modules</h2>
                 </div>
-                <div className="quick-actions-grid" style={{ gridTemplateColumns: 'repeat(3, 1fr)' }}>
+                <div className="quick-actions-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))' }}>
                     {managementTools.map((tool, i) => (
                         <Link key={i} to={tool.to} className="quick-action-card">
-                            <div
-                                className="qa-icon-wrap"
-                                style={{
-                                    background: `var(--stat-${tool.color}-bg)`,
-                                    border: `1px solid var(--stat-${tool.color}-border)`,
-                                    fontSize: '1.5rem',
-                                    width: '52px',
-                                    height: '52px',
-                                }}
-                            >
-                                {tool.icon}
+                            <div className="qa-icon-wrap">
+                                <Icon name={tool.iconName} size={22} />
                             </div>
                             <div>
                                 <div className="qa-title">{tool.title}</div>
@@ -162,28 +153,28 @@ const AdminDashboard = () => {
 
             {/* Platform Health */}
             <div className="anim-fade-up anim-d3">
-                <div className="section-header">
-                    <h2 className="section-title">Platform Summary</h2>
+                <div className="section-header-bar">
+                    <h2 className="section-title">Network Analytics</h2>
                 </div>
                 <div style={{
                     background: 'var(--bg-card)',
                     border: '1px solid var(--border-subtle)',
                     borderRadius: 'var(--radius-xl)',
-                    padding: '1.5rem',
+                    padding: '1.75rem',
                 }}>
                     <div style={{ display: 'flex', gap: '2rem', flexWrap: 'wrap' }}>
                         {[
-                            { label: 'Platform Doctors', value: stats.totalDoctors, sub: `${stats.pendingApprovals} pending` },
-                            { label: 'Registered Patients', value: Math.max(0, stats.totalUsers - stats.totalDoctors - 1), sub: 'Active users' },
-                            { label: 'Total Appointments', value: stats.totalAppointments, sub: 'All time' },
-                            { label: 'Approval Rate', value: stats.totalDoctors > 0 ? `${Math.round(((stats.totalDoctors - stats.pendingApprovals) / stats.totalDoctors) * 100)}%` : '—', sub: 'Doctor approval' },
+                            { label: 'Active Providers', value: stats.totalDoctors, sub: `${stats.pendingApprovals} awaiting approval` },
+                            { label: 'Registered Patients', value: Math.max(0, stats.totalUsers - stats.totalDoctors - 1), sub: 'Active accounts' },
+                            { label: 'Total Consultations', value: stats.totalAppointments, sub: 'Lifetime volume' },
+                            { label: 'Approval Rate', value: stats.totalDoctors > 0 ? `${Math.round(((stats.totalDoctors - stats.pendingApprovals) / stats.totalDoctors) * 100)}%` : '—', sub: 'Provider verification' },
                         ].map((item, i) => (
-                            <div key={i} style={{ flex: '1', minWidth: '120px' }}>
-                                <div style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--text-primary)', fontFamily: 'var(--font-display)', letterSpacing: '-0.02em' }}>
+                            <div key={i} style={{ flex: '1', minWidth: '150px' }}>
+                                <div style={{ fontSize: '1.75rem', fontWeight: 800, color: 'var(--text-primary)', fontFamily: 'var(--font-display)', letterSpacing: '-0.02em' }}>
                                     {item.value}
                                 </div>
-                                <div style={{ fontSize: '0.825rem', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '0.1rem' }}>{item.label}</div>
-                                <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>{item.sub}</div>
+                                <div style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '0.15rem' }}>{item.label}</div>
+                                <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{item.sub}</div>
                             </div>
                         ))}
                     </div>

@@ -3,6 +3,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import api from '../../utils/api';
 import './BookAppointment.css';
 import { assets } from '../../assets/assets_frontend/assets';
+import Icon from '../../components/Icons';
 
 const BookAppointment = () => {
     const [doctors, setDoctors] = useState([]);
@@ -75,7 +76,7 @@ const BookAppointment = () => {
         const today = new Date();
         const slots = [];
 
-        // Normalize availability: handle both old string[] and new object[] formats
+        // Normalize availability
         let availability = selectedDoctor.availability || [];
         if (availability.length > 0 && typeof availability[0] === 'string') {
             availability = availability.map(day => ({ day, startTime: '10:00', endTime: '17:00' }));
@@ -89,7 +90,6 @@ const BookAppointment = () => {
             const daySlot = availability.find(a => a.day === dayName);
             if (!daySlot) continue;
 
-            // Parse doctor's start and end hours
             const [startH, startM] = daySlot.startTime.split(':').map(Number);
             const [endH, endM] = daySlot.endTime.split(':').map(Number);
 
@@ -99,7 +99,6 @@ const BookAppointment = () => {
             const endTime = new Date(currentDate);
             endTime.setHours(endH, endM, 0, 0);
 
-            // If today, skip past times
             if (currentDate.toDateString() === today.toDateString()) {
                 const nowPlus = new Date(today);
                 nowPlus.setHours(nowPlus.getHours() + 1);
@@ -138,7 +137,7 @@ const BookAppointment = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (!slotTime) {
-            setError('Please select a time slot');
+            setError('Please select an available consultation slot');
             return;
         }
 
@@ -153,12 +152,12 @@ const BookAppointment = () => {
                 doctorId: selectedDoctor._id,
                 date: date,
                 time: slotTime,
-                reason: formData.reason || 'General Consultation',
+                reason: formData.reason || 'General Medical Consultation',
             });
-            setSuccess('Appointment booked successfully!');
-            setTimeout(() => navigate('/patient/appointments'), 2000);
+            setSuccess('Appointment request submitted successfully!');
+            setTimeout(() => navigate('/patient/appointments'), 1800);
         } catch (error) {
-            setError(error.response?.data?.message || 'Failed to book appointment');
+            setError(error.response?.data?.message || 'Failed to schedule appointment');
             setLoading(false);
         }
     };
@@ -170,31 +169,43 @@ const BookAppointment = () => {
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.25rem' }}>
                     <div style={{
                         width: 40, height: 40, borderRadius: 'var(--radius-lg)',
-                        background: 'var(--stat-blue-bg)', border: '1px solid var(--stat-blue-border)',
-                        display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.2rem'
-                    }}>📅</div>
-                    <h1 style={{ margin: 0, fontSize: '1.5rem' }}>Book Appointment</h1>
+                        background: 'var(--primary-light)', border: '1px solid var(--border-subtle)',
+                        color: 'var(--primary)', display: 'flex', alignItems: 'center', justifyContent: 'center'
+                    }}>
+                        <Icon name="calendar" size={20} />
+                    </div>
+                    <h1 style={{ margin: 0, fontSize: '1.5rem' }}>Schedule Clinical Consultation</h1>
                 </div>
                 <p style={{ color: 'var(--text-muted)', margin: 0, fontSize: '0.875rem' }}>
-                    {selectedDoctor ? `Select a date & time to consult with Dr. ${selectedDoctor.userId?.name}` : 'Select a specialist doctor to see available consultation slots.'}
+                    {selectedDoctor ? `Choose a convenient date & time slot for Dr. ${selectedDoctor.userId?.name}` : 'Select a clinical provider to view open consultation hours.'}
                 </p>
             </div>
 
-            {error && <div className="alert alert-error anim-fade-up" style={{ marginBottom: '1.5rem' }}>✕ {error}</div>}
-            {success && <div className="alert alert-success anim-fade-up" style={{ marginBottom: '1.5rem' }}>✓ {success}</div>}
+            {error && (
+                <div className="alert alert-error anim-fade-up" style={{ marginBottom: '1.5rem' }}>
+                    <Icon name="alertTriangle" size={18} />
+                    <span>{error}</span>
+                </div>
+            )}
+            {success && (
+                <div className="alert alert-success anim-fade-up" style={{ marginBottom: '1.5rem' }}>
+                    <Icon name="checkCircle" size={18} />
+                    <span>{success}</span>
+                </div>
+            )}
 
             <div className="card anim-fade-up" style={{ padding: '1.5rem', marginBottom: '1.5rem' }}>
                 <div className="form-group" style={{ marginBottom: 0 }}>
-                    <label className="form-label">Select Doctor</label>
+                    <label className="form-label">Select Medical Specialist</label>
                     <select
                         className="form-select"
                         onChange={handleDoctorSelect}
                         value={selectedDoctor?._id || ''}
                     >
-                        <option value="">Choose a doctor...</option>
+                        <option value="">Choose clinical provider...</option>
                         {doctors.map((doc) => (
                             <option key={doc._id} value={doc._id}>
-                                {doc.userId?.name} — {doc.specialization} (${doc.fees})
+                                Dr. {doc.userId?.name} — {doc.specialization} (${doc.fees})
                             </option>
                         ))}
                     </select>
@@ -210,8 +221,10 @@ const BookAppointment = () => {
                         </div>
                         <div style={{ flex: 1 }}>
                             <div className="doctor-info-header">
-                                <h2 className="doctor-name">{selectedDoctor.userId?.name}</h2>
-                                <img src={assets.verified_icon} alt="Verified" className="verified-icon" />
+                                <h2 className="doctor-name">Dr. {selectedDoctor.userId?.name}</h2>
+                                <span style={{ color: 'var(--primary)', display: 'inline-flex', alignItems: 'center', marginLeft: '0.5rem' }} title="Verified Doctor">
+                                    <Icon name="checkCircle" size={20} />
+                                </span>
                             </div>
                             <p className="doctor-credentials">
                                 {selectedDoctor.qualifications} · {selectedDoctor.specialization}
@@ -220,10 +233,10 @@ const BookAppointment = () => {
 
                             <div className="about-section">
                                 <h3 className="about-title">
-                                    About Specialist
+                                    Provider Biography
                                 </h3>
                                 <p className="about-text">
-                                    {selectedDoctor.about || 'Specialist practitioner offering personalized consultation and care.'}
+                                    {selectedDoctor.about || 'Dedicated specialist practitioner offering individualized clinical care and treatment.'}
                                 </p>
                             </div>
 
@@ -235,11 +248,11 @@ const BookAppointment = () => {
 
                     {/* Booking Slots */}
                     <div className="booking-slots-container card anim-fade-up anim-d2" style={{ padding: '1.75rem' }}>
-                        <h3 className="slots-title">Available Slots</h3>
+                        <h3 className="slots-title">Available Consultation Slots</h3>
 
                         {docSlots.length === 0 ? (
-                            <p style={{ color: 'var(--text-muted)', textAlign: 'center', padding: '2rem' }}>
-                                No available slots for this doctor in the next 2 weeks.
+                            <p style={{ color: 'var(--text-muted)', textAlign: 'center', padding: '2.5rem' }}>
+                                No open slots available for this doctor in the upcoming 14 days.
                             </p>
                         ) : (
                             <>
@@ -279,10 +292,10 @@ const BookAppointment = () => {
                         )}
 
                         <div className="form-group" style={{ marginTop: '1.5rem' }}>
-                            <label className="form-label">Reason for Consultation / Symptoms</label>
+                            <label className="form-label">Consultation Reason & Clinical Notes</label>
                             <textarea
                                 className="form-input"
-                                placeholder="Describe your symptoms or reason for visit..."
+                                placeholder="Describe current symptoms or specific medical reason for consultation..."
                                 value={formData.reason}
                                 onChange={(e) => setFormData({ ...formData, reason: e.target.value })}
                                 rows="3"
@@ -294,7 +307,8 @@ const BookAppointment = () => {
                             className="btn btn-primary btn-book"
                             disabled={loading || !slotTime}
                         >
-                            {loading ? 'Booking…' : 'Confirm & Book Appointment'}
+                            <Icon name="calendar" size={18} />
+                            {loading ? 'Submitting…' : 'Confirm & Request Consultation'}
                         </button>
                     </div>
                 </>

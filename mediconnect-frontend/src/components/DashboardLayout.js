@@ -2,49 +2,50 @@ import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
+import Icon from './Icons';
 
 const NAV_CONFIG = {
     patient: [
-        { to: '/patient/dashboard', label: 'Dashboard', icon: '⊞' },
-        { to: '/patient/doctors', label: 'Find Doctors', icon: '🔍' },
-        { to: '/patient/book-appointment', label: 'Book Appointment', icon: '📅' },
-        { to: '/patient/appointments', label: 'My Appointments', icon: '🗓' },
-        { to: '/patient/profile', label: 'Profile', icon: '👤' },
+        { to: '/patient/dashboard', label: 'Dashboard', icon: 'dashboard' },
+        { to: '/patient/doctors', label: 'Find Doctors', icon: 'search' },
+        { to: '/patient/book-appointment', label: 'Book Appointment', icon: 'calendar' },
+        { to: '/patient/appointments', label: 'My Appointments', icon: 'clock' },
+        { to: '/patient/profile', label: 'Profile', icon: 'user' },
     ],
     doctor: [
-        { to: '/doctor/dashboard', label: 'Dashboard', icon: '⊞' },
-        { to: '/doctor/appointments', label: 'Appointment Requests', icon: '📋' },
-        { to: '/doctor/history', label: 'Consultation History', icon: '🕐' },
-        { to: '/doctor/profile', label: 'My Profile', icon: '👤' },
+        { to: '/doctor/dashboard', label: 'Dashboard', icon: 'dashboard' },
+        { to: '/doctor/appointments', label: 'Appointment Requests', icon: 'fileText' },
+        { to: '/doctor/history', label: 'Consultation History', icon: 'clock' },
+        { to: '/doctor/profile', label: 'My Profile', icon: 'user' },
     ],
     admin: [
-        { to: '/admin/dashboard', label: 'Dashboard', icon: '⊞' },
-        { to: '/admin/doctors', label: 'Manage Doctors', icon: '👨‍⚕️' },
-        { to: '/admin/users', label: 'Manage Users', icon: '👥' },
-        { to: '/admin/appointments', label: 'All Appointments', icon: '📋' },
+        { to: '/admin/dashboard', label: 'Dashboard', icon: 'dashboard' },
+        { to: '/admin/doctors', label: 'Manage Doctors', icon: 'stethoscope' },
+        { to: '/admin/users', label: 'Manage Users', icon: 'users' },
+        { to: '/admin/appointments', label: 'All Appointments', icon: 'fileText' },
     ],
 };
 
 const PAGE_TITLES = {
-    '/patient/dashboard': 'Dashboard',
-    '/patient/doctors': 'Find Doctors',
+    '/patient/dashboard': 'Patient Dashboard',
+    '/patient/doctors': 'Find Specialists',
     '/patient/book-appointment': 'Book Appointment',
     '/patient/appointments': 'My Appointments',
     '/patient/profile': 'My Profile',
-    '/doctor/dashboard': 'Dashboard',
+    '/doctor/dashboard': 'Doctor Dashboard',
     '/doctor/appointments': 'Appointment Requests',
     '/doctor/history': 'Consultation History',
-    '/doctor/profile': 'My Profile',
-    '/admin/dashboard': 'Dashboard',
+    '/doctor/profile': 'Doctor Profile',
+    '/admin/dashboard': 'Admin Command Center',
     '/admin/doctors': 'Manage Doctors',
     '/admin/users': 'Manage Users',
-    '/admin/appointments': 'All Appointments',
+    '/admin/appointments': 'Platform Appointments',
 };
 
 const ROLE_COLORS = {
-    patient: 'var(--secondary)',
-    doctor: 'var(--success)',
-    admin: 'var(--error)',
+    patient: 'var(--gradient-primary)',
+    doctor: 'var(--gradient-accent)',
+    admin: 'linear-gradient(135deg, #e11d48 0%, #be123c 100%)',
 };
 
 const DashboardLayout = ({ children }) => {
@@ -55,6 +56,7 @@ const DashboardLayout = ({ children }) => {
 
     const navLinks = NAV_CONFIG[user?.role] || [];
     const pageTitle = PAGE_TITLES[location.pathname] || 'Dashboard';
+    const homeUrl = user?.role ? `/${user.role}/dashboard` : '/';
 
     useEffect(() => {
         setSidebarOpen(false);
@@ -89,10 +91,11 @@ const DashboardLayout = ({ children }) => {
             {/* Sidebar */}
             <aside className={`sidebar ${sidebarOpen ? 'mobile-open' : ''}`}>
                 {/* Brand */}
-                <Link to="/" className="sidebar-brand">
+                <Link to={homeUrl} className="sidebar-brand">
                     <div className="sidebar-brand-icon">
-                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                            <path d="M5 10h10M10 5v10" stroke="white" strokeWidth="2.5" strokeLinecap="round" />
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" />
+                            <path d="M3.22 12H9.5l.5-1 2 4.5 2-7 1.5 3.5h5.27" />
                         </svg>
                     </div>
                     <span className="sidebar-brand-text">MediConnect</span>
@@ -101,7 +104,7 @@ const DashboardLayout = ({ children }) => {
                 {/* Navigation */}
                 <nav className="sidebar-nav">
                     <div className="sidebar-section-label">
-                        {user?.role === 'admin' ? 'Admin Panel' : user?.role === 'doctor' ? 'My Practice' : 'Navigation'}
+                        {user?.role === 'admin' ? 'Administration' : user?.role === 'doctor' ? 'Clinical Portal' : 'Patient Services'}
                     </div>
                     {navLinks.map((link) => (
                         <Link
@@ -109,14 +112,13 @@ const DashboardLayout = ({ children }) => {
                             to={link.to}
                             className={`sidebar-link ${isActive(link.to) ? 'active' : ''}`}
                         >
-                            <span className="sidebar-link-icon">{link.icon}</span>
-                            <span className="sidebar-link-label">{link.label}</span>
-                            {isActive(link.to) && <span className="sidebar-active-dot" />}
+                            <Icon name={link.icon} size={18} />
+                            <span>{link.label}</span>
                         </Link>
                     ))}
                 </nav>
 
-                {/* User Footer */}
+                {/* User Profile Footer */}
                 <div className="sidebar-footer">
                     <div className="sidebar-user-card">
                         <div
@@ -133,16 +135,16 @@ const DashboardLayout = ({ children }) => {
                 </div>
             </aside>
 
-            {/* Main */}
+            {/* Main Content Area */}
             <div className="layout-main">
                 {/* Top Header */}
                 <header className="dash-header">
-                    <div className="dash-header-left">
-                        {/* Mobile sidebar toggle */}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                        {/* Mobile toggle */}
                         <button
                             className="sidebar-toggle-btn"
                             onClick={() => setSidebarOpen(!sidebarOpen)}
-                            aria-label="Toggle sidebar"
+                            aria-label="Toggle navigation"
                         >
                             <span />
                             <span />
@@ -150,40 +152,39 @@ const DashboardLayout = ({ children }) => {
                         </button>
                         <div className="dash-breadcrumb">
                             <span style={{ color: 'var(--text-muted)' }}>
-                                {user?.role?.charAt(0).toUpperCase() + user?.role?.slice(1)}
+                                {user?.role ? user.role.charAt(0).toUpperCase() + user.role.slice(1) : 'Portal'}
                             </span>
-                            <span style={{ color: 'var(--text-muted)', margin: '0 0.25rem' }}>/</span>
+                            <span style={{ color: 'var(--border-strong)', margin: '0 0.25rem' }}>/</span>
                             <span>{pageTitle}</span>
                         </div>
                     </div>
 
                     <div className="dash-header-right">
-                        {/* Greeting (desktop) */}
                         <span
                             style={{
-                                fontSize: '0.8rem',
-                                color: 'var(--text-muted)',
+                                fontSize: '0.85rem',
+                                color: 'var(--text-secondary)',
                                 fontWeight: 500,
                             }}
                             className="desktop-only"
                         >
-                            {getGreeting()}, {user?.name?.split(' ')[0] || 'there'} 👋
+                            {getGreeting()}, <strong style={{ color: 'var(--text-primary)' }}>{user?.name?.split(' ')[0] || 'there'}</strong>
                         </span>
 
-                        {/* Theme toggle */}
+                        {/* Theme Toggle Button */}
                         <button
-                            className="theme-toggle"
+                            className="theme-toggle-btn"
                             onClick={toggleTheme}
                             aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
                             title={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
                         >
-                            {theme === 'dark' ? '☀️' : '🌙'}
+                            <Icon name={theme === 'dark' ? 'sun' : 'moon'} size={18} />
                         </button>
 
-                        {/* Logout */}
+                        {/* Logout Button */}
                         <button className="header-logout-btn" onClick={logout}>
-                            <span>⎋</span>
-                            <span>Logout</span>
+                            <Icon name="logout" size={16} />
+                            <span>Sign Out</span>
                         </button>
                     </div>
                 </header>

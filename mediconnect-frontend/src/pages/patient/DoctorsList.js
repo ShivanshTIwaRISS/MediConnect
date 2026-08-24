@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../../utils/api';
+import Icon from '../../components/Icons';
 
 const DoctorsList = () => {
     const [doctors, setDoctors] = useState([]);
@@ -39,7 +40,7 @@ const DoctorsList = () => {
 
     const specialties = ['all', ...new Set(doctors.map(d => d.specialization).filter(Boolean))];
 
-    if (loading) return <div className="loading-container"><div className="spinner" /><p>Finding doctors…</p></div>;
+    if (loading) return <div className="loading-container"><div className="spinner" /><p>Finding accredited specialists…</p></div>;
 
     return (
         <div>
@@ -48,27 +49,31 @@ const DoctorsList = () => {
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.25rem' }}>
                     <div style={{
                         width: 40, height: 40, borderRadius: 'var(--radius-lg)',
-                        background: 'var(--stat-purple-bg)', border: '1px solid var(--stat-purple-border)',
-                        display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.2rem'
-                    }}>🔍</div>
-                    <h1 style={{ margin: 0, fontSize: '1.5rem' }}>Find a Doctor</h1>
+                        background: 'var(--primary-light)', border: '1px solid var(--border-subtle)',
+                        color: 'var(--primary)', display: 'flex', alignItems: 'center', justifyContent: 'center'
+                    }}>
+                        <Icon name="search" size={20} />
+                    </div>
+                    <h1 style={{ margin: 0, fontSize: '1.5rem' }}>Find a Specialist</h1>
                 </div>
                 <p style={{ color: 'var(--text-muted)', margin: 0, fontSize: '0.875rem' }}>
-                    Browse our qualified specialists and book your appointment.
+                    Browse verified physicians and book clinical consultations online.
                 </p>
             </div>
 
             {/* Search + Filters */}
             <div className="card anim-fade-up" style={{ marginBottom: '1.5rem', padding: '1.25rem' }}>
                 <div style={{ marginBottom: '1rem', position: 'relative' }}>
-                    <span style={{ position: 'absolute', left: '0.875rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }}>🔍</span>
+                    <div style={{ position: 'absolute', left: '0.875rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)', display: 'flex' }}>
+                        <Icon name="search" size={18} />
+                    </div>
                     <input
                         type="text"
                         className="form-input"
-                        placeholder="Search by doctor name or specialty…"
+                        placeholder="Search doctor by name or medical specialty…"
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
-                        style={{ paddingLeft: '2.25rem' }}
+                        style={{ paddingLeft: '2.5rem' }}
                     />
                 </div>
                 <div className="filter-tabs" style={{ marginBottom: 0 }}>
@@ -84,16 +89,18 @@ const DoctorsList = () => {
                 </div>
             </div>
 
-            <p style={{ color: 'var(--text-muted)', marginBottom: '1rem', fontSize: '0.8rem' }}>
-                Showing <strong style={{ color: 'var(--text-secondary)' }}>{filteredDoctors.length}</strong> doctor{filteredDoctors.length !== 1 ? 's' : ''}
+            <p style={{ color: 'var(--text-muted)', marginBottom: '1rem', fontSize: '0.825rem' }}>
+                Showing <strong style={{ color: 'var(--text-primary)' }}>{filteredDoctors.length}</strong> available specialist{filteredDoctors.length !== 1 ? 's' : ''}
             </p>
 
             {filteredDoctors.length === 0 ? (
                 <div className="card" style={{ padding: 0 }}>
                     <div className="empty-state">
-                        <div className="empty-state-icon">🩺</div>
-                        <h3>No Doctors Found</h3>
-                        <p>Try adjusting your search or specialty filter.</p>
+                        <div className="empty-state-icon">
+                            <Icon name="stethoscope" size={24} />
+                        </div>
+                        <h3>No Specialists Found</h3>
+                        <p>Try adjusting your search terms or specialty filter criteria.</p>
                     </div>
                 </div>
             ) : (
@@ -113,7 +120,8 @@ const DoctorsList = () => {
                                             className="avatar avatar-lg"
                                             style={{
                                                 borderRadius: 'var(--radius-xl)',
-                                                background: `hsl(${(i * 55 + 200) % 360}, 65%, 55%)`
+                                                background: 'var(--gradient-primary)',
+                                                color: '#ffffff'
                                             }}
                                         >
                                             {(doctor.userId?.name || 'D').charAt(0)}
@@ -121,7 +129,7 @@ const DoctorsList = () => {
                                     )}
                                 </div>
                                 <div style={{ flex: 1, minWidth: 0 }}>
-                                    <div className="doctor-card-name">{doctor.userId?.name || 'Doctor'}</div>
+                                    <div className="doctor-card-name">Dr. {doctor.userId?.name || 'Doctor'}</div>
                                     <span className="doctor-card-spec">{doctor.specialization}</span>
                                     {doctor.qualifications && (
                                         <span className="doctor-card-qual">{doctor.qualifications}</span>
@@ -131,21 +139,21 @@ const DoctorsList = () => {
 
                             <div className="detail-divider" />
 
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem', marginBottom: '1rem' }}>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginBottom: '1.25rem' }}>
                                 <div className="detail-row">
-                                    <span className="detail-row-label">⏱ Experience</span>
-                                    <span className="detail-row-value">{doctor.experience} years</span>
+                                    <span className="detail-row-label">Experience</span>
+                                    <span className="detail-row-value">{doctor.experience} Years</span>
                                 </div>
                                 <div className="detail-row">
-                                    <span className="detail-row-label">💰 Consultation Fee</span>
+                                    <span className="detail-row-label">Consultation Fee</span>
                                     <span className="detail-row-value brand">${doctor.fees}</span>
                                 </div>
                                 <div className="detail-row">
-                                    <span className="detail-row-label">📅 Availability</span>
-                                    <span className="detail-row-value" style={{ fontSize: '0.78rem', textAlign: 'right', maxWidth: '60%' }}>
+                                    <span className="detail-row-label">Availability</span>
+                                    <span className="detail-row-value" style={{ fontSize: '0.8rem', textAlign: 'right', maxWidth: '60%' }}>
                                         {Array.isArray(doctor.availability) && doctor.availability.length > 0
                                             ? doctor.availability.slice(0, 2).map(a => `${a.day}`).join(', ')
-                                            : (typeof doctor.availability === 'string' ? doctor.availability : 'Flexible')}
+                                            : (typeof doctor.availability === 'string' ? doctor.availability : 'By Appointment')}
                                     </span>
                                 </div>
                             </div>
@@ -155,7 +163,8 @@ const DoctorsList = () => {
                                 className="btn btn-primary"
                                 style={{ width: '100%', justifyContent: 'center' }}
                             >
-                                Book Appointment →
+                                Book Appointment
+                                <Icon name="chevronRight" size={16} />
                             </Link>
                         </div>
                     ))}

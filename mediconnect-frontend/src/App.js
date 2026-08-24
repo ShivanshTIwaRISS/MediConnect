@@ -1,6 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { AuthProvider } from './context/AuthContext';
+import { AuthProvider, useAuth } from './context/AuthContext';
 import { ThemeProvider } from './context/ThemeContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import Navbar from './components/Navbar';
@@ -34,6 +34,38 @@ import ManageAppointments from './pages/admin/ManageAppointments';
 
 import ChatAgent from './components/ChatAgent';
 
+// Home Page wrapper: If user is logged in, redirect straight to their dashboard
+const PublicHomeRoute = () => {
+    const { isAuthenticated, user, loading } = useAuth();
+    if (loading) return null;
+    if (isAuthenticated && user?.role) {
+        return <Navigate to={`/${user.role}/dashboard`} replace />;
+    }
+    return (
+        <>
+            <Navbar />
+            <Home />
+            <Footer />
+        </>
+    );
+};
+
+// Auth Page wrapper: If user is already logged in, redirect to dashboard
+const PublicAuthRoute = ({ children }) => {
+    const { isAuthenticated, user, loading } = useAuth();
+    if (loading) return null;
+    if (isAuthenticated && user?.role) {
+        return <Navigate to={`/${user.role}/dashboard`} replace />;
+    }
+    return (
+        <>
+            <Navbar />
+            {children}
+            <Footer />
+        </>
+    );
+};
+
 // Helper: Wrap a page in DashboardLayout + ProtectedRoute
 const DashPage = ({ roles, children }) => (
     <ProtectedRoute allowedRoles={roles}>
@@ -50,10 +82,10 @@ function App() {
                 <Router>
                     <ScrollToTop />
                     <Routes>
-                        {/* Public Routes — use Navbar + Footer */}
-                        <Route path="/" element={<><Navbar /><Home /><Footer /></>} />
-                        <Route path="/login" element={<><Navbar /><Login /></>} />
-                        <Route path="/signup" element={<><Navbar /><Signup /></>} />
+                        {/* Public Routes — Auto-redirect logged-in users to their role dashboard */}
+                        <Route path="/" element={<PublicHomeRoute />} />
+                        <Route path="/login" element={<PublicAuthRoute><Login /></PublicAuthRoute>} />
+                        <Route path="/signup" element={<PublicAuthRoute><Signup /></PublicAuthRoute>} />
 
                         {/* Patient Routes */}
                         <Route path="/patient/dashboard" element={<DashPage roles={['patient']}><PatientDashboard /></DashPage>} />
@@ -74,7 +106,7 @@ function App() {
                         <Route path="/admin/users" element={<DashPage roles={['admin']}><ManageUsers /></DashPage>} />
                         <Route path="/admin/appointments" element={<DashPage roles={['admin']}><ManageAppointments /></DashPage>} />
 
-                        {/* 404 */}
+                        {/* 404 fallback */}
                         <Route path="*" element={<Navigate to="/" replace />} />
                     </Routes>
                     <ChatAgent />

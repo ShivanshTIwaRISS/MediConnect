@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../../utils/api';
+import Icon from '../../components/Icons';
 
 const MyAppointments = () => {
     const [appointments, setAppointments] = useState([]);
@@ -21,7 +22,7 @@ const MyAppointments = () => {
     };
 
     const handleCancel = async (id) => {
-        if (!window.confirm('Cancel this appointment?')) return;
+        if (!window.confirm('Are you sure you wish to cancel this appointment request?')) return;
         try {
             await api.put(`/patient/appointments/${id}/cancel`);
             fetchAppointments();
@@ -34,7 +35,7 @@ const MyAppointments = () => {
     const statusCounts = { all: appointments.length, pending: 0, approved: 0, rejected: 0, cancelled: 0 };
     appointments.forEach(a => { if (statusCounts[a.status] !== undefined) statusCounts[a.status]++; });
 
-    if (loading) return <div className="loading-container"><div className="spinner" /><p>Loading appointments…</p></div>;
+    if (loading) return <div className="loading-container"><div className="spinner" /><p>Loading your appointments…</p></div>;
 
     return (
         <div>
@@ -44,17 +45,20 @@ const MyAppointments = () => {
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.25rem' }}>
                         <div style={{
                             width: 40, height: 40, borderRadius: 'var(--radius-lg)',
-                            background: 'var(--stat-blue-bg)', border: '1px solid var(--stat-blue-border)',
-                            display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.2rem'
-                        }}>🗓</div>
+                            background: 'var(--primary-light)', border: '1px solid var(--border-subtle)',
+                            color: 'var(--primary)', display: 'flex', alignItems: 'center', justifyContent: 'center'
+                        }}>
+                            <Icon name="clock" size={20} />
+                        </div>
                         <h1 style={{ margin: 0, fontSize: '1.5rem' }}>My Appointments</h1>
                     </div>
                     <p style={{ color: 'var(--text-muted)', margin: 0, fontSize: '0.875rem' }}>
-                        View and manage all your healthcare visits.
+                        Review, track, and manage your scheduled clinical appointments.
                     </p>
                 </div>
                 <Link to="/patient/book-appointment" className="btn btn-primary">
-                    + Book New
+                    <Icon name="plus" size={16} />
+                    Book New
                 </Link>
             </div>
 
@@ -66,8 +70,8 @@ const MyAppointments = () => {
                         className={`filter-tab ${filter === status ? 'active' : ''}`}
                         onClick={() => setFilter(status)}
                     >
-                        {status === 'all' ? 'All' : status.charAt(0).toUpperCase() + status.slice(1)}
-                        <span style={{ marginLeft: '0.35rem', opacity: 0.7 }}>({statusCounts[status] ?? 0})</span>
+                        {status === 'all' ? 'All Visits' : status.charAt(0).toUpperCase() + status.slice(1)}
+                        <span style={{ marginLeft: '0.35rem', opacity: 0.75 }}>({statusCounts[status] ?? 0})</span>
                     </button>
                 ))}
             </div>
@@ -75,12 +79,15 @@ const MyAppointments = () => {
             {filtered.length === 0 ? (
                 <div className="card" style={{ padding: 0 }}>
                     <div className="empty-state">
-                        <div className="empty-state-icon">🗓</div>
-                        <h3>No Appointments</h3>
-                        <p>{filter === 'all' ? "You haven't booked any appointments yet." : `No ${filter} appointments found.`}</p>
+                        <div className="empty-state-icon">
+                            <Icon name="calendar" size={24} />
+                        </div>
+                        <h3>No Appointments Found</h3>
+                        <p>{filter === 'all' ? "You don't have any appointments scheduled yet." : `No appointments with status "${filter}".`}</p>
                         {filter === 'all' && (
-                            <Link to="/patient/book-appointment" className="btn btn-primary" style={{ marginTop: '0.5rem' }}>
-                                Book Your First Appointment
+                            <Link to="/patient/book-appointment" className="btn btn-primary" style={{ marginTop: '1rem' }}>
+                                <Icon name="plus" size={16} />
+                                Schedule Appointment
                             </Link>
                         )}
                     </div>
@@ -101,28 +108,28 @@ const MyAppointments = () => {
                                         <h4 style={{ margin: '0 0 0.2rem', color: 'var(--text-primary)', fontFamily: 'var(--font-display)' }}>
                                             Dr. {appt.doctorId?.userId?.name || 'Doctor'}
                                         </h4>
-                                        <span style={{ fontSize: '0.8rem', color: 'var(--primary)', fontWeight: 600 }}>
-                                            {appt.doctorId?.specialization || 'Specialist'}
+                                        <span style={{ fontSize: '0.825rem', color: 'var(--primary)', fontWeight: 600 }}>
+                                            {appt.doctorId?.specialization || 'Clinical Specialist'}
                                         </span>
                                     </div>
                                 </div>
                                 <span className={`badge badge-${appt.status}`}>{appt.status}</span>
                             </div>
 
-                            <div style={{ display: 'flex', gap: '1.5rem', flexWrap: 'wrap', marginTop: '1rem', padding: '0.875rem', background: 'var(--bg-glass)', borderRadius: 'var(--radius-lg)', border: '1px solid var(--border-subtle)' }}>
+                            <div style={{ display: 'flex', gap: '1.5rem', flexWrap: 'wrap', marginTop: '1rem', padding: '0.875rem 1.25rem', background: 'var(--bg-glass)', borderRadius: 'var(--radius-lg)', border: '1px solid var(--border-subtle)' }}>
                                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
-                                    <span>📅</span>
+                                    <Icon name="calendar" size={16} />
                                     <span>{new Date(appt.date).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' })}</span>
                                 </div>
                                 {appt.time && (
                                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
-                                        <span>🕐</span>
+                                        <Icon name="clock" size={16} />
                                         <span>{appt.time}</span>
                                     </div>
                                 )}
                                 {appt.reason && (
                                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
-                                        <span>📝</span>
+                                        <Icon name="fileText" size={16} />
                                         <span>{appt.reason}</span>
                                     </div>
                                 )}
@@ -134,6 +141,7 @@ const MyAppointments = () => {
                                         onClick={() => handleCancel(appt._id)}
                                         className="btn btn-sm btn-error"
                                     >
+                                        <Icon name="x" size={14} />
                                         Cancel Appointment
                                     </button>
                                 </div>

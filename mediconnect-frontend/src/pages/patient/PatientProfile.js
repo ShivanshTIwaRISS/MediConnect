@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import api from '../../utils/api';
 import { useAuth } from '../../context/AuthContext';
+import Icon from '../../components/Icons';
 
 const PatientProfile = () => {
     const { user } = useAuth();
@@ -34,7 +35,7 @@ const PatientProfile = () => {
 
         try {
             await api.put('/patient/profile', formData);
-            setMessage({ type: 'success', text: 'Profile updated successfully!' });
+            setMessage({ type: 'success', text: 'Profile information updated successfully.' });
         } catch (error) {
             setMessage({
                 type: 'error',
@@ -46,7 +47,7 @@ const PatientProfile = () => {
     };
 
     if (loading) {
-        return <div className="loading-container"><div className="spinner"></div><p>Loading profile…</p></div>;
+        return <div className="loading-container"><div className="spinner" /><p>Loading patient record…</p></div>;
     }
 
     return (
@@ -56,13 +57,15 @@ const PatientProfile = () => {
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.25rem' }}>
                     <div style={{
                         width: 40, height: 40, borderRadius: 'var(--radius-lg)',
-                        background: 'var(--stat-blue-bg)', border: '1px solid var(--stat-blue-border)',
-                        display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.2rem'
-                    }}>👤</div>
-                    <h1 style={{ margin: 0, fontSize: '1.5rem' }}>My Profile</h1>
+                        background: 'var(--primary-light)', border: '1px solid var(--border-subtle)',
+                        color: 'var(--primary)', display: 'flex', alignItems: 'center', justifyContent: 'center'
+                    }}>
+                        <Icon name="user" size={20} />
+                    </div>
+                    <h1 style={{ margin: 0, fontSize: '1.5rem' }}>Personal Profile</h1>
                 </div>
                 <p style={{ color: 'var(--text-muted)', margin: 0, fontSize: '0.875rem' }}>
-                    Manage your personal account details and settings.
+                    Update your personal account credentials and contact information.
                 </p>
             </div>
 
@@ -71,9 +74,9 @@ const PatientProfile = () => {
                 <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
                     <div className="avatar avatar-xl" style={{
                         margin: '0 auto 1rem',
-                        fontSize: '2.5rem',
-                        width: '90px',
-                        height: '90px',
+                        fontSize: '2rem',
+                        width: '88px',
+                        height: '88px',
                         background: 'var(--gradient-primary)',
                         borderRadius: 'var(--radius-2xl)',
                         boxShadow: 'var(--shadow-md)',
@@ -83,12 +86,13 @@ const PatientProfile = () => {
                     <h3 style={{ margin: '0 0 0.35rem', color: 'var(--text-primary)', fontFamily: 'var(--font-display)' }}>
                         {formData.name || user?.name}
                     </h3>
-                    <span className="badge badge-patient">Patient</span>
+                    <span className="badge badge-patient">Registered Patient</span>
                 </div>
 
                 {message.text && (
                     <div className={`alert alert-${message.type}`} style={{ marginBottom: '1.5rem' }}>
-                        {message.type === 'success' ? '✓ ' : '✕ '} {message.text}
+                        <Icon name={message.type === 'success' ? 'checkCircle' : 'alertTriangle'} size={18} />
+                        <span>{message.text}</span>
                     </div>
                 )}
 

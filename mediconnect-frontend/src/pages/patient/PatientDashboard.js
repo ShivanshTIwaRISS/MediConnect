@@ -2,13 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../../utils/api';
 import { useAuth } from '../../context/AuthContext';
+import Icon from '../../components/Icons';
 
-const HEALTH_TIPS = [
-    '💧 Drink at least 8 glasses of water today.',
-    '🚶 A 30-minute walk can improve your mood and health.',
-    '😴 Quality sleep of 7–9 hours boosts your immune system.',
-    '🥗 Eating a balanced diet helps maintain a healthy weight.',
-    '🧘 5 minutes of mindfulness reduces stress significantly.',
+const CLINICAL_INSIGHTS = [
+    'Optimal hydration supports sustained cognitive focus and cellular vitality.',
+    'Daily 30-minute moderate aerobic activity reduces cardiovascular risk factors by 25%.',
+    '7 to 9 hours of uninterrupted circadian sleep strengthens natural immune resilience.',
+    'Nutrient-dense whole food intake stabilizes glycemic balance and metabolic health.',
+    'Daily 5-minute mindfulness breathing actively modulates autonomic nervous tone.',
 ];
 
 const PatientDashboard = () => {
@@ -16,7 +17,7 @@ const PatientDashboard = () => {
     const [stats, setStats] = useState({ total: 0, pending: 0, approved: 0 });
     const [recentAppointments, setRecentAppointments] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [tipIndex] = useState(() => Math.floor(Math.random() * HEALTH_TIPS.length));
+    const [insightIndex] = useState(() => Math.floor(Math.random() * CLINICAL_INSIGHTS.length));
 
     useEffect(() => {
         const fetchData = async () => {
@@ -42,23 +43,23 @@ const PatientDashboard = () => {
         return (
             <div className="loading-container">
                 <div className="spinner" />
-                <p>Loading your dashboard…</p>
+                <p>Loading patient portal…</p>
             </div>
         );
     }
 
     const statCards = [
-        { color: 'blue', icon: '🗓', label: 'Total Appointments', value: stats.total },
-        { color: 'amber', icon: '⏳', label: 'Pending', value: stats.pending },
-        { color: 'green', icon: '✅', label: 'Approved', value: stats.approved },
-        { color: 'purple', icon: '❤️', label: 'Health Score', value: '98%' },
+        { color: 'blue', iconName: 'calendar', label: 'Total Appointments', value: stats.total },
+        { color: 'amber', iconName: 'clockAlert', label: 'Pending Review', value: stats.pending },
+        { color: 'green', iconName: 'checkCircle', label: 'Confirmed Visits', value: stats.approved },
+        { color: 'purple', iconName: 'heartPulse', label: 'Health Score', value: '98%' },
     ];
 
     const quickActions = [
-        { icon: '🔍', title: 'Find Doctors', desc: 'Browse specialists near you', to: '/patient/doctors' },
-        { icon: '📅', title: 'Book Appointment', desc: 'Schedule a new visit', to: '/patient/book-appointment' },
-        { icon: '🗓', title: 'My Appointments', desc: 'View & manage visits', to: '/patient/appointments' },
-        { icon: '👤', title: 'My Profile', desc: 'Update your details', to: '/patient/profile' },
+        { iconName: 'search', title: 'Find Doctors', desc: 'Browse credentialed specialists', to: '/patient/doctors' },
+        { iconName: 'calendar', title: 'Book Appointment', desc: 'Schedule a new clinical consultation', to: '/patient/book-appointment' },
+        { iconName: 'clock', title: 'My Appointments', desc: 'Review scheduled and past visits', to: '/patient/appointments' },
+        { iconName: 'user', title: 'Patient Profile', desc: 'Update your personal medical profile', to: '/patient/profile' },
     ];
 
     return (
@@ -67,34 +68,45 @@ const PatientDashboard = () => {
             <div className="welcome-hero anim-fade-up">
                 <div className="welcome-hero-inner">
                     <div>
-                        <div className="welcome-greeting">
-                            <span className="welcome-greeting-dot" />
-                            Patient Portal
+                        <div className="welcome-tag">
+                            <span className="welcome-tag-dot" />
+                            Patient Services Portal
                         </div>
-                        <h1>Welcome back, {user?.name?.split(' ')[0] || 'Patient'} 👋</h1>
-                        <p style={{ marginBottom: 0 }}>Here's an overview of your healthcare journey today.</p>
+                        <h1>Welcome back, {user?.name?.split(' ')[0] || 'Patient'}</h1>
+                        <p style={{ marginBottom: 0 }}>Overview of your scheduled care, specialist consultations, and health record.</p>
                     </div>
                     <Link to="/patient/book-appointment" className="btn btn-primary btn-lg">
-                        + Book Appointment
+                        <Icon name="plus" size={18} />
+                        Book Appointment
                     </Link>
                 </div>
 
-                {/* Health tip */}
+                {/* Health Insight */}
                 <div style={{
                     marginTop: '1.5rem',
-                    padding: '0.75rem 1.25rem',
-                    background: 'var(--stat-blue-bg)',
-                    border: '1px solid var(--stat-blue-border)',
+                    padding: '0.85rem 1.25rem',
+                    background: 'var(--bg-glass)',
+                    border: '1px solid var(--border-subtle)',
                     borderRadius: 'var(--radius-lg)',
                     fontSize: '0.875rem',
                     color: 'var(--text-secondary)',
                     display: 'flex',
                     alignItems: 'center',
-                    gap: '0.5rem',
+                    gap: '0.75rem',
                 }}>
-                    <span style={{ fontWeight: 700, color: 'var(--primary)', fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.6px' }}>Health Tip</span>
-                    <span style={{ color: 'var(--border-strong)' }}>·</span>
-                    <span>{HEALTH_TIPS[tipIndex]}</span>
+                    <div style={{
+                        padding: '0.25rem 0.6rem',
+                        background: 'var(--primary-light)',
+                        borderRadius: 'var(--radius-sm)',
+                        color: 'var(--primary-text)',
+                        fontWeight: 700,
+                        fontSize: '0.72rem',
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.05em'
+                    }}>
+                        Clinical Insight
+                    </div>
+                    <span>{CLINICAL_INSIGHTS[insightIndex]}</span>
                 </div>
             </div>
 
@@ -102,7 +114,9 @@ const PatientDashboard = () => {
             <div className="stats-grid">
                 {statCards.map((s, i) => (
                     <div key={i} className={`stat-card ${s.color} anim-fade-up anim-d${i + 1}`}>
-                        <div className="stat-icon">{s.icon}</div>
+                        <div className="stat-icon-wrap">
+                            <Icon name={s.iconName} size={22} />
+                        </div>
                         <div className="stat-info">
                             <div className="stat-value">{s.value}</div>
                             <div className="stat-label">{s.label}</div>
@@ -113,12 +127,15 @@ const PatientDashboard = () => {
 
             {/* Recent Appointments */}
             {recentAppointments.length > 0 && (
-                <div className="list-section anim-fade-up anim-d2">
-                    <div className="section-header">
+                <div className="anim-fade-up anim-d2" style={{ marginBottom: '2rem' }}>
+                    <div className="section-header-bar">
                         <h2 className="section-title">Recent Appointments</h2>
-                        <Link to="/patient/appointments" className="view-all-link">View All →</Link>
+                        <Link to="/patient/appointments" className="view-all-link">
+                            View All
+                            <Icon name="chevronRight" size={16} />
+                        </Link>
                     </div>
-                    <div className="appt-list">
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
                         {recentAppointments.map((appt, i) => (
                             <div key={i} className="appt-card-new">
                                 <div className="appt-left">
@@ -128,7 +145,7 @@ const PatientDashboard = () => {
                                     <div className="appt-info">
                                         <h4>Dr. {appt.doctorId?.userId?.name || 'Doctor'}</h4>
                                         <span className="appt-info-sub">
-                                            {appt.doctorId?.specialization || 'Specialist'} · {appt.time || ''}
+                                            {appt.doctorId?.specialization || 'Specialist'} {appt.time ? `· ${appt.time}` : ''}
                                         </span>
                                     </div>
                                 </div>
@@ -145,14 +162,16 @@ const PatientDashboard = () => {
             )}
 
             {/* Quick Actions */}
-            <div className="anim-fade-up anim-d3" style={{ marginBottom: '1.5rem' }}>
-                <div className="section-header">
+            <div className="anim-fade-up anim-d3">
+                <div className="section-header-bar">
                     <h2 className="section-title">Quick Actions</h2>
                 </div>
                 <div className="quick-actions-grid">
                     {quickActions.map((action, i) => (
                         <Link key={i} to={action.to} className="quick-action-card">
-                            <div className="qa-icon-wrap">{action.icon}</div>
+                            <div className="qa-icon-wrap">
+                                <Icon name={action.iconName} size={22} />
+                            </div>
                             <div>
                                 <div className="qa-title">{action.title}</div>
                                 <div className="qa-desc">{action.desc}</div>
