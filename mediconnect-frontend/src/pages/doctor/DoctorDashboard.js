@@ -114,7 +114,7 @@ const DoctorDashboard = () => {
                             <span className="welcome-tag-dot" />
                             Clinical Practice Overview
                         </div>
-                        <h1>{getGreeting()}, Dr. {user?.name?.split(' ')[0] || 'Doctor'}</h1>
+                        <h1>{getGreeting()}, Dr. {(user?.name || 'Doctor').replace(/^Dr\.\s+/i, '').split(' ')[0]}</h1>
                         <p style={{ marginBottom: 0 }}>Manage consultation queues, patient schedules, and clinical notes.</p>
                     </div>
                     <div>

@@ -107,7 +107,7 @@ const ManageAppointments = () => {
                                 <div className="appt-info">
                                     <h4>{appt.patientId?.name || 'Patient'}</h4>
                                     <span className="appt-info-sub">
-                                        with Dr. {appt.doctorId?.userId?.name || 'Doctor'}
+                                        with {appt.doctorId?.userId?.name || 'Doctor'}
                                         {appt.doctorId?.specialization ? ` · ${appt.doctorId.specialization}` : ''}
                                     </span>
                                 </div>

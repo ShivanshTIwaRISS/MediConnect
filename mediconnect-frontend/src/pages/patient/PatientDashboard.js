@@ -146,7 +146,7 @@ const PatientDashboard = () => {
                                         {(appt.doctorId?.userId?.name || 'D').charAt(0)}
                                     </div>
                                     <div className="appt-info">
-                                        <h4>Dr. {appt.doctorId?.userId?.name || 'Doctor'}</h4>
+                                        <h4>{appt.doctorId?.userId?.name || 'Doctor'}</h4>
                                         <span className="appt-info-sub">
                                             {appt.doctorId?.specialization || 'Specialist'} {appt.time ? `· ${appt.time}` : ''}
                                         </span>

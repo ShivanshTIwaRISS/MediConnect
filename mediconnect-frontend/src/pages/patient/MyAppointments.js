@@ -106,7 +106,7 @@ const MyAppointments = () => {
                                     </div>
                                     <div>
                                         <h4 style={{ margin: '0 0 0.2rem', color: 'var(--text-primary)', fontFamily: 'var(--font-display)' }}>
-                                            Dr. {appt.doctorId?.userId?.name || 'Doctor'}
+                                            {appt.doctorId?.userId?.name || 'Doctor'}
                                         </h4>
                                         <span style={{ fontSize: '0.825rem', color: 'var(--primary)', fontWeight: 600 }}>
                                             {appt.doctorId?.specialization || 'Clinical Specialist'}

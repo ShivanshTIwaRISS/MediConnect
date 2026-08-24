@@ -129,7 +129,7 @@ const DoctorsList = () => {
                                     )}
                                 </div>
                                 <div style={{ flex: 1, minWidth: 0 }}>
-                                    <div className="doctor-card-name">Dr. {doctor.userId?.name || 'Doctor'}</div>
+                                    <div className="doctor-card-name">{doctor.userId?.name || 'Doctor'}</div>
                                     <span className="doctor-card-spec">{doctor.specialization}</span>
                                     {doctor.qualifications && (
                                         <span className="doctor-card-qual">{doctor.qualifications}</span>

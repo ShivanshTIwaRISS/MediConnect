@@ -205,7 +205,7 @@ const BookAppointment = () => {
                         <option value="">Choose clinical provider...</option>
                         {doctors.map((doc) => (
                             <option key={doc._id} value={doc._id}>
-                                Dr. {doc.userId?.name} — {doc.specialization} (₹{doc.fees})
+                                {doc.userId?.name} — {doc.specialization} (₹{doc.fees})
                             </option>
                         ))}
                     </select>
@@ -221,7 +221,7 @@ const BookAppointment = () => {
                         </div>
                         <div style={{ flex: 1 }}>
                             <div className="doctor-info-header">
-                                <h2 className="doctor-name">Dr. {selectedDoctor.userId?.name}</h2>
+                                <h2 className="doctor-name">{selectedDoctor.userId?.name}</h2>
                                 <span style={{ color: 'var(--primary)', display: 'inline-flex', alignItems: 'center', marginLeft: '0.5rem' }} title="Verified Doctor">
                                     <Icon name="checkCircle" size={20} />
                                 </span>
