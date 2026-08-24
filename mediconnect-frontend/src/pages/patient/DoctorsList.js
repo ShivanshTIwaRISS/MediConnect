@@ -146,7 +146,7 @@ const DoctorsList = () => {
                                 </div>
                                 <div className="detail-row">
                                     <span className="detail-row-label">Consultation Fee</span>
-                                    <span className="detail-row-value brand">${doctor.fees}</span>
+                                    <span className="detail-row-value brand">₹{doctor.fees}</span>
                                 </div>
                                 <div className="detail-row">
                                     <span className="detail-row-label">Availability</span>

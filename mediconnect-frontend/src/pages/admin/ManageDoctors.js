@@ -156,7 +156,7 @@ const ManageDoctors = () => {
                                 </div>
                                 <div className="detail-row">
                                     <span className="detail-row-label">Consultation Rate</span>
-                                    <span className="detail-row-value brand">${doctor.fees}</span>
+                                    <span className="detail-row-value brand">₹{doctor.fees}</span>
                                 </div>
                                 <div className="detail-row">
                                     <span className="detail-row-label">Account Status</span>

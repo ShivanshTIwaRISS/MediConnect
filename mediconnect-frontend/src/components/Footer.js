@@ -56,15 +56,16 @@ const Footer = () => {
                     <div className="footer-section">
                         <h5>Contact</h5>
                         <ul>
-                            <li><span className="footer-contact-item">📧 support@mediconnect.com</span></li>
-                            <li><span className="footer-contact-item">📞 +1 (555) 123-4567</span></li>
-                            <li><span className="footer-contact-item">📍 San Francisco, CA</span></li>
+                            <li><span className="footer-contact-item">📧 support@mediconnect.in</span></li>
+                            <li><span className="footer-contact-item">📞 +91 98765 43210</span></li>
+                            <li><span className="footer-contact-item">☎️ +91 (11) 4567-8900</span></li>
+                            <li><span className="footer-contact-item">📍 Barakhamba Road, Connaught Place, New Delhi 110001, India</span></li>
                         </ul>
                     </div>
                 </div>
 
                 <div className="footer-bottom">
-                    <p>&copy; {new Date().getFullYear()} MediConnect. All rights reserved.</p>
+                    <p>&copy; {new Date().getFullYear()} MediConnect India. All rights reserved.</p>
                     <div className="footer-bottom-links">
                         <a href="#privacy">Privacy Policy</a>
                         <span className="footer-divider">•</span>

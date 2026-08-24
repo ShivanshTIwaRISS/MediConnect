@@ -205,7 +205,7 @@ const BookAppointment = () => {
                         <option value="">Choose clinical provider...</option>
                         {doctors.map((doc) => (
                             <option key={doc._id} value={doc._id}>
-                                Dr. {doc.userId?.name} — {doc.specialization} (${doc.fees})
+                                Dr. {doc.userId?.name} — {doc.specialization} (₹{doc.fees})
                             </option>
                         ))}
                     </select>
@@ -241,7 +241,7 @@ const BookAppointment = () => {
                             </div>
 
                             <p className="fee-text">
-                                Consultation fee: <span className="fee-amount">${selectedDoctor.fees}</span>
+                                Consultation fee: <span className="fee-amount">₹{selectedDoctor.fees}</span>
                             </p>
                         </div>
                     </div>

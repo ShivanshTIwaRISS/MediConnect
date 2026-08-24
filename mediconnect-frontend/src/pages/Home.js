@@ -58,21 +58,21 @@ const Home = () => {
 
     const testimonials = [
         {
-            name: 'Sarah Johnson',
-            role: 'Verified Patient',
-            text: 'MediConnect made finding an accredited cardiologist immediate and painless. The consultation was thorough and completely on schedule.',
+            name: 'Ananya Sharma',
+            role: 'Verified Patient · New Delhi',
+            text: 'MediConnect made finding an accredited cardiologist in Delhi NCR immediate and painless. The consultation was thorough and completely on schedule.',
             rating: 5,
         },
         {
-            name: 'Dr. Michael Chen',
-            role: 'Chief of Cardiology',
-            text: 'The provider management suite streamlines clinical workflows effortlessly. Our patient response rates improved by over 40%.',
+            name: 'Dr. Rajesh Malhotra',
+            role: 'Senior Consultant · New Delhi',
+            text: 'The provider management suite streamlines clinical workflows effortlessly. Our patient response rates and consultation tracking improved significantly.',
             rating: 5,
         },
         {
-            name: 'Emily Rivera',
-            role: 'Verified Patient',
-            text: 'Transparent pricing with upfront consultation fees. No surprises, no waiting room friction. An essential healthcare platform.',
+            name: 'Rohan Verma',
+            role: 'Verified Patient · Gurugram',
+            text: 'Transparent pricing with upfront consultation fees in ₹ INR. No surprises, no waiting room friction. An essential healthcare platform.',
             rating: 5,
         },
     ];
@@ -99,9 +99,9 @@ const Home = () => {
             desc: 'Direct consultation responses and confirmations with zero administrative delay.'
         },
         {
-            iconName: 'dollarSign',
+            iconName: 'rupeeSign',
             title: 'Upfront Pricing',
-            desc: '100% transparent consultation fees with zero hidden charges.'
+            desc: '100% transparent consultation fees in ₹ INR with zero hidden charges.'
         },
         {
             iconName: 'smartphone',

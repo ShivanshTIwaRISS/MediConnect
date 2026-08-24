@@ -132,6 +132,14 @@ export const Icon = ({ name, size = 20, color = 'currentColor', className = '', 
                 <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
             </svg>
         ),
+        rupeeSign: (
+            <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} {...props}>
+                <path d="M6 3h12" />
+                <path d="M6 8h12" />
+                <path d="M6 13l8.5 8" />
+                <path d="M6 13h3a4 4 0 0 0 0-8H6" />
+            </svg>
+        ),
         award: (
             <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} {...props}>
                 <circle cx="12" cy="8" r="7" />

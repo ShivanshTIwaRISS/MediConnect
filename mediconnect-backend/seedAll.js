@@ -125,7 +125,7 @@ const seedDatabase = async () => {
             const spec = getRandom(SPECIALIZATIONS);
             const qual = getRandom(QUALIFICATIONS);
             const exp = getRandomInt(3, 28);
-            const fee = getRandomInt(4, 12) * 10; // $40 to $120
+            const fee = getRandomInt(5, 15) * 100; // ₹500 to ₹1500 (in INR)
 
             // Multi-day availability
             const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];

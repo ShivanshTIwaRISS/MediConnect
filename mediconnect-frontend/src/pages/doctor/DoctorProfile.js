@@ -208,12 +208,12 @@ const DoctorProfile = () => {
                             />
                         </div>
                         <div className="form-group">
-                            <label className="form-label">Consultation Rate ($ USD)</label>
+                            <label className="form-label">Consultation Fee (₹ INR)</label>
                             <input
                                 type="number"
                                 name="fees"
                                 className="form-input"
-                                placeholder="e.g., 120"
+                                placeholder="e.g., 500"
                                 value={formData.fees}
                                 onChange={handleChange}
                                 required

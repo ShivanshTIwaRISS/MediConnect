@@ -124,8 +124,8 @@ export const generateSmartResponse = (userQuery = '', role = 'patient', userName
     }
 
     // 10. Pricing & Fees
-    if (q.includes('fee') || q.includes('cost') || q.includes('price') || q.includes('charge') || q.includes('how much') || q.includes('rate')) {
-        return `💳 **MediConnect Fee Structure:**\n\n• Consultation fees range between **$40 and $90** depending on specialist qualifications and clinical specialty.\n• Every doctor's rate is transparently displayed on their card in **Find Doctors** and on the **Book Appointment** screen before you confirm.`;
+    if (q.includes('fee') || q.includes('cost') || q.includes('price') || q.includes('charge') || q.includes('how much') || q.includes('rate') || q.includes('rupee') || q.includes('rs') || q.includes('inr')) {
+        return `💳 **MediConnect Fee Structure:**\n\n• Consultation fees range typically between **₹400 and ₹1,500** (in ₹ INR) depending on specialist qualifications, clinical department, and experience.\n• Every doctor's rate is transparently displayed on their card in **Find Doctors** and on the **Book Appointment** screen before you confirm.`;
     }
 
     // 11. Tracking / Canceling Appointments

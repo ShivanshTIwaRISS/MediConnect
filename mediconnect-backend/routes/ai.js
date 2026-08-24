@@ -27,7 +27,7 @@ router.post('/chat', async (req, res) => {
             if (doctors && doctors.length > 0) {
                 doctorsContext = doctors.map(doc => {
                     const name = doc.userId?.name || 'Practitioner';
-                    return `- Dr. ${name}: ${doc.specialization} ($${doc.fees}, ${doc.experience} yrs exp) - ${doc.about || 'Specialist'}`;
+                    return `- Dr. ${name}: ${doc.specialization} (₹${doc.fees}, ${doc.experience} yrs exp) - ${doc.about || 'Specialist'}`;
                 }).join('\n');
             }
         } catch (dbErr) {

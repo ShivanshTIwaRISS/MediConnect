@@ -88,212 +88,212 @@ export const specialityData = [
 export const doctors = [
     {
         _id: 'doc1',
-        name: 'Dr. Richard James',
+        name: 'Dr. Rajesh Sharma',
         image: doc1,
         speciality: 'General physician',
-        degree: 'MBBS',
-        experience: '4 Years',
-        about: 'Dr. Davis has a strong commitment to delivering comprehensive medical care, focusing on preventive medicine, early diagnosis, and effective treatment strategies. Dr. Davis has a strong commitment to delivering comprehensive medical care, focusing on preventive medicine, early diagnosis, and effective treatment strategies.',
-        fees: 50,
+        degree: 'MBBS, MD',
+        experience: '8 Years',
+        about: 'Dr. Rajesh Sharma is a trusted General Physician in New Delhi dedicated to preventive healthcare, comprehensive diagnostic evaluations, and evidence-based personalized medicine.',
+        fees: 600,
         address: {
-            line1: '17th Cross, Richmond',
-            line2: 'Circle, Ring Road, London'
+            line1: '12 Barakhamba Road',
+            line2: 'Connaught Place, New Delhi'
         }
     },
     {
         _id: 'doc2',
-        name: 'Dr. Emily Larson',
+        name: 'Dr. Priya Patel',
         image: doc2,
         speciality: 'Gynecologist',
-        degree: 'MBBS',
-        experience: '3 Years',
-        about: 'Dr. Davis has a strong commitment to delivering comprehensive medical care, focusing on preventive medicine, early diagnosis, and effective treatment strategies. Dr. Davis has a strong commitment to delivering comprehensive medical care, focusing on preventive medicine, early diagnosis, and effective treatment strategies.',
-        fees: 60,
+        degree: 'MBBS, MS (OB-GYN)',
+        experience: '7 Years',
+        about: 'Dr. Priya Patel provides specialized reproductive health, maternity care, and advanced obstetric consultations with extensive clinical experience.',
+        fees: 800,
         address: {
-            line1: '27th Cross, Richmond',
-            line2: 'Circle, Ring Road, London'
+            line1: 'B-4, South Extension Part II',
+            line2: 'Ring Road, New Delhi'
         }
     },
     {
         _id: 'doc3',
-        name: 'Dr. Sarah Patel',
+        name: 'Dr. Sneha Iyer',
         image: doc3,
         speciality: 'Dermatologist',
-        degree: 'MBBS',
-        experience: '1 Years',
-        about: 'Dr. Davis has a strong commitment to delivering comprehensive medical care, focusing on preventive medicine, early diagnosis, and effective treatment strategies. Dr. Davis has a strong commitment to delivering comprehensive medical care, focusing on preventive medicine, early diagnosis, and effective treatment strategies.',
-        fees: 30,
+        degree: 'MBBS, MD (Dermatology)',
+        experience: '5 Years',
+        about: 'Dr. Sneha Iyer specializes in clinical dermatology, allergy diagnostics, and dermatological therapies with a compassionate patient-first approach.',
+        fees: 700,
         address: {
-            line1: '37th Cross, Richmond',
-            line2: 'Circle, Ring Road, London'
+            line1: 'C-18, Defence Colony',
+            line2: 'Lajpat Nagar, New Delhi'
         }
     },
     {
         _id: 'doc4',
-        name: 'Dr. Christopher Lee',
+        name: 'Dr. Vikram Malhotra',
         image: doc4,
         speciality: 'Pediatricians',
-        degree: 'MBBS',
-        experience: '2 Years',
-        about: 'Dr. Davis has a strong commitment to delivering comprehensive medical care, focusing on preventive medicine, early diagnosis, and effective treatment strategies. Dr. Davis has a strong commitment to delivering comprehensive medical care, focusing on preventive medicine, early diagnosis, and effective treatment strategies.',
-        fees: 40,
+        degree: 'MBBS, MD (Pediatrics)',
+        experience: '9 Years',
+        about: 'Dr. Vikram Malhotra is a distinguished pediatrician focusing on child immunization, growth monitoring, and pediatric wellness programs.',
+        fees: 650,
         address: {
-            line1: '47th Cross, Richmond',
-            line2: 'Circle, Ring Road, London'
+            line1: 'E-42, Saket District Centre',
+            line2: 'Press Enclave Marg, New Delhi'
         }
     },
     {
         _id: 'doc5',
-        name: 'Dr. Jennifer Garcia',
+        name: 'Dr. Ananya Mukherjee',
         image: doc5,
         speciality: 'Neurologist',
-        degree: 'MBBS',
-        experience: '4 Years',
-        about: 'Dr. Davis has a strong commitment to delivering comprehensive medical care, focusing on preventive medicine, early diagnosis, and effective treatment strategies. Dr. Davis has a strong commitment to delivering comprehensive medical care, focusing on preventive medicine, early diagnosis, and effective treatment strategies.',
-        fees: 50,
+        degree: 'MBBS, DM (Neurology)',
+        experience: '12 Years',
+        about: 'Dr. Ananya Mukherjee provides advanced diagnostic evaluations for neurological disorders, migraines, neuromuscular conditions, and cerebrovascular health.',
+        fees: 1200,
         address: {
-            line1: '57th Cross, Richmond',
-            line2: 'Circle, Ring Road, London'
+            line1: 'Institutional Area, Vasant Kunj',
+            line2: 'Nelson Mandela Marg, New Delhi'
         }
     },
     {
         _id: 'doc6',
-        name: 'Dr. Andrew Williams',
+        name: 'Dr. Alok Verma',
         image: doc6,
         speciality: 'Neurologist',
-        degree: 'MBBS',
-        experience: '4 Years',
-        about: 'Dr. Davis has a strong commitment to delivering comprehensive medical care, focusing on preventive medicine, early diagnosis, and effective treatment strategies. Dr. Davis has a strong commitment to delivering comprehensive medical care, focusing on preventive medicine, early diagnosis, and effective treatment strategies.',
-        fees: 50,
+        degree: 'MBBS, MD, DM',
+        experience: '10 Years',
+        about: 'Dr. Alok Verma is a senior neurologist committed to individualized neurological treatment planning, neuro-rehabilitation, and acute clinical interventions.',
+        fees: 1100,
         address: {
-            line1: '57th Cross, Richmond',
-            line2: 'Circle, Ring Road, London'
+            line1: 'A-21, Green Park Main',
+            line2: 'Hauz Khas, New Delhi'
         }
     },
     {
         _id: 'doc7',
-        name: 'Dr. Christopher Davis',
+        name: 'Dr. Amit Sengupta',
         image: doc7,
         speciality: 'General physician',
-        degree: 'MBBS',
-        experience: '4 Years',
-        about: 'Dr. Davis has a strong commitment to delivering comprehensive medical care, focusing on preventive medicine, early diagnosis, and effective treatment strategies. Dr. Davis has a strong commitment to delivering comprehensive medical care, focusing on preventive medicine, early diagnosis, and effective treatment strategies.',
-        fees: 50,
+        degree: 'MBBS, DNB (Medicine)',
+        experience: '6 Years',
+        about: 'Dr. Amit Sengupta offers proactive routine screenings, infectious disease management, and metabolic health follow-ups.',
+        fees: 500,
         address: {
-            line1: '17th Cross, Richmond',
-            line2: 'Circle, Ring Road, London'
+            line1: 'Plot 7, Sector 12 Dwarka',
+            line2: 'Dwarka, New Delhi'
         }
     },
     {
         _id: 'doc8',
-        name: 'Dr. Timothy White',
+        name: 'Dr. Meera Nambiar',
         image: doc8,
         speciality: 'Gynecologist',
-        degree: 'MBBS',
-        experience: '3 Years',
-        about: 'Dr. Davis has a strong commitment to delivering comprehensive medical care, focusing on preventive medicine, early diagnosis, and effective treatment strategies. Dr. Davis has a strong commitment to delivering comprehensive medical care, focusing on preventive medicine, early diagnosis, and effective treatment strategies.',
-        fees: 60,
+        degree: 'MBBS, DGO, DNB',
+        experience: '8 Years',
+        about: 'Dr. Meera Nambiar brings dedicated expertise in women’s preventive healthcare, hormonal wellness, and family planning consultations.',
+        fees: 750,
         address: {
-            line1: '27th Cross, Richmond',
-            line2: 'Circle, Ring Road, London'
+            line1: '24 Janpath Road',
+            line2: 'Central Secretariat, New Delhi'
         }
     },
     {
         _id: 'doc9',
-        name: 'Dr. Ava Mitchell',
+        name: 'Dr. Ritu Deshmukh',
         image: doc9,
         speciality: 'Dermatologist',
-        degree: 'MBBS',
-        experience: '1 Years',
-        about: 'Dr. Davis has a strong commitment to delivering comprehensive medical care, focusing on preventive medicine, early diagnosis, and effective treatment strategies. Dr. Davis has a strong commitment to delivering comprehensive medical care, focusing on preventive medicine, early diagnosis, and effective treatment strategies.',
-        fees: 30,
+        degree: 'MBBS, DVD',
+        experience: '4 Years',
+        about: 'Dr. Ritu Deshmukh focuses on holistic skin treatments, chronic eczema care, and advanced cosmetic dermatology.',
+        fees: 600,
         address: {
-            line1: '37th Cross, Richmond',
-            line2: 'Circle, Ring Road, London'
+            line1: 'Shop 14, Greater Kailash I',
+            line2: 'M-Block Market, New Delhi'
         }
     },
     {
         _id: 'doc10',
-        name: 'Dr. Jeffrey King',
+        name: 'Dr. Kunal Kapoor',
         image: doc10,
         speciality: 'Pediatricians',
-        degree: 'MBBS',
-        experience: '2 Years',
-        about: 'Dr. Davis has a strong commitment to delivering comprehensive medical care, focusing on preventive medicine, early diagnosis, and effective treatment strategies. Dr. Davis has a strong commitment to delivering comprehensive medical care, focusing on preventive medicine, early diagnosis, and effective treatment strategies.',
-        fees: 40,
+        degree: 'MBBS, DCH',
+        experience: '5 Years',
+        about: 'Dr. Kunal Kapoor is a friendly pediatrician committed to newborn care, adolescent health guidance, and seasonal pediatric infections.',
+        fees: 550,
         address: {
-            line1: '47th Cross, Richmond',
-            line2: 'Circle, Ring Road, London'
+            line1: 'Block C, Preet Vihar',
+            line2: 'Vikas Marg, New Delhi'
         }
     },
     {
         _id: 'doc11',
-        name: 'Dr. Zoe Kelly',
+        name: 'Dr. Nandini Rao',
         image: doc11,
         speciality: 'Neurologist',
-        degree: 'MBBS',
-        experience: '4 Years',
-        about: 'Dr. Davis has a strong commitment to delivering comprehensive medical care, focusing on preventive medicine, early diagnosis, and effective treatment strategies. Dr. Davis has a strong commitment to delivering comprehensive medical care, focusing on preventive medicine, early diagnosis, and effective treatment strategies.',
-        fees: 50,
+        degree: 'MBBS, MD, DM',
+        experience: '11 Years',
+        about: 'Dr. Nandini Rao specializes in movement disorders, epilepsy management, and cognitive wellness assessments.',
+        fees: 1150,
         address: {
-            line1: '57th Cross, Richmond',
-            line2: 'Circle, Ring Road, London'
+            line1: '16 Community Centre',
+            line2: 'New Friends Colony, New Delhi'
         }
     },
     {
         _id: 'doc12',
-        name: 'Dr. Patrick Harris',
+        name: 'Dr. Siddharth Joshi',
         image: doc12,
         speciality: 'Neurologist',
-        degree: 'MBBS',
-        experience: '4 Years',
-        about: 'Dr. Davis has a strong commitment to delivering comprehensive medical care, focusing on preventive medicine, early diagnosis, and effective treatment strategies. Dr. Davis has a strong commitment to delivering comprehensive medical care, focusing on preventive medicine, early diagnosis, and effective treatment strategies.',
-        fees: 50,
+        degree: 'MBBS, DM',
+        experience: '9 Years',
+        about: 'Dr. Siddharth Joshi brings extensive experience in neuro-diagnostics and neuromuscular therapeutic interventions.',
+        fees: 1000,
         address: {
-            line1: '57th Cross, Richmond',
-            line2: 'Circle, Ring Road, London'
+            line1: '58 Pusa Road',
+            line2: 'Karol Bagh, New Delhi'
         }
     },
     {
         _id: 'doc13',
-        name: 'Dr. Chloe Evans',
+        name: 'Dr. Pooja Bhatia',
         image: doc13,
         speciality: 'General physician',
-        degree: 'MBBS',
-        experience: '4 Years',
-        about: 'Dr. Davis has a strong commitment to delivering comprehensive medical care, focusing on preventive medicine, early diagnosis, and effective treatment strategies. Dr. Davis has a strong commitment to delivering comprehensive medical care, focusing on preventive medicine, early diagnosis, and effective treatment strategies.',
-        fees: 50,
+        degree: 'MBBS, MD',
+        experience: '7 Years',
+        about: 'Dr. Pooja Bhatia provides comprehensive primary care, lifestyle disease management, and preventative check-ups.',
+        fees: 550,
         address: {
-            line1: '17th Cross, Richmond',
-            line2: 'Circle, Ring Road, London'
+            line1: '8 Ring Road',
+            line2: 'Lajpat Nagar IV, New Delhi'
         }
     },
     {
         _id: 'doc14',
-        name: 'Dr. Ryan Martinez',
+        name: 'Dr. Rohan Mehra',
         image: doc14,
         speciality: 'Gynecologist',
-        degree: 'MBBS',
-        experience: '3 Years',
-        about: 'Dr. Davis has a strong commitment to delivering comprehensive medical care, focusing on preventive medicine, early diagnosis, and effective treatment strategies. Dr. Davis has a strong commitment to delivering comprehensive medical care, focusing on preventive medicine, early diagnosis, and effective treatment strategies.',
-        fees: 60,
+        degree: 'MBBS, MS',
+        experience: '6 Years',
+        about: 'Dr. Rohan Mehra specializes in advanced gynecology consultations and minimally invasive clinical solutions.',
+        fees: 850,
         address: {
-            line1: '27th Cross, Richmond',
-            line2: 'Circle, Ring Road, London'
+            line1: 'D-9, Hauz Khas Enclave',
+            line2: 'Aurobindo Marg, New Delhi'
         }
     },
     {
         _id: 'doc15',
-        name: 'Dr. Amelia Hill',
+        name: 'Dr. Kriti Singhania',
         image: doc15,
         speciality: 'Dermatologist',
-        degree: 'MBBS',
-        experience: '1 Years',
-        about: 'Dr. Davis has a strong commitment to delivering comprehensive medical care, focusing on preventive medicine, early diagnosis, and effective treatment strategies. Dr. Davis has a strong commitment to delivering comprehensive medical care, focusing on preventive medicine, early diagnosis, and effective treatment strategies.',
-        fees: 30,
+        degree: 'MBBS, MD',
+        experience: '6 Years',
+        about: 'Dr. Kriti Singhania provides individualized skincare regimens and clinical management of complex dermatological issues.',
+        fees: 700,
         address: {
-            line1: '37th Cross, Richmond',
-            line2: 'Circle, Ring Road, London'
+            line1: '33 Basant Lok',
+            line2: 'Vasant Vihar, New Delhi'
         }
     },
 ]
