@@ -1,94 +1,151 @@
 /**
- * Intelligent In-App Clinical & Platform Knowledge Engine
- * Provides instant, zero-latency clinical navigation & guidance when remote AI services are unreachable.
+ * Intelligent In-App Clinical & Platform Natural Language Engine
+ * Provides instant, zero-latency clinical intelligence, specialty matching, and conversational guidance.
  */
 
-const SPECIALISTS_DATA = [
-    { name: "Dr. Richard James", spec: "General Physician", exp: "4 Years", fee: "$50", desc: "Routine health checkups, preventative care, and acute symptom management." },
-    { name: "Dr. Emily Larson", spec: "Gynecologist", exp: "3 Years", fee: "$60", desc: "Women's reproductive health, prenatal consultations, and wellness checks." },
-    { name: "Dr. Christopher Lee", spec: "Dermatologist", exp: "2 Years", fee: "$40", desc: "Skin disorders, acne, allergies, and dermatological evaluations." },
-    { name: "Dr. Christopher Davis", spec: "General Physician", exp: "5 Years", fee: "$50", desc: "Comprehensive adult medical care and chronic disease management." },
-    { name: "Dr. Jennifer Garcia", spec: "Neurologist", exp: "4 Years", fee: "$70", desc: "Neurological evaluations, migraines, nerve conditions, and cognitive health." },
-    { name: "Dr. Andrew Williams", spec: "Gastroenterologist", exp: "8 Years", fee: "$80", desc: "Digestive system health, GERD, abdominal care, and gut diagnostics." },
-    { name: "Dr. Sarah Patel", spec: "Cardiologist", exp: "7 Years", fee: "$90", desc: "Heart health evaluations, blood pressure control, and cardiac care." },
-    { name: "Dr. Akriti Verma", spec: "Psychologist", exp: "6 Years", fee: "$65", desc: "Mental health counseling, anxiety management, and cognitive therapy." }
+const SPECIALISTS_DIRECTORY = [
+    {
+        name: "Dr. Sarah Patel",
+        spec: "Cardiologist",
+        exp: "7 Years",
+        fee: "$90",
+        desc: "Cardiovascular assessments, hypertension management, ECG evaluations, and preventative cardiac health.",
+        keywords: ["heart", "cardio", "cardiology", "cardiologist", "chest pain", "blood pressure", "bp", "hypertension", "palpitation", "pulse", "ecg", "cardiac"]
+    },
+    {
+        name: "Dr. Christopher Lee",
+        spec: "Dermatologist",
+        exp: "2 Years",
+        fee: "$40",
+        desc: "Acne therapy, chronic eczema, skin allergies, mole evaluations, and cosmetic dermatology.",
+        keywords: ["skin", "derma", "dermatology", "dermatologist", "acne", "rash", "eczema", "hair", "scalp", "mole", "itch", "allergy", "psoriasis"]
+    },
+    {
+        name: "Dr. Jennifer Garcia",
+        spec: "Neurologist",
+        exp: "4 Years",
+        fee: "$70",
+        desc: "Chronic migraines, nerve disorders, concussion management, sleep neurological tone, and cognitive wellness.",
+        keywords: ["neuro", "neurology", "neurologist", "brain", "headache", "migraine", "nerve", "dizzy", "dizziness", "vertigo", "seizure", "memory", "numbness"]
+    },
+    {
+        name: "Dr. Akriti Verma",
+        spec: "Psychologist",
+        exp: "6 Years",
+        fee: "$65",
+        desc: "Cognitive behavioral therapy (CBT), anxiety management, depressive state support, and stress resilience.",
+        keywords: ["psych", "psyc", "psychologist", "psycologist", "pshychologist", "mental", "anxiety", "stress", "depress", "depression", "therapy", "therapist", "counsel", "counseling", "burnout", "sad", "mind", "panic"]
+    },
+    {
+        name: "Dr. Andrew Williams",
+        spec: "Gastroenterologist",
+        exp: "8 Years",
+        fee: "$80",
+        desc: "Acid reflux (GERD), irritable bowel, gut microbiome health, digestive inflammation, and abdominal diagnostics.",
+        keywords: ["gastro", "gastroenterology", "gastroenterologist", "stomach", "digest", "digestion", "gut", "acid", "reflux", "gerd", "belly", "nausea", "vomit", "ulcer", "constipation", "diarrhea"]
+    },
+    {
+        name: "Dr. Emily Larson",
+        spec: "Gynecologist",
+        exp: "3 Years",
+        fee: "$60",
+        desc: "Reproductive health, prenatal counseling, menstrual irregularities, and preventative women's care.",
+        keywords: ["gynecology", "gynecologist", "gynae", "obgyn", "women", "prenatal", "pregnancy", "menstrual", "period", "reproductive"]
+    },
+    {
+        name: "Dr. Richard James",
+        spec: "General Physician",
+        exp: "4 Years",
+        fee: "$50",
+        desc: "Preventative wellness checks, viral fever management, routine screenings, and acute illness diagnostics.",
+        keywords: ["physician", "doctor", "general", "fever", "cold", "cough", "flu", "sick", "infection", "weakness", "checkup", "fatigue", "body pain"]
+    }
 ];
 
-export const generateSmartResponse = (userQuery, role = 'patient', userName = 'User') => {
-    const q = (userQuery || '').toLowerCase();
+export const generateSmartResponse = (userQuery = '', role = 'patient', userName = 'User') => {
+    const raw = (userQuery || '').trim();
+    const q = raw.toLowerCase();
 
-    // 1. Greetings
-    if (/^(hi|hello|hey|greetings|good morning|good evening|good afternoon|namaste|hola)/i.test(q)) {
+    // 1. Gratitude & Pleasantries (Thanks, thank you, got it, etc.)
+    if (/^(thanks|thank you|thx|ty|thank u|appreciate it|awesome|great|perfect|cool|ok thanks|okay thanks|got it|understood|good)/i.test(q)) {
+        return `You're very welcome, ${userName}! 😊\n\nI'm always here to assist with booking specialists, reviewing clinical appointments, or answering platform questions. Let me know if you need anything else!`;
+    }
+
+    // 2. About MediConnect / Platform Inquiries
+    if (q.includes('about this platform') || q.includes('about platform') || q.includes('what is this platform') || q.includes('what is mediconnect') || q.includes('how does this work') || q.includes('how does mediconnect work') || q.includes('tell me about this') || q.includes('features') || q.includes('what can you do')) {
+        return `🏥 **About MediConnect Platform**\n\nMediConnect is a next-generation digital healthcare platform designed to connect patients directly with verified clinical specialists in real time.\n\n**Core Capabilities:**\n• **Specialist Directory:** Browse credentialed providers across Cardiology, Dermatology, Neurology, Psychology, Gastroenterology, and General Practice.\n• **Instant 14-Day Slot Scheduling:** View open consultation hours and reserve your preferred 30-minute slot instantly.\n• **Role-Tailored Portals:**\n  - **Patients:** Schedule consultations, review status (Pending/Confirmed), and access care insights.\n  - **Doctors:** Manage appointment queues, approve/reject bookings, and set weekly active hours.\n  - **Admins:** Audit users, verify doctor credentials, and monitor platform activity.\n• **Modern Theme Support:** Seamless switching between Deep Obsidian (Dark) and Luminous Alabaster (Light) modes.\n\n👉 Would you like to **Find Doctors** or **Book an Appointment** now?`;
+    }
+
+    // 3. Greetings
+    if (/^(hi|hello|hey|greetings|good morning|good evening|good afternoon|namaste|hola|yo)\b/i.test(q)) {
         if (role === 'doctor') {
-            return `Hello Dr. ${userName}! 👋\n\nI'm your MediConnect Clinical Assistant. Here's what you can do today:\n\n• **Review Requests:** Check incoming patient consultation requests in **Appointment Requests**\n• **Manage Schedule:** Adjust your weekly availability hours under **Profile & Settings**\n• **Patient History:** Inspect previous consultations in **Consultation History**\n\nHow may I assist your practice right now?`;
+            return `Hello Dr. ${userName}! 👋\n\nI'm your MediConnect Clinical Assistant. Here is your quick navigation:\n\n• **Review Requests:** Manage pending patient bookings under **Appointment Requests**\n• **Manage Schedule:** Adjust your available hours under **Profile & Settings**\n• **Consultation Log:** Review patient history in **Consultation History**\n\nHow can I support your practice today?`;
         }
         if (role === 'admin') {
-            return `Welcome Administrator ${userName}! 🛡️\n\nI'm your MediConnect Operations Assistant. Here's how I can help:\n\n• **Verify Doctors:** Review credential submissions in **Manage Doctors**\n• **Audit Accounts:** Monitor active patients and practitioners in **Manage Users**\n• **Appointments Audit:** Inspect platform consultations in **All Appointments**\n\nWhat platform operation would you like to review?`;
+            return `Welcome Administrator ${userName}! 🛡️\n\nI'm your MediConnect Operations Assistant:\n\n• **Doctor Verification:** Review doctor credentials in **Manage Doctors**\n• **User Directory:** Audit patients and providers in **Manage Users**\n• **Platform Audits:** Inspect platform-wide consultations in **All Appointments**\n\nWhat platform operation would you like to review?`;
         }
-        return `Hello ${userName}! 👋\n\nI'm your MediConnect AI Health Assistant. I can help you:\n\n• **Find Specialists:** Search certified doctors across 10+ medical fields\n• **Book Appointments:** Schedule video or in-person clinical consultations\n• **Track Health Care:** Review confirmed visits and pending reviews in **My Appointments**\n\nWhat can I assist you with today?`;
+        return `Hello ${userName}! 👋\n\nI'm your MediConnect AI Health Assistant. I can help you:\n\n• **Find Specialists:** Search verified doctors across 10+ medical fields\n• **Book Appointments:** Schedule clinical consultations in seconds\n• **Track Appointments:** Check confirmed visits and pending reviews in **My Appointments**\n\nWhat would you like to explore today?`;
     }
 
-    // 2. Doctor Search & Specific Medical Fields
-    if (q.includes('heart') || q.includes('cardio') || q.includes('chest pain') || q.includes('blood pressure')) {
-        const doc = SPECIALISTS_DATA.find(d => d.spec === 'Cardiologist') || SPECIALISTS_DATA[6];
-        return `For cardiovascular health and heart checkups, we recommend scheduling with a certified **Cardiologist**:\n\n• **Recommended Specialist:** **${doc.name}** (${doc.spec})\n• **Experience:** ${doc.exp} · **Rate:** ${doc.fee}\n• **Focus:** ${doc.desc}\n\n**Next Steps to Book:**\n1. Open the **Find Doctors** tab from the left sidebar.\n2. Select the **Cardiologist** specialty filter.\n3. Click on the doctor card and choose an available consultation slot!`;
+    // 4. Specialty & Symptom Matching (with Typo-Tolerance)
+    for (const doc of SPECIALISTS_DIRECTORY) {
+        const matches = doc.keywords.some(keyword => q.includes(keyword));
+        if (matches) {
+            return `We recommend consulting our verified **${doc.spec}**:\n\n• **Specialist:** **${doc.name}**\n• **Qualifications:** Certified ${doc.spec} · ${doc.exp} Experience\n• **Consultation Rate:** ${doc.fee}\n• **Clinical Focus:** ${doc.desc}\n\n**How to Book Dr. ${doc.name.split(' ').slice(1).join(' ')}:**\n1. Open the **Find Doctors** (or **Book Appointment**) tab on your left sidebar.\n2. Select **${doc.spec}** from the filter tabs.\n3. Choose your preferred day and available 30-minute time slot!`;
+        }
     }
 
-    if (q.includes('skin') || q.includes('derma') || q.includes('acne') || q.includes('rash') || q.includes('hair')) {
-        const doc = SPECIALISTS_DATA.find(d => d.spec === 'Dermatologist') || SPECIALISTS_DATA[2];
-        return `For skin health, rashes, or dermatological care, we recommend consulting our verified **Dermatologist**:\n\n• **Specialist:** **${doc.name}** (${doc.spec})\n• **Experience:** ${doc.exp} · **Rate:** ${doc.fee}\n• **Focus:** ${doc.desc}\n\n👉 Head to **Find Doctors** in your sidebar and filter by *Dermatologist* to book!`;
+    // 5. Orthopedics / Bone & Joint
+    if (q.includes('bone') || q.includes('joint') || q.includes('knee') || q.includes('back pain') || q.includes('spine') || q.includes('fracture') || q.includes('ortho')) {
+        return `For bone, joint, or spinal concerns:\n\n• **Recommended Specialty:** **Orthopedics & Sports Medicine**\n• **Consultation Steps:** Head over to **Find Doctors** in your sidebar to browse musculoskeletal practitioners and book an in-person or video consultation.\n\n*Note:* If you are experiencing an acute injury or severe fracture, please seek immediate emergency care.`;
     }
 
-    if (q.includes('brain') || q.includes('headache') || q.includes('migraine') || q.includes('neuro') || q.includes('nerve')) {
-        const doc = SPECIALISTS_DATA.find(d => d.spec === 'Neurologist') || SPECIALISTS_DATA[4];
-        return `For persistent headaches, neurological issues, or nerve health, you can consult our **Neurologist**:\n\n• **Specialist:** **${doc.name}** (${doc.spec})\n• **Experience:** ${doc.exp} · **Rate:** ${doc.fee}\n• **Focus:** ${doc.desc}\n\n👉 Go to **Find Doctors** > select **Neurologist** to schedule an evaluation.`;
+    // 6. Pediatrics / Children
+    if (q.includes('child') || q.includes('kid') || q.includes('baby') || q.includes('pediatric') || q.includes('pedia') || q.includes('infant')) {
+        return `For infants, children, and adolescent health:\n\n• **Recommended Specialty:** **Pediatrics**\n• **Services:** Growth tracking, developmental screenings, viral illness care, and childhood immunizations.\n\n👉 Browse specialists under **Find Doctors** to schedule a pediatric checkup!`;
     }
 
-    if (q.includes('stomach') || q.includes('digest') || q.includes('acid') || q.includes('gut') || q.includes('gastro')) {
-        const doc = SPECIALISTS_DATA.find(d => d.spec === 'Gastroenterologist') || SPECIALISTS_DATA[5];
-        return `For digestive issues, acid reflux, or stomach discomfort, please consult our **Gastroenterologist**:\n\n• **Specialist:** **${doc.name}** (${doc.spec})\n• **Experience:** ${doc.exp} · **Rate:** ${doc.fee}\n\n👉 Head to **Find Doctors** and filter by *Gastroenterologist* to choose a slot.`;
+    // 7. Ophthalmology / Eye Care
+    if (q.includes('eye') || q.includes('vision') || q.includes('sight') || q.includes('optical') || q.includes('glasses')) {
+        return `For vision checks, eye strain, or ophthalmic evaluations:\n\n• **Recommended Specialty:** **Ophthalmology**\n• **Services:** Vision acuity tests, eye strain evaluation, and prescription checks.\n\n👉 Select **Find Doctors** from the sidebar to find open consultation slots!`;
     }
 
-    if (q.includes('mental') || q.includes('anxiety') || q.includes('stress') || q.includes('depress') || q.includes('psycho') || q.includes('therapy')) {
-        const doc = SPECIALISTS_DATA.find(d => d.spec === 'Psychologist') || SPECIALISTS_DATA[7];
-        return `For emotional well-being, anxiety management, and therapy, we have certified **Psychologists**:\n\n• **Specialist:** **${doc.name}** (${doc.spec})\n• **Experience:** ${doc.exp} · **Rate:** ${doc.fee}\n• **Focus:** ${doc.desc}\n\n👉 You can privately schedule a session from **Find Doctors** > *Psychologist*.`;
+    // 8. Dental Care
+    if (q.includes('tooth') || q.includes('teeth') || q.includes('dentist') || q.includes('dental') || q.includes('gum')) {
+        return `For dental hygiene, toothache, or oral care:\n\n• **Recommended Specialty:** **Dentistry**\n• **Services:** Routine cleaning, cavity management, tooth pain evaluation, and periodontal care.`;
     }
 
-    if (q.includes('find doctor') || q.includes('search doctor') || q.includes('specialist') || q.includes('who are the doctors') || q.includes('doctor list')) {
-        return `Here are some of the certified specialist categories available on MediConnect:\n\n• **General Physicians:** Routine health, viral fever, preventative screenings\n• **Cardiologists:** Heart health, hypertension, ECG evaluations\n• **Dermatologists:** Skin conditions, acne, eczema, allergies\n• **Neurologists:** Migraines, nerve disorders, cognitive checks\n• **Gastroenterologists:** Digestive disorders, gut health\n• **Psychologists:** Mental health, counseling, anxiety management\n\n👉 Tap **Find Doctors** on your sidebar to browse full profiles, verified degrees, and consultation fees!`;
-    }
-
-    // 3. Booking Workflow
-    if (q.includes('book') || q.includes('schedule') || q.includes('appointment') || q.includes('consult')) {
+    // 9. Booking Assistance
+    if (q.includes('book') || q.includes('schedule') || q.includes('how to book') || q.includes('appointment') || q.includes('slot')) {
         if (role === 'doctor') {
-            return `To manage consultation bookings as a Doctor:\n\n1. Open **Appointment Requests** from your sidebar.\n2. Review pending patient requests and click **Approve** or **Reject**.\n3. Keep your active hours updated in **Profile & Settings** so patients only book when you are available.`;
+            return `📅 **Doctor Appointment Management:**\n\n• Go to **Appointment Requests** from your sidebar to approve or decline incoming patient requests.\n• To adjust your consultation hours, visit **Profile & Settings** and toggle active days.`;
         }
-        return `📅 **How to Book an Appointment on MediConnect:**\n\n1. Click **Book Appointment** (or **Find Doctors**) from the left sidebar.\n2. Select your preferred medical practitioner.\n3. Choose an available date and a convenient 30-minute time slot.\n4. Enter your symptoms or clinical reason for the visit and confirm!\n\nYou can track the status anytime under **My Appointments**.`;
+        return `📅 **How to Book a Consultation:**\n\n1. Click **Book Appointment** (or **Find Doctors**) from the left sidebar.\n2. Choose a specialist.\n3. Pick any date in the upcoming 14 days and click on an available time slot.\n4. Enter your symptoms or clinical reason for consultation.\n5. Click **Confirm & Request Consultation**!`;
     }
 
-    // 4. Appointments / Status Tracking
-    if (q.includes('my appointment') || q.includes('status') || q.includes('history') || q.includes('cancel')) {
+    // 10. Pricing & Fees
+    if (q.includes('fee') || q.includes('cost') || q.includes('price') || q.includes('charge') || q.includes('how much') || q.includes('rate')) {
+        return `💳 **MediConnect Fee Structure:**\n\n• Consultation fees range between **$40 and $90** depending on specialist qualifications and clinical specialty.\n• Every doctor's rate is transparently displayed on their card in **Find Doctors** and on the **Book Appointment** screen before you confirm.`;
+    }
+
+    // 11. Tracking / Canceling Appointments
+    if (q.includes('my appointment') || q.includes('status') || q.includes('track') || q.includes('history') || q.includes('cancel')) {
         if (role === 'doctor') {
-            return `You can review all historical consultations under **Consultation History** and pending appointments under **Appointment Requests**.`;
+            return `You can review completed consultations in **Consultation History** and pending appointments in **Appointment Requests**.`;
         }
-        return `📋 **Tracking Your Appointments:**\n\n• Go to **My Appointments** from your sidebar navigation.\n• **Pending:** The doctor is reviewing your request.\n• **Approved:** Your appointment is confirmed! Please attend at your scheduled time.\n• **Rejected / Cancelled:** You may reschedule with another available slot or specialist.`;
+        return `📋 **Tracking Your Appointments:**\n\n• Navigate to **My Appointments** from the left sidebar.\n• **Pending:** The doctor is reviewing your request.\n• **Approved:** Confirmed! Please attend at your scheduled time.\n• **Rejected:** You may rebook with another open slot or specialist.`;
     }
 
-    // 5. Theme & Settings
-    if (q.includes('theme') || q.includes('dark') || q.includes('light') || q.includes('settings') || q.includes('logout') || q.includes('sign out')) {
-        return `⚙️ **Profile & Appearance Settings:**\n\n• To switch between **Dark Obsidian** and **Light Alabaster** themes, or to sign out safely, go to **Profile & Settings** from your sidebar (or click your user card at the bottom of the sidebar).\n• You can toggle your interface theme with a single click in the **Interface Appearance** card.`;
+    // 12. Theme & Account Settings
+    if (q.includes('theme') || q.includes('dark') || q.includes('light') || q.includes('settings') || q.includes('logout') || q.includes('sign out') || q.includes('password')) {
+        return `⚙️ **Profile & Appearance Settings:**\n\n• Click **Profile & Settings** from your sidebar (or click your user profile card at the bottom of the sidebar).\n• You can toggle between **Light Alabaster** and **Deep Obsidian Dark Mode** with 1 click, update your details, or sign out safely.`;
     }
 
-    // 6. Admin Actions
-    if (role === 'admin' || q.includes('admin') || q.includes('approve') || q.includes('user') || q.includes('verification')) {
-        return `🛡️ **Admin Command Operations:**\n\n• **Manage Doctors:** Approve new physician registrations, inspect clinical credentials, or manage active practitioners.\n• **Manage Users:** View registered patients and doctors, or deactivate accounts.\n• **All Appointments:** Platform-wide clinical audit log.\n• **Settings:** Manage admin account security and interface appearance.`;
-    }
-
-    // 7. General Health Tips & Questions
+    // 13. General Health Advice & Tips
     if (q.includes('tip') || q.includes('health') || q.includes('diet') || q.includes('water') || q.includes('sleep') || q.includes('exercise')) {
-        return `💡 **Core Health Recommendations for Daily Vitality:**\n\n1. **Hydration:** Drink 2.5–3 liters of water daily to maintain cellular function and cognitive focus.\n2. **Circadian Sleep:** Aim for 7–8 hours of consistent sleep to optimize immune recovery.\n3. **Daily Movement:** At least 30 minutes of moderate activity reduces cardiovascular risks by 25%.\n4. **Preventative Screenings:** Schedule an annual general health checkup with a physician.\n\nNeed to consult a doctor? Visit **Find Doctors** to schedule a checkup!`;
+        return `💡 **Core Clinical Wellness Tips:**\n\n1. **Hydration:** Drink 2.5–3 liters of water daily to maintain cellular function and cognitive focus.\n2. **Circadian Sleep:** 7–9 hours of uninterrupted sleep optimizes immune recovery.\n3. **Daily Activity:** 30 minutes of moderate cardiovascular movement reduces chronic risk factors by 25%.\n4. **Preventative Care:** Schedule regular preventative screenings with a physician.\n\nNeed to consult a practitioner? Visit **Find Doctors** anytime!`;
     }
 
-    // 8. Default Contextual Fallback
-    return `I can help you navigate MediConnect, locate specialists, book clinical appointments, and manage health records.\n\n• **Find Specialists:** Browse credentialed cardiologists, dermatologists, psychologists, and physicians.\n• **Book Consultations:** Schedule an open date & time slot in **Book Appointment**.\n• **View Records:** Track your appointments under **My Appointments**.\n\nFeel free to ask a specific question or select one of the suggested prompts below!`;
+    // 14. Default Contextual Guidance
+    return `I'm here to help you get the most out of MediConnect! Here are a few things you can ask me:\n\n• *"Suggest a cardiologist"* or *"I need a psychologist"*\n• *"How do I book an appointment?"*\n• *"Where can I see my scheduled visits?"*\n• *"How do consultation fees work?"*\n\nFeel free to type any health or platform question!`;
 };
