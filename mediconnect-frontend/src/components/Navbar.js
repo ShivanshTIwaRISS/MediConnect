@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useTheme } from '../context/ThemeContext';
 import './Navbar.css';
 
 const Navbar = () => {
     const { user, logout, isAuthenticated } = useAuth();
+    const { theme, toggleTheme } = useTheme();
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const [scrolled, setScrolled] = useState(false);
     const location = useLocation();
@@ -18,8 +20,6 @@ const Navbar = () => {
     useEffect(() => {
         setMobileMenuOpen(false);
     }, [location]);
-
-
 
     const getNavLinks = () => {
         if (!user) return [];
@@ -63,13 +63,13 @@ const Navbar = () => {
                     <div className="navbar-content">
                         <Link to="/" className="navbar-brand">
                             <div className="brand-logo">
-                                <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
-                                    <rect width="28" height="28" rx="8" fill="url(#brandGrad)" />
-                                    <path d="M8 14h12M14 8v12" stroke="white" strokeWidth="2.5" strokeLinecap="round" />
+                                <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+                                    <rect width="32" height="32" rx="10" fill="url(#navGrad)" />
+                                    <path d="M9 16h14M16 9v14" stroke="white" strokeWidth="2.5" strokeLinecap="round" />
                                     <defs>
-                                        <linearGradient id="brandGrad" x1="0" y1="0" x2="28" y2="28">
-                                            <stop stopColor="#667eea" />
-                                            <stop offset="1" stopColor="#764ba2" />
+                                        <linearGradient id="navGrad" x1="0" y1="0" x2="32" y2="32">
+                                            <stop stopColor="#0ea5e9" />
+                                            <stop offset="1" stopColor="#7c3aed" />
                                         </linearGradient>
                                     </defs>
                                 </svg>
@@ -91,6 +91,15 @@ const Navbar = () => {
                         </div>
 
                         <div className="navbar-end">
+                            {/* Theme Toggle */}
+                            <button
+                                className="theme-toggle"
+                                onClick={toggleTheme}
+                                aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
+                            >
+                                {theme === 'dark' ? '☀️' : '🌙'}
+                            </button>
+
                             {isAuthenticated ? (
                                 <div className="user-section">
                                     <div className="user-chip">
@@ -108,12 +117,8 @@ const Navbar = () => {
                                 </div>
                             ) : (
                                 <div className="auth-buttons">
-                                    <Link to="/login" className="btn btn-sm btn-ghost">
-                                        Login
-                                    </Link>
-                                    <Link to="/signup" className="btn btn-sm btn-primary">
-                                        Sign Up
-                                    </Link>
+                                    <Link to="/login" className="btn btn-sm btn-ghost">Login</Link>
+                                    <Link to="/signup" className="btn btn-sm btn-primary">Sign Up</Link>
                                 </div>
                             )}
 
@@ -123,16 +128,16 @@ const Navbar = () => {
                                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
                                 aria-label="Toggle menu"
                             >
-                                <span></span>
-                                <span></span>
-                                <span></span>
+                                <span />
+                                <span />
+                                <span />
                             </button>
                         </div>
                     </div>
                 </div>
             </nav>
 
-            {/* Mobile Menu Overlay */}
+            {/* Mobile Overlay */}
             {mobileMenuOpen && (
                 <div className="mobile-overlay" onClick={() => setMobileMenuOpen(false)} />
             )}
@@ -142,9 +147,7 @@ const Navbar = () => {
                 <div className="mobile-drawer-header">
                     {isAuthenticated && (
                         <div className="mobile-user-info">
-                            <div className="avatar avatar-lg">
-                                {getInitial()}
-                            </div>
+                            <div className="avatar avatar-lg">{getInitial()}</div>
                             <div>
                                 <p className="mobile-user-name">{user?.name}</p>
                                 <span className={`badge badge-${user?.role}`}>{user?.role}</span>

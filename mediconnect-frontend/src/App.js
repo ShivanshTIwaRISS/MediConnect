@@ -1,11 +1,12 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
+import { ThemeProvider } from './context/ThemeContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import ScrollToTop from './components/ScrollToTop';
-
+import DashboardLayout from './components/DashboardLayout';
 
 // Pages
 import Home from './pages/Home';
@@ -33,140 +34,53 @@ import ManageAppointments from './pages/admin/ManageAppointments';
 
 import ChatAgent from './components/ChatAgent';
 
+// Helper: Wrap a page in DashboardLayout + ProtectedRoute
+const DashPage = ({ roles, children }) => (
+    <ProtectedRoute allowedRoles={roles}>
+        <DashboardLayout>
+            {children}
+        </DashboardLayout>
+    </ProtectedRoute>
+);
+
 function App() {
     return (
-        <AuthProvider>
-            <Router>
-                <ScrollToTop />
-                <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+        <ThemeProvider>
+            <AuthProvider>
+                <Router>
+                    <ScrollToTop />
+                    <Routes>
+                        {/* Public Routes — use Navbar + Footer */}
+                        <Route path="/" element={<><Navbar /><Home /><Footer /></>} />
+                        <Route path="/login" element={<><Navbar /><Login /></>} />
+                        <Route path="/signup" element={<><Navbar /><Signup /></>} />
 
-                    <Navbar />
-                    <main style={{ flex: 1 }}>
-                        <Routes>
-                            {/* Public Routes */}
-                            <Route path="/" element={<Home />} />
-                            <Route path="/login" element={<Login />} />
-                            <Route path="/signup" element={<Signup />} />
+                        {/* Patient Routes */}
+                        <Route path="/patient/dashboard" element={<DashPage roles={['patient']}><PatientDashboard /></DashPage>} />
+                        <Route path="/patient/doctors" element={<DashPage roles={['patient']}><DoctorsList /></DashPage>} />
+                        <Route path="/patient/book-appointment" element={<DashPage roles={['patient']}><BookAppointment /></DashPage>} />
+                        <Route path="/patient/appointments" element={<DashPage roles={['patient']}><MyAppointments /></DashPage>} />
+                        <Route path="/patient/profile" element={<DashPage roles={['patient']}><PatientProfile /></DashPage>} />
 
-                            {/* Patient Routes */}
-                            <Route
-                                path="/patient/dashboard"
-                                element={
-                                    <ProtectedRoute allowedRoles={['patient']}>
-                                        <PatientDashboard />
-                                    </ProtectedRoute>
-                                }
-                            />
-                            <Route
-                                path="/patient/doctors"
-                                element={
-                                    <ProtectedRoute allowedRoles={['patient']}>
-                                        <DoctorsList />
-                                    </ProtectedRoute>
-                                }
-                            />
-                            <Route
-                                path="/patient/book-appointment"
-                                element={
-                                    <ProtectedRoute allowedRoles={['patient']}>
-                                        <BookAppointment />
-                                    </ProtectedRoute>
-                                }
-                            />
-                            <Route
-                                path="/patient/appointments"
-                                element={
-                                    <ProtectedRoute allowedRoles={['patient']}>
-                                        <MyAppointments />
-                                    </ProtectedRoute>
-                                }
-                            />
-                            <Route
-                                path="/patient/profile"
-                                element={
-                                    <ProtectedRoute allowedRoles={['patient']}>
-                                        <PatientProfile />
-                                    </ProtectedRoute>
-                                }
-                            />
+                        {/* Doctor Routes */}
+                        <Route path="/doctor/dashboard" element={<DashPage roles={['doctor']}><DoctorDashboard /></DashPage>} />
+                        <Route path="/doctor/profile" element={<DashPage roles={['doctor']}><DoctorProfile /></DashPage>} />
+                        <Route path="/doctor/appointments" element={<DashPage roles={['doctor']}><AppointmentRequests /></DashPage>} />
+                        <Route path="/doctor/history" element={<DashPage roles={['doctor']}><DoctorHistory /></DashPage>} />
 
-                            {/* Doctor Routes */}
-                            <Route
-                                path="/doctor/dashboard"
-                                element={
-                                    <ProtectedRoute allowedRoles={['doctor']}>
-                                        <DoctorDashboard />
-                                    </ProtectedRoute>
-                                }
-                            />
-                            <Route
-                                path="/doctor/profile"
-                                element={
-                                    <ProtectedRoute allowedRoles={['doctor']}>
-                                        <DoctorProfile />
-                                    </ProtectedRoute>
-                                }
-                            />
-                            <Route
-                                path="/doctor/appointments"
-                                element={
-                                    <ProtectedRoute allowedRoles={['doctor']}>
-                                        <AppointmentRequests />
-                                    </ProtectedRoute>
-                                }
-                            />
-                            <Route
-                                path="/doctor/history"
-                                element={
-                                    <ProtectedRoute allowedRoles={['doctor']}>
-                                        <DoctorHistory />
-                                    </ProtectedRoute>
-                                }
-                            />
+                        {/* Admin Routes */}
+                        <Route path="/admin/dashboard" element={<DashPage roles={['admin']}><AdminDashboard /></DashPage>} />
+                        <Route path="/admin/doctors" element={<DashPage roles={['admin']}><ManageDoctors /></DashPage>} />
+                        <Route path="/admin/users" element={<DashPage roles={['admin']}><ManageUsers /></DashPage>} />
+                        <Route path="/admin/appointments" element={<DashPage roles={['admin']}><ManageAppointments /></DashPage>} />
 
-                            {/* Admin Routes */}
-                            <Route
-                                path="/admin/dashboard"
-                                element={
-                                    <ProtectedRoute allowedRoles={['admin']}>
-                                        <AdminDashboard />
-                                    </ProtectedRoute>
-                                }
-                            />
-                            <Route
-                                path="/admin/doctors"
-                                element={
-                                    <ProtectedRoute allowedRoles={['admin']}>
-                                        <ManageDoctors />
-                                    </ProtectedRoute>
-                                }
-                            />
-                            <Route
-                                path="/admin/users"
-                                element={
-                                    <ProtectedRoute allowedRoles={['admin']}>
-                                        <ManageUsers />
-                                    </ProtectedRoute>
-                                }
-                            />
-                            <Route
-                                path="/admin/appointments"
-                                element={
-                                    <ProtectedRoute allowedRoles={['admin']}>
-                                        <ManageAppointments />
-                                    </ProtectedRoute>
-                                }
-                            />
-
-                            {/* 404 Route */}
-                            <Route path="*" element={<Navigate to="/" replace />} />
-                        </Routes>
-                    </main>
-                    <Footer />
+                        {/* 404 */}
+                        <Route path="*" element={<Navigate to="/" replace />} />
+                    </Routes>
                     <ChatAgent />
-                </div>
-            </Router>
-        </AuthProvider>
+                </Router>
+            </AuthProvider>
+        </ThemeProvider>
     );
 }
 

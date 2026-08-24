@@ -1,5 +1,5 @@
 .booking-container {
-    padding: 2rem;
+    padding: 0;
     max-width: 1000px;
     margin: 0 auto;
 }
@@ -10,15 +10,20 @@
     padding: 2rem;
     margin-bottom: 2rem;
     align-items: flex-start;
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-2xl);
+    box-shadow: var(--shadow-sm);
 }
 
 .doctor-image-container {
-    width: 250px;
-    height: 250px;
-    border-radius: 12px;
+    width: 220px;
+    height: 220px;
+    border-radius: var(--radius-xl);
     overflow: hidden;
-    background-color: var(--primary);
+    background: var(--gradient-primary);
     flex-shrink: 0;
+    box-shadow: var(--shadow-md);
 }
 
 .doctor-image-container img {
@@ -36,77 +41,88 @@
 
 .doctor-name {
     font-size: 1.75rem;
-    font-weight: 700;
-    color: var(--gray-800);
+    font-weight: 800;
+    color: var(--text-primary);
+    font-family: var(--font-display);
+    letter-spacing: -0.02em;
 }
 
 .verified-icon {
-    width: 20px;
-    height: 20px;
+    width: 22px;
+    height: 22px;
 }
 
 .doctor-credentials {
-    font-size: 1rem;
-    color: var(--gray-600);
-    margin-bottom: 0.5rem;
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+    margin-bottom: 0.75rem;
 }
 
 .experience-badge {
     display: inline-block;
     padding: 0.25rem 0.75rem;
-    background-color: #f3f4f6;
-    border-radius: 99px;
+    background-color: var(--bg-glass);
+    border-radius: var(--radius-full);
     font-size: 0.75rem;
-    color: var(--gray-600);
-    border: 1px solid #e5e7eb;
+    font-weight: 600;
+    color: var(--text-secondary);
+    border: 1px solid var(--border-default);
 }
 
 .about-section {
-    margin: 1.5rem 0;
+    margin: 1.25rem 0;
 }
 
 .about-title {
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    font-weight: 600;
+    font-weight: 700;
     margin-bottom: 0.5rem;
-    color: var(--gray-800);
+    color: var(--text-primary);
+    font-size: 0.95rem;
 }
 
 .about-text {
     line-height: 1.6;
-    color: var(--gray-600);
-    font-size: 0.95rem;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
 }
 
 .fee-text {
     font-weight: 600;
-    color: var(--gray-700);
+    color: var(--text-secondary);
     margin-top: 1rem;
+    font-size: 0.95rem;
 }
 
 .fee-amount {
     color: var(--primary);
+    font-weight: 800;
+    font-size: 1.15rem;
 }
 
 /* Slots section */
 .booking-slots-container {
-    margin-top: 2rem;
+    margin-top: 1.5rem;
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-2xl);
 }
 
 .slots-title {
-    font-size: 1.25rem;
-    font-weight: 600;
-    margin-bottom: 1.5rem;
-    color: var(--gray-800);
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 1.25rem;
+    color: var(--text-primary);
+    font-family: var(--font-display);
 }
 
 .days-scroll {
     display: flex;
-    gap: 1rem;
+    gap: 0.75rem;
     overflow-x: auto;
-    padding-bottom: 1rem;
+    padding-bottom: 0.75rem;
 }
 
 .day-slot {
@@ -114,19 +130,26 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    min-width: 60px;
-    height: 80px;
-    border: 1px solid #e5e7eb;
-    border-radius: 99px;
+    min-width: 64px;
+    height: 84px;
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-2xl);
     cursor: pointer;
-    transition: all 0.2s;
-    background: white;
+    transition: all var(--transition-base);
+    background: var(--bg-surface);
+    color: var(--text-secondary);
+}
+
+.day-slot:hover {
+    border-color: var(--primary);
+    transform: translateY(-2px);
 }
 
 .day-slot.active {
-    background-color: var(--primary);
-    border-color: var(--primary);
+    background: var(--gradient-primary);
+    border-color: transparent;
     color: white;
+    box-shadow: 0 4px 14px rgba(14, 165, 233, 0.4);
 }
 
 .day-name {
@@ -136,48 +159,72 @@
 }
 
 .day-date {
-    font-size: 1rem;
-    font-weight: 700;
+    font-size: 1.15rem;
+    font-weight: 800;
 }
 
 .times-scroll {
     display: flex;
-    gap: 0.75rem;
+    gap: 0.6rem;
     flex-wrap: wrap;
-    margin-top: 1.5rem;
+    margin-top: 1.25rem;
 }
 
 .time-slot {
     padding: 0.5rem 1.25rem;
-    border: 1px solid #e5e7eb;
-    border-radius: 99px;
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-full);
     cursor: pointer;
-    font-size: 0.875rem;
-    background: white;
-    transition: all 0.2s;
+    font-size: 0.85rem;
+    font-weight: 600;
+    background: var(--bg-surface);
+    color: var(--text-secondary);
+    transition: all var(--transition-fast);
+}
+
+.time-slot:hover:not(.booked) {
+    border-color: var(--primary);
+    color: var(--primary);
+    background: var(--bg-glass);
 }
 
 .time-slot.active {
-    background-color: var(--primary);
-    border-color: var(--primary);
+    background: var(--gradient-primary);
+    border-color: transparent;
     color: white;
+    box-shadow: 0 2px 10px rgba(14, 165, 233, 0.35);
 }
 
 .time-slot.booked {
-    background: #f3f4f6;
-    color: #9ca3af;
-    border-color: #e5e7eb;
+    background: var(--bg-surface-secondary);
+    color: var(--text-muted);
+    border-color: var(--border-subtle);
     cursor: not-allowed;
     text-decoration: line-through;
-    opacity: 0.6;
+    opacity: 0.5;
     pointer-events: none;
 }
 
 .btn-book {
-    margin-top: 2.5rem;
+    margin-top: 2rem;
     width: 100%;
-    max-width: 300px;
-    padding: 1rem;
-    font-size: 1rem;
-    font-weight: 600;
+    max-width: 280px;
+    padding: 0.875rem 1.5rem;
+    font-size: 0.95rem;
+    font-weight: 700;
+}
+
+@media (max-width: 768px) {
+    .doctor-card {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+    .doctor-info-header {
+        justify-content: center;
+    }
+    .doctor-image-container {
+        width: 160px;
+        height: 160px;
+    }
 }

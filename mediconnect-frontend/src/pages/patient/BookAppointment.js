@@ -26,7 +26,7 @@ const BookAppointment = () => {
 
     // Auto-select doctor from URL param
     useEffect(() => {
-        const doctorId = searchParams.get('doctorId');
+        const doctorId = searchParams.get('doctor') || searchParams.get('doctorId');
         if (doctorId && doctors.length > 0) {
             const doc = doctors.find(d => d._id === doctorId);
             if (doc) {
@@ -164,132 +164,141 @@ const BookAppointment = () => {
     };
 
     return (
-        <div className="dashboard-page">
-            <div className="booking-container fade-in">
-                <div className="dashboard-header">
-                    <h1>Book Appointment</h1>
-                    {!selectedDoctor && <p>Select a doctor to see availability</p>}
+        <div className="booking-container">
+            {/* Header */}
+            <div style={{ marginBottom: '2rem' }} className="anim-fade-up">
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.25rem' }}>
+                    <div style={{
+                        width: 40, height: 40, borderRadius: 'var(--radius-lg)',
+                        background: 'var(--stat-blue-bg)', border: '1px solid var(--stat-blue-border)',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.2rem'
+                    }}>📅</div>
+                    <h1 style={{ margin: 0, fontSize: '1.5rem' }}>Book Appointment</h1>
                 </div>
+                <p style={{ color: 'var(--text-muted)', margin: 0, fontSize: '0.875rem' }}>
+                    {selectedDoctor ? `Select a date & time to consult with Dr. ${selectedDoctor.userId?.name}` : 'Select a specialist doctor to see available consultation slots.'}
+                </p>
+            </div>
 
-                {error && <div className="alert alert-error">{error}</div>}
-                {success && <div className="alert alert-success">{success}</div>}
+            {error && <div className="alert alert-error anim-fade-up" style={{ marginBottom: '1.5rem' }}>✕ {error}</div>}
+            {success && <div className="alert alert-success anim-fade-up" style={{ marginBottom: '1.5rem' }}>✓ {success}</div>}
 
-                <div className="card card-glass mb-4" style={{ padding: '1.5rem' }}>
-                    <div className="form-group mb-0">
-                        <label className="form-label">Select Doctor</label>
-                        <select
-                            className="form-select"
-                            onChange={handleDoctorSelect}
-                            value={selectedDoctor?._id || ''}
-                        >
-                            <option value="">Choose a doctor...</option>
-                            {doctors.map((doc) => (
-                                <option key={doc._id} value={doc._id}>
-                                    {doc.userId.name} - {doc.specialization}
-                                </option>
-                            ))}
-                        </select>
-                    </div>
+            <div className="card anim-fade-up" style={{ padding: '1.5rem', marginBottom: '1.5rem' }}>
+                <div className="form-group" style={{ marginBottom: 0 }}>
+                    <label className="form-label">Select Doctor</label>
+                    <select
+                        className="form-select"
+                        onChange={handleDoctorSelect}
+                        value={selectedDoctor?._id || ''}
+                    >
+                        <option value="">Choose a doctor...</option>
+                        {doctors.map((doc) => (
+                            <option key={doc._id} value={doc._id}>
+                                {doc.userId?.name} — {doc.specialization} (${doc.fees})
+                            </option>
+                        ))}
+                    </select>
                 </div>
+            </div>
 
-                {selectedDoctor && (
-                    <>
-                        {/* Doctor Details Card */}
-                        <div className="card doctor-card">
-                            <div className="doctor-image-container">
-                                <img src={selectedDoctor.image || assets.doc1} alt={selectedDoctor.userId.name} />
-                            </div>
-                            <div style={{ flex: 1 }}>
-                                <div className="doctor-info-header">
-                                    <h2 className="doctor-name">{selectedDoctor.userId.name}</h2>
-                                    <img src={assets.verified_icon} alt="Verified" className="verified-icon" />
-                                </div>
-                                <p className="doctor-credentials">
-                                    {selectedDoctor.qualifications} - {selectedDoctor.specialization}
-                                    <span className="experience-badge ml-2">{selectedDoctor.experience} Years</span>
-                                </p>
-
-                                <div className="about-section">
-                                    <h3 className="about-title">
-                                        About <img src={assets.info_icon} alt="info" style={{ width: '15px' }} />
-                                    </h3>
-                                    <p className="about-text">
-                                        {selectedDoctor.about || 'No description provided.'}
-                                    </p>
-                                </div>
-
-                                <p className="fee-text">
-                                    Appointment fee: <span className="fee-amount">${selectedDoctor.fees}</span>
-                                </p>
-                            </div>
+            {selectedDoctor && (
+                <>
+                    {/* Doctor Details Card */}
+                    <div className="doctor-card anim-fade-up anim-d1">
+                        <div className="doctor-image-container">
+                            <img src={selectedDoctor.image || assets.doc1} alt={selectedDoctor.userId?.name} />
                         </div>
+                        <div style={{ flex: 1 }}>
+                            <div className="doctor-info-header">
+                                <h2 className="doctor-name">{selectedDoctor.userId?.name}</h2>
+                                <img src={assets.verified_icon} alt="Verified" className="verified-icon" />
+                            </div>
+                            <p className="doctor-credentials">
+                                {selectedDoctor.qualifications} · {selectedDoctor.specialization}
+                                <span className="experience-badge" style={{ marginLeft: '0.5rem' }}>{selectedDoctor.experience} Years Exp</span>
+                            </p>
 
-                        {/* Booking Slots */}
-                        <div className="booking-slots-container card card-glass p-4">
-                            <h3 className="slots-title">Booking slots</h3>
-
-                            {docSlots.length === 0 ? (
-                                <p style={{ color: 'var(--gray-500)', textAlign: 'center', padding: '2rem' }}>
-                                    No available slots for this doctor in the next 2 weeks.
+                            <div className="about-section">
+                                <h3 className="about-title">
+                                    About Specialist
+                                </h3>
+                                <p className="about-text">
+                                    {selectedDoctor.about || 'Specialist practitioner offering personalized consultation and care.'}
                                 </p>
-                            ) : (
-                                <>
-                                    <div className="days-scroll">
-                                        {docSlots.map((item, index) => (
+                            </div>
+
+                            <p className="fee-text">
+                                Consultation fee: <span className="fee-amount">${selectedDoctor.fees}</span>
+                            </p>
+                        </div>
+                    </div>
+
+                    {/* Booking Slots */}
+                    <div className="booking-slots-container card anim-fade-up anim-d2" style={{ padding: '1.75rem' }}>
+                        <h3 className="slots-title">Available Slots</h3>
+
+                        {docSlots.length === 0 ? (
+                            <p style={{ color: 'var(--text-muted)', textAlign: 'center', padding: '2rem' }}>
+                                No available slots for this doctor in the next 2 weeks.
+                            </p>
+                        ) : (
+                            <>
+                                <div className="days-scroll">
+                                    {docSlots.map((item, index) => (
+                                        <div
+                                            key={index}
+                                            onClick={() => { setSlotIndex(index); setSlotTime(''); }}
+                                            className={`day-slot ${slotIndex === index ? 'active' : ''}`}
+                                        >
+                                            <span className="day-name">
+                                                {item[0] && item[0].datetime.toLocaleDateString([], { weekday: 'short' })}
+                                            </span>
+                                            <span className="day-date">
+                                                {item[0] && item[0].datetime.getDate()}
+                                            </span>
+                                        </div>
+                                    ))}
+                                </div>
+
+                                <div className="times-scroll">
+                                    {docSlots[slotIndex].map((item, index) => {
+                                        const isBooked = bookedSlots.includes(item.time);
+                                        return (
                                             <div
                                                 key={index}
-                                                onClick={() => { setSlotIndex(index); setSlotTime(''); }}
-                                                className={`day-slot ${slotIndex === index ? 'active' : ''}`}
+                                                onClick={() => !isBooked && setSlotTime(item.time)}
+                                                className={`time-slot ${item.time === slotTime ? 'active' : ''} ${isBooked ? 'booked' : ''}`}
+                                                title={isBooked ? 'This slot is already booked' : ''}
                                             >
-                                                <span className="day-name">
-                                                    {item[0] && item[0].datetime.toLocaleDateString([], { weekday: 'short' })}
-                                                </span>
-                                                <span className="day-date">
-                                                    {item[0] && item[0].datetime.getDate()}
-                                                </span>
+                                                {item.time.toLowerCase()}
                                             </div>
-                                        ))}
-                                    </div>
+                                        );
+                                    })}
+                                </div>
+                            </>
+                        )}
 
-                                    <div className="times-scroll">
-                                        {docSlots[slotIndex].map((item, index) => {
-                                            const isBooked = bookedSlots.includes(item.time);
-                                            return (
-                                                <div
-                                                    key={index}
-                                                    onClick={() => !isBooked && setSlotTime(item.time)}
-                                                    className={`time-slot ${item.time === slotTime ? 'active' : ''} ${isBooked ? 'booked' : ''}`}
-                                                    title={isBooked ? 'This slot is already booked' : ''}
-                                                >
-                                                    {item.time.toLowerCase()}
-                                                </div>
-                                            );
-                                        })}
-                                    </div>
-                                </>
-                            )}
-
-                            <div className="form-group mt-4">
-                                <label className="form-label">Reason for Consultation</label>
-                                <textarea
-                                    className="form-textarea"
-                                    placeholder="Describe your symptoms..."
-                                    value={formData.reason}
-                                    onChange={(e) => setFormData({ ...formData, reason: e.target.value })}
-                                />
-                            </div>
-
-                            <button
-                                onClick={handleSubmit}
-                                className="btn btn-primary btn-book"
-                                disabled={loading || !slotTime}
-                            >
-                                {loading ? 'Booking...' : 'Book an appointment'}
-                            </button>
+                        <div className="form-group" style={{ marginTop: '1.5rem' }}>
+                            <label className="form-label">Reason for Consultation / Symptoms</label>
+                            <textarea
+                                className="form-input"
+                                placeholder="Describe your symptoms or reason for visit..."
+                                value={formData.reason}
+                                onChange={(e) => setFormData({ ...formData, reason: e.target.value })}
+                                rows="3"
+                            />
                         </div>
-                    </>
-                )}
-            </div>
+
+                        <button
+                            onClick={handleSubmit}
+                            className="btn btn-primary btn-book"
+                            disabled={loading || !slotTime}
+                        >
+                            {loading ? 'Booking…' : 'Confirm & Book Appointment'}
+                        </button>
+                    </div>
+                </>
+            )}
         </div>
     );
 };
