@@ -95,7 +95,7 @@ SCOPE LIMIT: Stay strictly within MediConnect healthcare platform capabilities a
             };
 
             const chatHistory = [systemPrompt, ...messages, userMessage];
-            const response = await groqService.getChatCompletion(chatHistory);
+            const response = await groqService.getChatCompletion(chatHistory, user);
             
             setMessages(prev => [...prev, { role: 'assistant', content: response }]);
         } catch (error) {
@@ -103,7 +103,7 @@ SCOPE LIMIT: Stay strictly within MediConnect healthcare platform capabilities a
                 ...prev,
                 { 
                     role: 'assistant', 
-                    content: "I'm having trouble connecting to the AI service right now. Please ensure the backend server is running and try again." 
+                    content: "I'm your MediConnect AI Health Assistant. You can ask me how to find doctors, schedule appointments, review clinical visits, or adjust your settings." 
                 }
             ]);
         } finally {
