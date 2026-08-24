@@ -13,11 +13,14 @@ const AdminDashboard = () => {
         totalAppointments: 0,
     });
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState('');
 
-    useEffect(() => {
-        const fetchStats = async () => {
-            try {
-                const response = await api.get('/admin/statistics');
+    const fetchStats = async () => {
+        setLoading(true);
+        setError('');
+        try {
+            const response = await api.get('/admin/statistics');
+            if (response.data && response.data.statistics) {
                 const data = response.data.statistics;
                 setStats({
                     totalUsers: data.users.total,
@@ -25,12 +28,16 @@ const AdminDashboard = () => {
                     pendingApprovals: data.doctors.pending,
                     totalAppointments: data.appointments.total,
                 });
-            } catch (error) {
-                console.error('Error:', error);
-            } finally {
-                setLoading(false);
             }
-        };
+        } catch (err) {
+            console.error('Error fetching admin stats:', err);
+            setError(err.response?.data?.message || 'Unable to connect to backend server. Please verify the backend is running.');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
         fetchStats();
     }, []);
 
@@ -38,7 +45,7 @@ const AdminDashboard = () => {
         return (
             <div className="loading-container">
                 <div className="spinner" />
-                <p>Loading administration data…</p>
+                <p>Loading administration metrics…</p>
             </div>
         );
     }
@@ -103,6 +110,18 @@ const AdminDashboard = () => {
                     </div>
                 </div>
             </div>
+
+            {error && (
+                <div className="alert alert-error anim-fade-up" style={{ marginBottom: '1.5rem', justifyContent: 'space-between' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                        <Icon name="alertTriangle" size={18} />
+                        <span>{error}</span>
+                    </div>
+                    <button onClick={fetchStats} className="btn btn-sm btn-outline" style={{ background: 'var(--bg-surface)' }}>
+                        Retry
+                    </button>
+                </div>
+            )}
 
             {/* Pending alert */}
             {stats.pendingApprovals > 0 && (

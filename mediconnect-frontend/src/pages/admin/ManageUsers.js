@@ -5,29 +5,37 @@ import Icon from '../../components/Icons';
 const ManageUsers = () => {
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState('');
     const [searchTerm, setSearchTerm] = useState('');
     const [roleFilter, setRoleFilter] = useState('all');
 
-    useEffect(() => { fetchUsers(); }, []);
-
     const fetchUsers = async () => {
+        setLoading(true);
+        setError('');
         try {
             const response = await api.get('/admin/users');
-            setUsers(response.data.users);
-        } catch (error) {
-            console.error('Error:', error);
+            if (response.data && response.data.users) {
+                setUsers(response.data.users);
+            }
+        } catch (err) {
+            console.error('Error fetching users:', err);
+            setError(err.response?.data?.message || 'Unable to fetch user directory. Please check backend connection.');
         } finally {
             setLoading(false);
         }
     };
+
+    useEffect(() => { 
+        fetchUsers(); 
+    }, []);
 
     const handleDelete = async (id, name) => {
         if (!window.confirm(`Delete user account "${name}"? This action cannot be reversed.`)) return;
         try {
             await api.delete(`/admin/users/${id}`);
             fetchUsers();
-        } catch (error) {
-            alert(error.response?.data?.message || 'Failed to delete user');
+        } catch (err) {
+            alert(err.response?.data?.message || 'Failed to delete user');
         }
     };
 
@@ -62,6 +70,18 @@ const ManageUsers = () => {
                     Audit registered patients, medical practitioners, and platform administrators.
                 </p>
             </div>
+
+            {error && (
+                <div className="alert alert-error anim-fade-up" style={{ marginBottom: '1.5rem', justifyContent: 'space-between' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                        <Icon name="alertTriangle" size={18} />
+                        <span>{error}</span>
+                    </div>
+                    <button onClick={fetchUsers} className="btn btn-sm btn-outline" style={{ background: 'var(--bg-surface)' }}>
+                        Retry
+                    </button>
+                </div>
+            )}
 
             {/* Search + Filter Bar */}
             <div className="card anim-fade-up" style={{ marginBottom: '1.5rem', padding: '1.25rem' }}>

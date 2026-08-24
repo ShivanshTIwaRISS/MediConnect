@@ -5,27 +5,35 @@ import Icon from '../../components/Icons';
 const ManageDoctors = () => {
     const [doctors, setDoctors] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState('');
     const [filter, setFilter] = useState('all');
 
-    useEffect(() => { fetchDoctors(); }, []);
-
     const fetchDoctors = async () => {
+        setLoading(true);
+        setError('');
         try {
             const response = await api.get('/admin/doctors');
-            setDoctors(response.data.doctors);
-        } catch (error) {
-            console.error('Error:', error);
+            if (response.data && response.data.doctors) {
+                setDoctors(response.data.doctors);
+            }
+        } catch (err) {
+            console.error('Error fetching doctors:', err);
+            setError(err.response?.data?.message || 'Unable to fetch doctors list. Please check your network connection.');
         } finally {
             setLoading(false);
         }
     };
 
+    useEffect(() => { 
+        fetchDoctors(); 
+    }, []);
+
     const handleApprove = async (id) => {
         try {
             await api.put(`/admin/doctors/${id}/approve`);
             fetchDoctors();
-        } catch (error) {
-            alert(error.response?.data?.message || 'Failed to approve');
+        } catch (err) {
+            alert(err.response?.data?.message || 'Failed to approve');
         }
     };
 
@@ -34,8 +42,8 @@ const ManageDoctors = () => {
         try {
             await api.put(`/admin/doctors/${id}/block`);
             fetchDoctors();
-        } catch (error) {
-            alert(error.response?.data?.message || 'Failed to block');
+        } catch (err) {
+            alert(err.response?.data?.message || 'Failed to block');
         }
     };
 
@@ -63,6 +71,18 @@ const ManageDoctors = () => {
                     Verify practitioner credentials, approve registrations, and manage clinical privileges.
                 </p>
             </div>
+
+            {error && (
+                <div className="alert alert-error anim-fade-up" style={{ marginBottom: '1.5rem', justifyContent: 'space-between' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                        <Icon name="alertTriangle" size={18} />
+                        <span>{error}</span>
+                    </div>
+                    <button onClick={fetchDoctors} className="btn btn-sm btn-outline" style={{ background: 'var(--bg-surface)' }}>
+                        Retry
+                    </button>
+                </div>
+            )}
 
             {/* Pending alert */}
             {filterCounts.pending > 0 && (
