@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import Icon from '../components/Icons';
+import BrandLogo from '../components/BrandLogo';
 import './Auth.css';
 
 const Login = () => {
@@ -52,10 +53,7 @@ const Login = () => {
                 <div className="auth-panel-left">
                     <div className="auth-panel-content">
                         <div className="auth-panel-icon" style={{ display: 'inline-flex', marginBottom: '1.5rem', color: '#ffffff' }}>
-                            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" />
-                                <path d="M3.22 12H9.5l.5-1 2 4.5 2-7 1.5 3.5h5.27" />
-                            </svg>
+                            <BrandLogo size={64} iconSize={36} borderRadius={16} />
                         </div>
                         <h2>Welcome Back</h2>
                         <p>Sign in to your account to manage clinical appointments, review records, and connect with healthcare specialists.</p>
@@ -87,17 +85,7 @@ const Login = () => {
                     <div className="auth-form-wrapper fade-in">
                         <div className="auth-header">
                             <Link to="/" className="auth-logo">
-                                <svg width="34" height="34" viewBox="0 0 32 32" fill="none">
-                                    <rect width="32" height="32" rx="10" fill="url(#loginGradBrand)" />
-                                    <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" transform="scale(0.8) translate(4, 4)" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-                                    <path d="M3.22 12H9.5l.5-1 2 4.5 2-7 1.5 3.5h5.27" transform="scale(0.8) translate(4, 4)" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-                                    <defs>
-                                        <linearGradient id="loginGradBrand" x1="0" y1="0" x2="32" y2="32">
-                                            <stop stopColor="#0284c7" />
-                                            <stop offset="1" stopColor="#2563eb" />
-                                        </linearGradient>
-                                    </defs>
-                                </svg>
+                                <BrandLogo size={34} iconSize={20} />
                                 <span>MediConnect</span>
                             </Link>
                             <h2>Sign In</h2>

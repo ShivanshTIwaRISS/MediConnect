@@ -31,6 +31,7 @@ import AdminDashboard from './pages/admin/AdminDashboard';
 import ManageDoctors from './pages/admin/ManageDoctors';
 import ManageUsers from './pages/admin/ManageUsers';
 import ManageAppointments from './pages/admin/ManageAppointments';
+import AdminSettings from './pages/admin/AdminSettings';
 
 import ChatAgent from './components/ChatAgent';
 
@@ -105,6 +106,8 @@ function App() {
                         <Route path="/admin/doctors" element={<DashPage roles={['admin']}><ManageDoctors /></DashPage>} />
                         <Route path="/admin/users" element={<DashPage roles={['admin']}><ManageUsers /></DashPage>} />
                         <Route path="/admin/appointments" element={<DashPage roles={['admin']}><ManageAppointments /></DashPage>} />
+                        <Route path="/admin/settings" element={<DashPage roles={['admin']}><AdminSettings /></DashPage>} />
+                        <Route path="/admin/profile" element={<DashPage roles={['admin']}><AdminSettings /></DashPage>} />
 
                         {/* 404 fallback */}
                         <Route path="*" element={<Navigate to="/" replace />} />

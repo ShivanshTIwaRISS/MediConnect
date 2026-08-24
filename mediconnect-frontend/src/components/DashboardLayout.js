@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import Icon from './Icons';
+import BrandLogo from './BrandLogo';
 
 const NAV_CONFIG = {
     patient: [
@@ -22,6 +23,7 @@ const NAV_CONFIG = {
         { to: '/admin/doctors', label: 'Manage Doctors', icon: 'stethoscope' },
         { to: '/admin/users', label: 'Manage Users', icon: 'users' },
         { to: '/admin/appointments', label: 'All Appointments', icon: 'fileText' },
+        { to: '/admin/settings', label: 'Settings', icon: 'user' },
     ],
 };
 
@@ -39,6 +41,8 @@ const PAGE_TITLES = {
     '/admin/doctors': 'Manage Doctors',
     '/admin/users': 'Manage Users',
     '/admin/appointments': 'Platform Appointments',
+    '/admin/settings': 'Admin Settings',
+    '/admin/profile': 'Admin Settings',
 };
 
 const ROLE_COLORS = {
@@ -55,7 +59,7 @@ const DashboardLayout = ({ children }) => {
     const navLinks = NAV_CONFIG[user?.role] || [];
     const pageTitle = PAGE_TITLES[location.pathname] || 'Dashboard';
     const homeUrl = user?.role ? `/${user.role}/dashboard` : '/';
-    const profileUrl = user?.role === 'admin' ? '/admin/dashboard' : `/${user?.role}/profile`;
+    const profileUrl = user?.role === 'admin' ? '/admin/settings' : `/${user?.role}/profile`;
 
     useEffect(() => {
         setSidebarOpen(false);
@@ -91,12 +95,7 @@ const DashboardLayout = ({ children }) => {
             <aside className={`sidebar ${sidebarOpen ? 'mobile-open' : ''}`}>
                 {/* Brand */}
                 <Link to={homeUrl} className="sidebar-brand">
-                    <div className="sidebar-brand-icon">
-                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                            <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" />
-                            <path d="M3.22 12H9.5l.5-1 2 4.5 2-7 1.5 3.5h5.27" />
-                        </svg>
-                    </div>
+                    <BrandLogo size={36} iconSize={20} />
                     <span className="sidebar-brand-text">MediConnect</span>
                 </Link>
 

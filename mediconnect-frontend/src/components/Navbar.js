@@ -3,6 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 import Icon from './Icons';
+import BrandLogo from './BrandLogo';
 import './Navbar.css';
 
 const Navbar = () => {
@@ -47,6 +48,7 @@ const Navbar = () => {
                     { to: '/admin/doctors', label: 'Doctors' },
                     { to: '/admin/users', label: 'Users' },
                     { to: '/admin/appointments', label: 'Appointments' },
+                    { to: '/admin/settings', label: 'Settings' },
                 ];
             default: return [];
         }
@@ -65,19 +67,7 @@ const Navbar = () => {
                 <div className="container">
                     <div className="navbar-content">
                         <Link to={homeUrl} className="navbar-brand">
-                            <div className="brand-logo">
-                                <svg width="34" height="34" viewBox="0 0 32 32" fill="none">
-                                    <rect width="32" height="32" rx="10" fill="url(#navGrad)" />
-                                    <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" transform="scale(0.8) translate(4, 4)" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-                                    <path d="M3.22 12H9.5l.5-1 2 4.5 2-7 1.5 3.5h5.27" transform="scale(0.8) translate(4, 4)" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-                                    <defs>
-                                        <linearGradient id="navGrad" x1="0" y1="0" x2="32" y2="32">
-                                            <stop stopColor="#0284c7" />
-                                            <stop offset="1" stopColor="#2563eb" />
-                                        </linearGradient>
-                                    </defs>
-                                </svg>
-                            </div>
+                            <BrandLogo size={36} iconSize={20} />
                             <span className="brand-text">MediConnect</span>
                         </Link>
 
