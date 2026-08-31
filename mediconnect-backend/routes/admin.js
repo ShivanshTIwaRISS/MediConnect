@@ -4,6 +4,7 @@ const {
     getPendingDoctors,
     approveDoctor,
     blockDoctor,
+    deleteDoctor,
     getAllDoctors,
     getAllUsers,
     deleteUser,
@@ -20,6 +21,7 @@ router.get('/doctors/pending', getPendingDoctors);
 router.get('/doctors', getAllDoctors);
 router.put('/doctors/:id/approve', approveDoctor);
 router.put('/doctors/:id/block', blockDoctor);
+router.delete('/doctors/:id', deleteDoctor);
 router.get('/users', getAllUsers);
 router.delete('/users/:id', deleteUser);
 router.get('/appointments', getAllAppointments);

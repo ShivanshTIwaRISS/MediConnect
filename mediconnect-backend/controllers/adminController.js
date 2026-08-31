@@ -82,6 +82,45 @@ exports.blockDoctor = async (req, res) => {
     }
 };
 
+// @desc    Delete doctor
+// @route   DELETE /api/admin/doctors/:id
+// @access  Private (Admin)
+exports.deleteDoctor = async (req, res) => {
+    try {
+        const doctor = await Doctor.findById(req.params.id);
+
+        if (!doctor) {
+            return res.status(404).json({
+                success: false,
+                message: 'Doctor profile not found',
+            });
+        }
+
+        const userId = doctor.userId;
+
+        // Delete doctor profile
+        await Doctor.findByIdAndDelete(req.params.id);
+
+        // Delete associated user account if it exists
+        if (userId) {
+            await User.findByIdAndDelete(userId);
+        }
+
+        // Cancel or clean up pending appointments with this doctor
+        await Appointment.deleteMany({ doctorId: req.params.id });
+
+        res.status(200).json({
+            success: true,
+            message: 'Doctor and associated account deleted successfully',
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message,
+        });
+    }
+};
+
 // @desc    Get all doctors
 // @route   GET /api/admin/doctors
 // @access  Private (Admin)

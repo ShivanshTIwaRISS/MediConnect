@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import groqService from '../utils/groqService';
 import Icon from './Icons';
@@ -6,22 +7,141 @@ import './ChatAgent.css';
 
 const ROLE_SUGGESTIONS = {
     patient: [
-        'Find a specialist doctor',
-        'How do I book an appointment?',
-        'Where can I see my visits?',
-        'What health tips do you have?'
+        'Mujhe bukhar hai 🤒',
+        'Suggest a skin specialist',
+        'How to book appointment?',
+        'Sir dard ho raha hai',
+        'Compare doctor fees',
+        'Accha doctor chahiye'
     ],
     doctor: [
-        'How do I manage appointment requests?',
-        'How do I update my consultation hours?',
-        'Where do I view patient history?'
+        'Show my appointment stats',
+        'How to update my schedule?',
+        'My profile status kya hai?',
+        'Consultation history dikhao'
     ],
     admin: [
-        'Where do I approve new doctors?',
-        'How do I manage registered users?',
-        'Overview of platform metrics'
+        'Pending doctor applications',
+        'Platform stats dikhao',
+        'Show all doctors list',
+        'Kitne users registered hain?'
     ]
 };
+
+// ─── Markdown-lite renderer: converts AI markdown to React elements ──────────
+const renderMessageContent = (text) => {
+    if (!text) return null;
+
+    // Split by lines and process
+    const lines = text.split('\n');
+    const elements = [];
+    let key = 0;
+
+    for (let i = 0; i < lines.length; i++) {
+        let line = lines[i];
+
+        // Process inline markdown on the line
+        const processedLine = processInlineMarkdown(line, `line-${key++}`);
+        elements.push(processedLine);
+
+        // Add line break between lines (but not after last)
+        if (i < lines.length - 1) {
+            elements.push(<br key={`br-${key++}`} />);
+        }
+    }
+
+    return elements;
+};
+
+const processInlineMarkdown = (text, keyPrefix) => {
+    if (!text || typeof text !== 'string') return text;
+
+    // Split text by markdown patterns and process
+    const parts = [];
+    let remaining = text;
+    let partKey = 0;
+
+    while (remaining.length > 0) {
+        // Match markdown links: [text](/path) or [text](url)
+        const linkMatch = remaining.match(/\[([^\]]+)\]\(([^)]+)\)/);
+        // Match bold: **text**
+        const boldMatch = remaining.match(/\*\*([^*]+)\*\*/);
+
+        // Find the earliest match
+        let earliestMatch = null;
+        let earliestIndex = Infinity;
+        let matchType = null;
+
+        if (linkMatch && linkMatch.index < earliestIndex) {
+            earliestMatch = linkMatch;
+            earliestIndex = linkMatch.index;
+            matchType = 'link';
+        }
+        if (boldMatch && boldMatch.index < earliestIndex) {
+            earliestMatch = boldMatch;
+            earliestIndex = boldMatch.index;
+            matchType = 'bold';
+        }
+
+        if (!earliestMatch) {
+            // No more patterns, add remaining text
+            parts.push(remaining);
+            break;
+        }
+
+        // Add text before the match
+        if (earliestIndex > 0) {
+            parts.push(remaining.substring(0, earliestIndex));
+        }
+
+        // Process the match
+        if (matchType === 'link') {
+            const linkText = earliestMatch[1];
+            const linkHref = earliestMatch[2];
+
+            // Internal links start with /
+            if (linkHref.startsWith('/')) {
+                parts.push(
+                    <Link
+                        key={`${keyPrefix}-link-${partKey++}`}
+                        to={linkHref}
+                        className="chat-inline-link"
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        🔗 {linkText}
+                    </Link>
+                );
+            } else {
+                parts.push(
+                    <a
+                        key={`${keyPrefix}-a-${partKey++}`}
+                        href={linkHref}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="chat-inline-link"
+                    >
+                        {linkText}
+                    </a>
+                );
+            }
+        } else if (matchType === 'bold') {
+            parts.push(
+                <strong key={`${keyPrefix}-b-${partKey++}`}>
+                    {earliestMatch[1]}
+                </strong>
+            );
+        }
+
+        // Move past the match
+        remaining = remaining.substring(earliestIndex + earliestMatch[0].length);
+    }
+
+    if (parts.length === 0) return text;
+    if (parts.length === 1 && typeof parts[0] === 'string') return parts[0];
+
+    return <span key={keyPrefix}>{parts}</span>;
+};
+
 
 const ChatAgent = () => {
     const { user } = useAuth();
@@ -35,12 +155,14 @@ const ChatAgent = () => {
     useEffect(() => {
         if (user && messages.length === 0) {
             const role = user.role || 'patient';
-            let greeting = `Hi ${user.name}! I'm your MediConnect AI Clinical Assistant. How can I help you today?`;
+            let greeting = '';
             
             if (role === 'doctor') {
-                greeting = `Hello Dr. ${user.name}, I'm your MediConnect clinical assistant. How can I help manage your appointments and patient schedules today?`;
+                greeting = `Namaste Dr. ${user.name}! 🩺 Main aapka MediConnect clinical assistant hoon. Aapke appointments, schedule, ya profile se related koi bhi help chahiye toh poochiye!`;
             } else if (role === 'admin') {
-                greeting = `Welcome Administrator ${user.name}. I'm your MediConnect operations assistant. I can guide you through doctor verifications, platform metrics, and user management.`;
+                greeting = `Welcome Administrator ${user.name}! 🛡️ I'm your MediConnect operations assistant. I can help you with doctor verifications, platform metrics, user management, and more. Ask me anything!`;
+            } else {
+                greeting = `Hi ${user.name}! 👋 Main aapka MediConnect Health Assistant hoon. Aap mujhse Hindi, English ya Hinglish mein baat kar sakte hain!\n\nMujhe batao — kya help chahiye? Doctor dhundhna hai, appointment book karna hai, ya koi health query hai?`;
             }
             
             setMessages([{ role: 'assistant', content: greeting }]);
@@ -70,8 +192,6 @@ const ChatAgent = () => {
             // Build chat history with ONLY user/assistant messages.
             // The backend builds the authoritative system prompt server-side
             // using the authenticated user's role + live database context.
-            // We do NOT send a system prompt from the frontend to avoid
-            // conflicts and ensure DB-grounded, role-specific responses.
             const chatHistory = messages
                 .filter(m => m.role === 'user' || m.role === 'assistant')
                 .concat(userMessage);
@@ -84,11 +204,11 @@ const ChatAgent = () => {
             setMessages(prev => [...prev, { role: 'assistant', content: response }]);
         } catch (error) {
             const role = user?.role || 'patient';
-            let fallbackMsg = "I'm your MediConnect AI Health Assistant. You can ask me how to find doctors, schedule appointments, review clinical visits, or adjust your settings.";
+            let fallbackMsg = "Main aapka MediConnect AI Health Assistant hoon. Aap mujhse doctors dhundhne, appointments book karne, ya apni visits dekhne ke baare mein pooch sakte hain!";
             if (role === 'doctor') {
-                fallbackMsg = "I'm your MediConnect Clinical Assistant, Dr. " + (user?.name || '') + ". You can ask me about managing appointment requests, updating your schedule, or reviewing consultation history.";
+                fallbackMsg = "Main aapka MediConnect Clinical Assistant hoon, Dr. " + (user?.name || '') + ". Appointments manage karna, schedule update karna, ya consultation history dekhne mein help kar sakta hoon.";
             } else if (role === 'admin') {
-                fallbackMsg = "I'm your MediConnect Operations Assistant. You can ask me about doctor verifications, user management, or platform metrics.";
+                fallbackMsg = "I'm your MediConnect Operations Assistant. I can help with doctor verifications, user management, and platform metrics.";
             }
             setMessages(prev => [
                 ...prev,
@@ -106,8 +226,8 @@ const ChatAgent = () => {
 
     const handleClearChat = () => {
         const role = user?.role || 'patient';
-        let greeting = `Hi ${user?.name || 'there'}! Chat history cleared. How else can I assist you?`;
-        if (role === 'doctor') greeting = `Dr. ${user?.name}, chat reset. What would you like to check?`;
+        let greeting = `Hi ${user?.name || 'there'}! 😊 Chat clear ho gaya. Aur kya help chahiye?`;
+        if (role === 'doctor') greeting = `Dr. ${user?.name}, chat reset ho gaya. Kya check karna hai?`;
         if (role === 'admin') greeting = `Administrator ${user?.name}, chat reset. What platform operations can I help with?`;
         setMessages([{ role: 'assistant', content: greeting }]);
     };
@@ -150,7 +270,7 @@ const ChatAgent = () => {
                         <div>
                             <h3>MediConnect AI</h3>
                             <span className="chat-header-sub">
-                                <span className="status-dot"></span> Online Assistant
+                                <span className="status-dot"></span> {user.role === 'patient' ? 'Health Assistant' : user.role === 'doctor' ? 'Clinical Assistant' : 'Operations Assistant'}
                             </span>
                         </div>
                     </div>
@@ -182,7 +302,7 @@ const ChatAgent = () => {
                                     <span className="bot-name">MediConnect AI</span>
                                 </div>
                             )}
-                            <div className="msg-text">{msg.content}</div>
+                            <div className="msg-text">{renderMessageContent(msg.content)}</div>
                         </div>
                     ))}
                     {isLoading && (
@@ -216,7 +336,7 @@ const ChatAgent = () => {
                     <input 
                         type="text" 
                         className="chat-input" 
-                        placeholder="Ask about doctors, appointments, or services..." 
+                        placeholder={user.role === 'patient' ? 'Apna sawal poochiye... (Hindi/English/Hinglish)' : 'Ask about doctors, appointments, or services...'} 
                         value={input}
                         onChange={(e) => setInput(e.target.value)}
                         disabled={isLoading}

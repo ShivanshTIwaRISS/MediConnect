@@ -49,6 +49,35 @@ const doctorSchema = new mongoose.Schema({
         type: String,
         default: '',
     },
+    phone: {
+        type: String,
+        trim: true,
+        default: '',
+    },
+    gender: {
+        type: String,
+        enum: ['Male', 'Female', 'Other', ''],
+        default: '',
+    },
+    registrationNumber: {
+        type: String,
+        trim: true,
+        default: '',
+    },
+    clinicAddress: {
+        type: String,
+        trim: true,
+        default: '',
+    },
+    city: {
+        type: String,
+        trim: true,
+        default: '',
+    },
+    languages: [{
+        type: String,
+        trim: true,
+    }],
     status: {
         type: String,
         enum: ['pending', 'approved', 'blocked'],

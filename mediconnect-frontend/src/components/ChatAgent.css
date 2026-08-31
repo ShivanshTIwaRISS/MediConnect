@@ -196,6 +196,41 @@
     white-space: pre-line;
 }
 
+/* Inline Links in Chat Messages */
+.chat-inline-link {
+    color: var(--primary, #0284c7);
+    text-decoration: none;
+    font-weight: 600;
+    padding: 2px 8px;
+    margin: 2px 0;
+    border-radius: var(--radius-sm, 6px);
+    background: var(--primary-light, rgba(2, 132, 199, 0.1));
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    transition: all var(--transition-fast, 0.15s);
+    font-size: 0.82rem;
+    border: 1px solid transparent;
+    cursor: pointer;
+}
+
+.chat-inline-link:hover {
+    background: var(--primary, #0284c7);
+    color: #ffffff;
+    border-color: var(--primary, #0284c7);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(2, 132, 199, 0.3);
+}
+
+.message.user .chat-inline-link {
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.message.user .chat-inline-link:hover {
+    background: rgba(255, 255, 255, 0.35);
+}
+
 /* Typing Indicator */
 .typing-indicator {
     align-self: flex-start;

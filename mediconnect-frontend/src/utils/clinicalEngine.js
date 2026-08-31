@@ -5,8 +5,7 @@
  * It provides role-aware platform navigation guidance WITHOUT mentioning any
  * specific doctor names, fees, or data — because it has NO database access.
  * 
- * All doctor-specific recommendations come ONLY from the backend AI route
- * which fetches real data from the database.
+ * Now with Hinglish (Hindi + English mix) keyword support.
  */
 
 // ─── Role-specific navigation maps ──────────────────────────────────────────
@@ -30,111 +29,187 @@ const ADMIN_NAV = {
     allAppointments: '**All Appointments** — Monitor all platform-wide appointments and their statuses.',
 };
 
+// ─── Hinglish symptom keyword mappings ───────────────────────────────────────
+
+const HINGLISH_SYMPTOM_MAP = {
+    // Fever / Cold / General
+    'bukhar': 'fever', 'bukhaar': 'fever', 'buhaar': 'fever',
+    'sardi': 'cold', 'sardee': 'cold',
+    'khansi': 'cough', 'khaansi': 'cough',
+    'zukaaam': 'cold', 'zukaam': 'cold',
+    'tabiyat kharab': 'unwell', 'tabiyat': 'unwell',
+    'accha nhi': 'unwell', 'acha nhi': 'unwell', 'achha nahi': 'unwell',
+    'theek nahi': 'unwell', 'thik nahi': 'unwell',
+    'bimar': 'sick', 'bimaar': 'sick', 'beemaar': 'sick',
+
+    // Head
+    'sir dard': 'headache', 'sar dard': 'headache', 'sir me dard': 'headache',
+    'chakkar': 'dizziness', 'chakker': 'dizziness',
+
+    // Stomach / Digestion
+    'pet dard': 'stomach pain', 'pet me dard': 'stomach pain',
+    'gas': 'acidity', 'acidity': 'acidity',
+    'ulti': 'nausea', 'ultee': 'nausea',
+    'dast': 'diarrhea', 'loose motion': 'diarrhea',
+
+    // Skin
+    'khujli': 'itching', 'khujlee': 'itching',
+    'daag': 'skin marks', 'daane': 'pimples',
+    'chamdi': 'skin',
+
+    // Bone / Joint
+    'haddi': 'bone pain', 'haddee': 'bone pain',
+    'jodon': 'joint', 'jodon ka dard': 'joint pain', 'jodon me dard': 'joint pain',
+    'kamar dard': 'back pain', 'kamar me dard': 'back pain',
+    'ghutne': 'knee', 'ghutne me dard': 'knee pain',
+
+    // Eyes
+    'aankh': 'eye', 'aankhon': 'eye', 'aankh me': 'eye problem',
+    'nazar': 'vision',
+
+    // Dental
+    'daant': 'tooth', 'daant me dard': 'toothache', 'dant': 'tooth',
+
+    // Mental health
+    'tension': 'stress', 'neend nahi': 'insomnia', 'neend nhi': 'insomnia',
+    'ghabrahat': 'anxiety', 'dar': 'anxiety',
+    'udaas': 'depression', 'udaasi': 'depression',
+
+    // Women health
+    'mahila rog': 'gynecology', 'periods': 'gynecology',
+
+    // Children
+    'bachche': 'pediatric', 'bachche ki': 'pediatric', 'bacche': 'pediatric',
+
+    // ENT
+    'kaan': 'ear', 'naak': 'nose', 'gala': 'throat', 'gale me dard': 'sore throat',
+
+    // Heart
+    'dil': 'heart', 'seene me dard': 'chest pain', 'chest': 'chest pain',
+    'bp': 'blood pressure',
+
+    // General queries
+    'doctor chahiye': 'need doctor', 'doctor dikhao': 'find doctor',
+    'specialist chahiye': 'need specialist',
+};
+
 // ─── Main response generator ─────────────────────────────────────────────────
 
 export const generateSmartResponse = (userQuery = '', role = 'patient', userName = 'User') => {
     const raw = (userQuery || '').trim();
     const q = raw.toLowerCase();
 
+    // ── 0. Detect Hinglish and normalize ──
+    let isHinglish = false;
+    let normalizedQuery = q;
+    
+    for (const [hinglish, english] of Object.entries(HINGLISH_SYMPTOM_MAP)) {
+        if (q.includes(hinglish)) {
+            normalizedQuery = normalizedQuery.replace(hinglish, english);
+            isHinglish = true;
+        }
+    }
+
     // ── 1. Gratitude & Pleasantries ──
-    if (/^(thanks|thank you|thx|ty|thank u|appreciate|awesome|great|perfect|cool|ok thanks|okay thanks|got it|understood|good)/i.test(q)) {
-        if (role === 'doctor') return `You're welcome, Dr. ${userName}! 😊 I'm here whenever you need help managing your practice on MediConnect.`;
-        if (role === 'admin') return `You're welcome, ${userName}! 😊 I'm here to help with any platform administration tasks.`;
-        return `You're welcome, ${userName}! 😊 I'm always here to help you navigate MediConnect and find the right care.`;
+    if (/^(thanks|thank you|thx|ty|thank u|appreciate|awesome|great|perfect|cool|ok thanks|okay thanks|got it|understood|good|shukriya|dhanyavaad|dhanyawad|bahut accha)/i.test(q)) {
+        if (role === 'doctor') return `You're welcome, Dr. ${userName}! 😊 Jab bhi zaroorat ho, main yahaan hoon aapki help ke liye.`;
+        if (role === 'admin') return `You're welcome, ${userName}! 😊 Platform management mein koi bhi help chahiye toh poochiye.`;
+        return `Koi baat nahi ${userName}! 😊 Jab bhi koi sawal ho, main yahaan hoon. Apna khayal rakhiye! 💙`;
     }
 
     // ── 2. Greetings ──
-    if (/^(hi|hello|hey|greetings|good morning|good evening|good afternoon|namaste|hola|yo)\b/i.test(q)) {
+    if (/^(hi|hello|hey|greetings|good morning|good evening|good afternoon|namaste|hola|yo|kya haal|kaise ho|namaskar)\b/i.test(q)) {
         if (role === 'doctor') {
-            return `Hello Dr. ${userName}! 👋\n\nI'm your MediConnect Clinical Assistant. Here's what I can help you with:\n\n• ${DOCTOR_NAV.appointmentRequests}\n• ${DOCTOR_NAV.consultationHistory}\n• ${DOCTOR_NAV.profile}\n\nWhat would you like to do?`;
+            return `Namaste Dr. ${userName}! 👋\n\nMain aapka MediConnect Clinical Assistant hoon. Yeh raha aapka quick menu:\n\n• ${DOCTOR_NAV.appointmentRequests}\n• ${DOCTOR_NAV.consultationHistory}\n• ${DOCTOR_NAV.profile}\n\nKya help chahiye?`;
         }
         if (role === 'admin') {
-            return `Welcome Administrator ${userName}! 🛡️\n\nI'm your MediConnect Operations Assistant:\n\n• ${ADMIN_NAV.manageDoctors}\n• ${ADMIN_NAV.manageUsers}\n• ${ADMIN_NAV.allAppointments}\n\nWhat platform operation would you like help with?`;
+            return `Welcome Administrator ${userName}! 🛡️\n\nMain aapka MediConnect Operations Assistant hoon:\n\n• ${ADMIN_NAV.manageDoctors}\n• ${ADMIN_NAV.manageUsers}\n• ${ADMIN_NAV.allAppointments}\n\nKis platform operation mein help chahiye?`;
         }
-        return `Hello ${userName}! 👋\n\nI'm your MediConnect Health Assistant. I can help you:\n\n• ${PATIENT_NAV.findDoctors}\n• ${PATIENT_NAV.bookAppointment}\n• ${PATIENT_NAV.myAppointments}\n\nWhat would you like to explore today?`;
+        return `Hello ${userName}! 👋\n\nMain aapka MediConnect Health Assistant hoon. Main Hindi, English aur Hinglish sab samajhta hoon!\n\n• ${PATIENT_NAV.findDoctors}\n• ${PATIENT_NAV.bookAppointment}\n• ${PATIENT_NAV.myAppointments}\n\nBatao, kya help chahiye aaj?`;
     }
 
     // ── 3. About MediConnect / Platform Inquiries ──
-    if (q.includes('about this platform') || q.includes('about platform') || q.includes('what is this') || q.includes('what is mediconnect') || q.includes('how does this work') || q.includes('how does mediconnect work') || q.includes('tell me about this') || q.includes('features') || q.includes('what can you do')) {
-        return `🏥 **About MediConnect**\n\nMediConnect is a digital healthcare platform connecting patients with verified medical specialists.\n\n**Key Features:**\n• **Specialist Directory** — Browse verified doctors across multiple medical fields\n• **Instant Booking** — Schedule consultations by selecting available time slots\n• **Role-Based Portals:**\n  - **Patients:** Find doctors, book appointments, track visit history\n  - **Doctors:** Manage appointment requests, set availability, view consultations\n  - **Admins:** Verify doctors, manage users, monitor platform activity\n• **Theme Support** — Switch between Dark and Light modes\n\nWould you like help with a specific feature?`;
+    if (q.includes('about this platform') || q.includes('about platform') || q.includes('what is this') || q.includes('what is mediconnect') || q.includes('how does this work') || q.includes('how does mediconnect work') || q.includes('tell me about this') || q.includes('features') || q.includes('what can you do') || q.includes('kya kar sakta') || q.includes('kya kya kar sakte')) {
+        return `🏥 **MediConnect ke baare mein**\n\nMediConnect ek digital healthcare platform hai jo patients ko verified medical specialists se connect karta hai.\n\n**Key Features:**\n• **Specialist Directory** — Verified doctors browse karo multiple medical fields mein\n• **Instant Booking** — Available time slots select karke consultation schedule karo\n• **Role-Based Portals:**\n  - **Patients:** Doctors dhundho, appointments book karo, visit history dekho\n  - **Doctors:** Appointment requests manage karo, availability set karo\n  - **Admins:** Doctors verify karo, users manage karo, platform monitor karo\n• **Theme Support** — Dark aur Light mode mein switch karo\n\nKisi specific feature ke baare mein jaanna hai?`;
     }
 
     // ── 4. Symptom / Doctor / Specialist Queries ──
-    // Without DB access, we guide them to the Find Doctors section instead of inventing names
-    const symptomKeywords = ['heart', 'cardio', 'chest pain', 'blood pressure', 'skin', 'acne', 'rash', 'eczema', 'brain', 'headache', 'migraine', 'nerve', 'mental', 'anxiety', 'stress', 'depress', 'therapy', 'stomach', 'digest', 'acid', 'nausea', 'bone', 'joint', 'knee', 'back pain', 'spine', 'eye', 'vision', 'tooth', 'dental', 'child', 'pediatric', 'fever', 'cold', 'cough', 'flu', 'infection', 'gynecology', 'women', 'pregnancy', 'doctor', 'specialist', 'suggest', 'recommend', 'need a'];
+    const symptomKeywords = ['heart', 'cardio', 'chest pain', 'blood pressure', 'skin', 'acne', 'rash', 'eczema', 'brain', 'headache', 'migraine', 'nerve', 'mental', 'anxiety', 'stress', 'depress', 'therapy', 'stomach', 'digest', 'acid', 'nausea', 'bone', 'joint', 'knee', 'back pain', 'spine', 'eye', 'vision', 'tooth', 'dental', 'child', 'pediatric', 'fever', 'cold', 'cough', 'flu', 'infection', 'gynecology', 'women', 'pregnancy', 'doctor', 'specialist', 'suggest', 'recommend', 'need a', 'unwell', 'sick', 'dizziness', 'itching', 'insomnia', 'ear', 'nose', 'throat', 'need doctor', 'find doctor', 'need specialist'];
     
-    const isSymptomQuery = symptomKeywords.some(kw => q.includes(kw));
+    const isSymptomQuery = symptomKeywords.some(kw => normalizedQuery.includes(kw));
     
     if (isSymptomQuery) {
         if (role === 'doctor') {
-            return `As a doctor on MediConnect, you can:\n\n• View your incoming consultation requests in ${DOCTOR_NAV.appointmentRequests}\n• Review patient history in ${DOCTOR_NAV.consultationHistory}\n\nFor clinical references, please consult your professional medical resources.`;
+            return `Doctor sahab, aap khud medical professional hain! 😊\n\nAapke MediConnect tools:\n• ${DOCTOR_NAV.appointmentRequests} — Patient requests dekho\n• ${DOCTOR_NAV.consultationHistory} — Past consultations review karo\n\nClinical references ke liye apne professional resources check karo.`;
         }
         if (role === 'admin') {
-            return `As an administrator, you can view all doctors and their specializations in ${ADMIN_NAV.manageDoctors}.\n\nFor specific doctor listings and patient-facing features, please check the platform from a patient account.`;
+            return `Admin sahab, aap ${ADMIN_NAV.manageDoctors} mein saare doctors aur unki specializations dekh sakte hain.\n\nSpecific doctor listings ke liye patient account se platform check karo.`;
         }
-        return `I'd love to help you find the right specialist! 🩺\n\nPlease go to ${PATIENT_NAV.findDoctors} in the left sidebar to browse all our **verified specialists**. You can filter by specialization to find exactly the right doctor for your needs.\n\nOnce you find a doctor, use ${PATIENT_NAV.bookAppointment} to schedule a consultation.\n\n💡 *I'm currently in offline mode, so I can't show specific doctor details right now. The Find Doctors page has the complete, up-to-date directory.*`;
+        
+        const hinglishNote = isHinglish ? '\n\n🗣️ *Main aapki Hinglish samajh gaya!*' : '';
+        return `Chinta mat karo ${userName}, main aapko sahi specialist dhundhne mein help karta hoon! 🩺${hinglishNote}\n\n👉 Left sidebar mein ${PATIENT_NAV.findDoctors} pe jao — wahaan saare **verified specialists** milenge. Specialization ke hisaab se filter kar sakte ho.\n\nDoctor mil jaaye toh ${PATIENT_NAV.bookAppointment} se consultation schedule karo.\n\n💡 *Abhi main offline mode mein hoon, toh specific doctor details nahi dikha sakta. Find Doctors page pe complete directory hai.*`;
     }
 
     // ── 5. Booking & Appointment Queries ──
-    if (q.includes('book') || q.includes('schedule') || q.includes('how to book') || q.includes('appointment') || q.includes('slot')) {
+    if (q.includes('book') || q.includes('schedule') || q.includes('how to book') || q.includes('appointment') || q.includes('slot') || q.includes('appointment kaise') || q.includes('book kaise') || q.includes('book karna')) {
         if (role === 'doctor') {
-            return `📅 **Managing Your Appointments:**\n\n• ${DOCTOR_NAV.appointmentRequests} — Approve or decline patient booking requests\n• ${DOCTOR_NAV.profile} — Adjust your available consultation days and hours\n• ${DOCTOR_NAV.consultationHistory} — Review past completed consultations`;
+            return `📅 **Appointments Manage karo:**\n\n• ${DOCTOR_NAV.appointmentRequests} — Patient bookings approve/decline karo\n• ${DOCTOR_NAV.profile} — Available consultation days aur hours adjust karo\n• ${DOCTOR_NAV.consultationHistory} — Past consultations review karo`;
         }
         if (role === 'admin') {
-            return `📅 **Platform Appointment Management:**\n\n• ${ADMIN_NAV.allAppointments} — View and monitor all appointments across the platform\n• ${ADMIN_NAV.manageDoctors} — Ensure doctors are verified before they can receive bookings`;
+            return `📅 **Platform Appointment Management:**\n\n• ${ADMIN_NAV.allAppointments} — Saare appointments monitor karo\n• ${ADMIN_NAV.manageDoctors} — Ensure doctors verified hain before they receive bookings`;
         }
-        return `📅 **How to Book a Consultation:**\n\n1. Click ${PATIENT_NAV.findDoctors} from the left sidebar\n2. Browse specialists and select one that matches your needs\n3. Pick a date and an available time slot\n4. Enter your reason for consultation\n5. Click **Confirm & Request Consultation**\n\nYou can track your booking status in ${PATIENT_NAV.myAppointments}.`;
+        return `📅 **Appointment Book kaise karein:**\n\n1. Left sidebar mein ${PATIENT_NAV.findDoctors} click karo\n2. Apni zaroorat ke hisaab se specialist choose karo\n3. Date aur available time slot pick karo\n4. Consultation ka reason likho\n5. **Confirm & Request Consultation** click karo\n\nBooking ka status ${PATIENT_NAV.myAppointments} mein track karo.`;
     }
 
     // ── 6. Pricing & Fees ──
-    if (q.includes('fee') || q.includes('cost') || q.includes('price') || q.includes('charge') || q.includes('how much') || q.includes('rate')) {
+    if (q.includes('fee') || q.includes('cost') || q.includes('price') || q.includes('charge') || q.includes('how much') || q.includes('rate') || q.includes('kitni') || q.includes('kitna') || q.includes('paisa') || q.includes('fees')) {
         if (role === 'doctor') {
-            return `You can update your consultation fees in ${DOCTOR_NAV.profile}. Your current fee is displayed on your doctor profile card visible to patients.`;
+            return `Aap apni consultation fees ${DOCTOR_NAV.profile} mein update kar sakte hain. Aapki current fee patients ko doctor profile card pe dikhti hai.`;
         }
-        return `💳 **Consultation Fees:**\n\nEach doctor sets their own consultation fee. You can see the exact fee displayed on every doctor's card in ${PATIENT_NAV.findDoctors} before booking.\n\nFees are transparently shown so there are no surprises!`;
+        return `💳 **Consultation Fees:**\n\nHar doctor apni consultation fee khud set karta hai. ${PATIENT_NAV.findDoctors} mein har doctor ke card pe exact fee dikhayi deti hai — booking se pehle!\n\nFees transparent hain, koi hidden charges nahi! 😊`;
     }
 
     // ── 7. Tracking / Status / Cancel ──
-    if (q.includes('my appointment') || q.includes('status') || q.includes('track') || q.includes('history') || q.includes('cancel')) {
+    if (q.includes('my appointment') || q.includes('status') || q.includes('track') || q.includes('history') || q.includes('cancel') || q.includes('mera appointment') || q.includes('kab hai') || q.includes('cancel karna')) {
         if (role === 'doctor') {
-            return `📋 **Your Appointment Management:**\n\n• ${DOCTOR_NAV.appointmentRequests} — Pending patient requests awaiting your review\n• ${DOCTOR_NAV.consultationHistory} — All past completed consultations`;
+            return `📋 **Aapke Appointments:**\n\n• ${DOCTOR_NAV.appointmentRequests} — Pending patient requests\n• ${DOCTOR_NAV.consultationHistory} — Past completed consultations`;
         }
         if (role === 'admin') {
-            return `📋 **Platform Monitoring:**\n\n• ${ADMIN_NAV.allAppointments} — View all appointment statuses platform-wide\n• ${ADMIN_NAV.manageUsers} — Check individual user appointment history`;
+            return `📋 **Platform Monitoring:**\n\n• ${ADMIN_NAV.allAppointments} — Saare appointment statuses dekho\n• ${ADMIN_NAV.manageUsers} — Individual user ka history check karo`;
         }
-        return `📋 **Tracking Your Appointments:**\n\n• Go to ${PATIENT_NAV.myAppointments} from the left sidebar\n• **Pending** — The doctor is reviewing your request\n• **Approved** — Confirmed! Attend at your scheduled time\n• **Rejected** — You can rebook with another slot or specialist\n• **Completed** — Past consultations for your records`;
+        return `📋 **Appointments Track karo:**\n\n• ${PATIENT_NAV.myAppointments} pe jao sidebar se\n• **Pending** — Doctor aapki request review kar raha hai\n• **Approved** — Confirmed! Scheduled time pe attend karo\n• **Rejected** — Doosre slot ya specialist se rebook karo\n• **Completed** — Past consultations record ke liye`;
     }
 
     // ── 8. Admin-Specific Queries ──
-    if (role === 'admin' && (q.includes('doctor') || q.includes('approve') || q.includes('verify') || q.includes('block') || q.includes('pending') || q.includes('user') || q.includes('manage'))) {
-        return `🛡️ **Admin Operations:**\n\n• ${ADMIN_NAV.manageDoctors} — Review pending applications, approve verified doctors, or block accounts\n• ${ADMIN_NAV.manageUsers} — Audit all registered users on the platform\n• ${ADMIN_NAV.allAppointments} — Monitor appointment activity across the platform\n\nWhat specific operation would you like help with?`;
+    if (role === 'admin' && (q.includes('doctor') || q.includes('approve') || q.includes('verify') || q.includes('block') || q.includes('pending') || q.includes('user') || q.includes('manage') || q.includes('kitne'))) {
+        return `🛡️ **Admin Operations:**\n\n• ${ADMIN_NAV.manageDoctors} — Pending applications review karo, verified doctors approve karo, ya accounts block karo\n• ${ADMIN_NAV.manageUsers} — Platform ke saare registered users audit karo\n• ${ADMIN_NAV.allAppointments} — Appointment activity monitor karo\n\nKaunsi specific operation mein help chahiye?`;
     }
 
     // ── 9. Doctor-Specific Queries ──
-    if (role === 'doctor' && (q.includes('patient') || q.includes('request') || q.includes('consultation') || q.includes('schedule') || q.includes('availability') || q.includes('hours'))) {
-        return `👨‍⚕️ **Doctor Dashboard Help:**\n\n• ${DOCTOR_NAV.appointmentRequests} — Review and respond to patient booking requests\n• ${DOCTOR_NAV.consultationHistory} — Access complete consultation records\n• ${DOCTOR_NAV.profile} — Update your availability, fees, and professional details\n\nWhat would you like to manage?`;
+    if (role === 'doctor' && (q.includes('patient') || q.includes('request') || q.includes('consultation') || q.includes('schedule') || q.includes('availability') || q.includes('hours') || q.includes('mera') || q.includes('kitne'))) {
+        return `👨‍⚕️ **Doctor Dashboard Help:**\n\n• ${DOCTOR_NAV.appointmentRequests} — Patient booking requests review karo\n• ${DOCTOR_NAV.consultationHistory} — Complete consultation records access karo\n• ${DOCTOR_NAV.profile} — Availability, fees, aur professional details update karo\n\nKya manage karna hai?`;
     }
 
     // ── 10. Theme & Settings ──
-    if (q.includes('theme') || q.includes('dark') || q.includes('light') || q.includes('settings') || q.includes('logout') || q.includes('sign out') || q.includes('password') || q.includes('profile')) {
+    if (q.includes('theme') || q.includes('dark') || q.includes('light') || q.includes('settings') || q.includes('logout') || q.includes('sign out') || q.includes('password') || q.includes('profile') || q.includes('setting')) {
         const profileNav = role === 'doctor' ? DOCTOR_NAV.profile : PATIENT_NAV.profile;
-        return `⚙️ **Settings & Preferences:**\n\n• Go to ${profileNav} from the sidebar\n• Toggle between **Dark** and **Light** modes\n• Update your personal details\n• Sign out securely when needed`;
+        return `⚙️ **Settings & Preferences:**\n\n• Sidebar se ${profileNav} pe jao\n• **Dark** aur **Light** mode ke beech toggle karo\n• Apni personal details update karo\n• Jab chahein securely sign out karo`;
     }
 
     // ── 11. Health Tips ──
-    if (q.includes('tip') || q.includes('health') || q.includes('diet') || q.includes('water') || q.includes('sleep') || q.includes('exercise')) {
+    if (q.includes('tip') || q.includes('health') || q.includes('diet') || q.includes('water') || q.includes('sleep') || q.includes('exercise') || q.includes('sehat') || q.includes('pani') || q.includes('neend')) {
         if (role === 'doctor') {
-            return `As a healthcare professional, you're best equipped with clinical knowledge! 😊\n\nIf you need to manage your MediConnect practice:\n• ${DOCTOR_NAV.appointmentRequests}\n• ${DOCTOR_NAV.profile}`;
+            return `Doctor sahab, aap khud health expert hain! 😊\n\nMediConnect practice manage karne ke liye:\n• ${DOCTOR_NAV.appointmentRequests}\n• ${DOCTOR_NAV.profile}`;
         }
-        return `💡 **Wellness Tips:**\n\n1. **Hydration** — Drink 2.5–3 liters of water daily\n2. **Sleep** — Aim for 7–9 hours of quality sleep\n3. **Exercise** — 30 minutes of daily movement\n4. **Preventative Care** — Schedule regular check-ups\n\nFor personalized advice, consult a specialist via ${PATIENT_NAV.findDoctors}!`;
+        return `💡 **Health Tips:**\n\n1. **Paani** — Roz 2.5–3 litre paani peeyo 💧\n2. **Neend** — 7–9 ghante ki quality sleep lo 😴\n3. **Exercise** — Roz 30 minute movement karo 🏃\n4. **Check-ups** — Regular health check-ups karwao 🏥\n\nPersonalized advice ke liye ${PATIENT_NAV.findDoctors} se specialist se milo!`;
     }
 
     // ── 12. Default — Role-Aware Guidance ──
     if (role === 'doctor') {
-        return `I'm here to help you manage your MediConnect practice, Dr. ${userName}! Here's what you can ask:\n\n• *"How do I manage appointment requests?"*\n• *"Where can I update my schedule?"*\n• *"Show my consultation history"*\n\n**Quick Navigation:**\n• ${DOCTOR_NAV.appointmentRequests}\n• ${DOCTOR_NAV.consultationHistory}\n• ${DOCTOR_NAV.profile}`;
+        return `Dr. ${userName}, main aapki MediConnect practice manage karne mein help karta hoon! Yeh pooch sakte hain:\n\n• *"Appointment requests dikhao"*\n• *"Schedule kaise update karein?"*\n• *"Consultation history dikha"*\n\n**Quick Navigation:**\n• ${DOCTOR_NAV.appointmentRequests}\n• ${DOCTOR_NAV.consultationHistory}\n• ${DOCTOR_NAV.profile}`;
     }
     if (role === 'admin') {
-        return `I'm here to help you manage the MediConnect platform, ${userName}! Here's what you can ask:\n\n• *"How many doctors are pending approval?"*\n• *"How do I manage users?"*\n• *"Show platform appointment overview"*\n\n**Quick Navigation:**\n• ${ADMIN_NAV.manageDoctors}\n• ${ADMIN_NAV.manageUsers}\n• ${ADMIN_NAV.allAppointments}`;
+        return `${userName}, main MediConnect platform manage karne mein help karta hoon! Yeh pooch sakte hain:\n\n• *"Kitne doctors pending approval mein hain?"*\n• *"Users kaise manage karein?"*\n• *"Platform appointments ka overview dikhao"*\n\n**Quick Navigation:**\n• ${ADMIN_NAV.manageDoctors}\n• ${ADMIN_NAV.manageUsers}\n• ${ADMIN_NAV.allAppointments}`;
     }
-    return `I'm here to help you get the most out of MediConnect, ${userName}! Here's what you can ask:\n\n• *"Find a specialist for my symptoms"*\n• *"How do I book an appointment?"*\n• *"Where can I see my scheduled visits?"*\n• *"How do consultation fees work?"*\n\n**Quick Navigation:**\n• ${PATIENT_NAV.findDoctors}\n• ${PATIENT_NAV.bookAppointment}\n• ${PATIENT_NAV.myAppointments}`;
+    return `${userName}, main aapko MediConnect se best care dilane mein help karta hoon! 😊 Yeh pooch sakte hain:\n\n• *"Mujhe bukhar hai, doctor chahiye"*\n• *"Appointment kaise book karein?"*\n• *"Mera appointment kab hai?"*\n• *"Doctor ki fees kitni hai?"*\n\n**Quick Navigation:**\n• ${PATIENT_NAV.findDoctors}\n• ${PATIENT_NAV.bookAppointment}\n• ${PATIENT_NAV.myAppointments}`;
 };
