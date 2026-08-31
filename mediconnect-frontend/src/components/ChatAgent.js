@@ -7,24 +7,24 @@ import './ChatAgent.css';
 
 const ROLE_SUGGESTIONS = {
     patient: [
-        'Mujhe bukhar hai 🤒',
+        'I have a fever 🤒',
         'Suggest a skin specialist',
-        'How to book appointment?',
-        'Sir dard ho raha hai',
-        'Compare doctor fees',
-        'Accha doctor chahiye'
+        'How to book an appointment?',
+        'I have a headache',
+        'Compare doctor consultation fees',
+        'Show my appointments'
     ],
     doctor: [
         'Show my appointment stats',
         'How to update my schedule?',
-        'My profile status kya hai?',
-        'Consultation history dikhao'
+        'Check my profile verification status',
+        'View consultation history'
     ],
     admin: [
         'Pending doctor applications',
-        'Platform stats dikhao',
-        'Show all doctors list',
-        'Kitne users registered hain?'
+        'Platform metrics overview',
+        'Show all doctors directory',
+        'Total registered users'
     ]
 };
 
@@ -158,11 +158,11 @@ const ChatAgent = () => {
             let greeting = '';
             
             if (role === 'doctor') {
-                greeting = `Namaste Dr. ${user.name}! 🩺 Main aapka MediConnect clinical assistant hoon. Aapke appointments, schedule, ya profile se related koi bhi help chahiye toh poochiye!`;
+                greeting = `Hello Dr. ${user.name}! 🩺 I'm your MediConnect Clinical Assistant. How can I help you manage your practice, appointment requests, or consultation hours today?`;
             } else if (role === 'admin') {
-                greeting = `Welcome Administrator ${user.name}! 🛡️ I'm your MediConnect operations assistant. I can help you with doctor verifications, platform metrics, user management, and more. Ask me anything!`;
+                greeting = `Welcome Administrator ${user.name}! 🛡️ I'm your MediConnect Operations Assistant. I can assist with doctor verifications, platform metrics, and user management. What would you like to check?`;
             } else {
-                greeting = `Hi ${user.name}! 👋 Main aapka MediConnect Health Assistant hoon. Aap mujhse Hindi, English ya Hinglish mein baat kar sakte hain!\n\nMujhe batao — kya help chahiye? Doctor dhundhna hai, appointment book karna hai, ya koi health query hai?`;
+                greeting = `Hi ${user.name}! 👋 I'm your MediConnect Health Assistant. How can I help you today? Feel free to ask about doctors, symptoms, or booking appointments in English or Hinglish!`;
             }
             
             setMessages([{ role: 'assistant', content: greeting }]);
@@ -204,9 +204,9 @@ const ChatAgent = () => {
             setMessages(prev => [...prev, { role: 'assistant', content: response }]);
         } catch (error) {
             const role = user?.role || 'patient';
-            let fallbackMsg = "Main aapka MediConnect AI Health Assistant hoon. Aap mujhse doctors dhundhne, appointments book karne, ya apni visits dekhne ke baare mein pooch sakte hain!";
+            let fallbackMsg = "I'm your MediConnect AI Health Assistant. You can ask me how to find verified specialists, schedule consultations, or view your visits.";
             if (role === 'doctor') {
-                fallbackMsg = "Main aapka MediConnect Clinical Assistant hoon, Dr. " + (user?.name || '') + ". Appointments manage karna, schedule update karna, ya consultation history dekhne mein help kar sakta hoon.";
+                fallbackMsg = "I'm your MediConnect Clinical Assistant, Dr. " + (user?.name || '') + ". You can ask me about managing appointment requests, updating your schedule, or reviewing consultation history.";
             } else if (role === 'admin') {
                 fallbackMsg = "I'm your MediConnect Operations Assistant. I can help with doctor verifications, user management, and platform metrics.";
             }
@@ -226,9 +226,9 @@ const ChatAgent = () => {
 
     const handleClearChat = () => {
         const role = user?.role || 'patient';
-        let greeting = `Hi ${user?.name || 'there'}! 😊 Chat clear ho gaya. Aur kya help chahiye?`;
-        if (role === 'doctor') greeting = `Dr. ${user?.name}, chat reset ho gaya. Kya check karna hai?`;
-        if (role === 'admin') greeting = `Administrator ${user?.name}, chat reset. What platform operations can I help with?`;
+        let greeting = `Hi ${user?.name || 'there'}! Conversation cleared. How else can I assist you?`;
+        if (role === 'doctor') greeting = `Dr. ${user?.name}, conversation reset. What would you like to check?`;
+        if (role === 'admin') greeting = `Administrator ${user?.name}, conversation reset. What platform operations can I help with?`;
         setMessages([{ role: 'assistant', content: greeting }]);
     };
 
@@ -336,7 +336,7 @@ const ChatAgent = () => {
                     <input 
                         type="text" 
                         className="chat-input" 
-                        placeholder={user.role === 'patient' ? 'Apna sawal poochiye... (Hindi/English/Hinglish)' : 'Ask about doctors, appointments, or services...'} 
+                        placeholder={user.role === 'patient' ? 'Ask about doctors, symptoms, or appointments...' : 'Ask about platform operations, doctors, or metrics...'} 
                         value={input}
                         onChange={(e) => setInput(e.target.value)}
                         disabled={isLoading}
