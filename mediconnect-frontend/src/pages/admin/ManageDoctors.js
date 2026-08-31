@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import api from '../../utils/api';
 import Icon from '../../components/Icons';
+import DoctorBadge from '../../components/DoctorBadge';
 
 const ManageDoctors = () => {
     const [doctors, setDoctors] = useState([]);
@@ -353,11 +354,7 @@ const ManageDoctors = () => {
                                 </div>
                                 <div className="detail-row">
                                     <span className="detail-row-label">Verification Status</span>
-                                    <span className={`badge badge-${doctor.status}`}>
-                                        {doctor.status === 'approved' && '✅ Approved'}
-                                        {doctor.status === 'pending' && '🟡 Pending Review'}
-                                        {doctor.status === 'blocked' && '🔴 Suspended'}
-                                    </span>
+                                    <DoctorBadge status={doctor.status} />
                                 </div>
                                 {doctor.qualifications && (
                                     <div className="detail-row">

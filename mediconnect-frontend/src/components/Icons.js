@@ -197,6 +197,18 @@ export const Icon = ({ name, size = 20, color = 'currentColor', className = '', 
                 <circle cx="12" cy="12" r="10" />
                 <line x1="4.93" y1="4.93" x2="19.07" y2="19.07" />
             </svg>
+        ),
+        verifiedBadge: (
+            <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={className} {...props}>
+                <path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z" fill={color} fillOpacity="0.18" stroke={color} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+                <path d="m9 12 2 2 4-4" stroke={color} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+        ),
+        shieldCheck: (
+            <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} {...props}>
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                <path d="m9 12 2 2 4-4" />
+            </svg>
         )
     };
 

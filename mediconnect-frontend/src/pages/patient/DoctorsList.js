@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../../utils/api';
 import Icon from '../../components/Icons';
+import DoctorBadge from '../../components/DoctorBadge';
 
 const DoctorsList = () => {
     const [doctors, setDoctors] = useState([]);
@@ -273,9 +274,7 @@ const DoctorsList = () => {
                                 </div>
                                 <div className="detail-row">
                                     <span className="detail-row-label">Credential Status</span>
-                                    <span className="badge badge-approved" style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
-                                        <Icon name="checkCircle" size={12} /> Certified Provider
-                                    </span>
+                                    <DoctorBadge status="approved" customLabel="Verified Specialist" />
                                 </div>
                                 <div className="detail-row">
                                     <span className="detail-row-label">Availability</span>

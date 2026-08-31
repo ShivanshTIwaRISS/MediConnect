@@ -3,6 +3,7 @@ import api from '../../utils/api';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
 import Icon from '../../components/Icons';
+import DoctorBadge from '../../components/DoctorBadge';
 
 const LANGUAGE_OPTIONS = ['English', 'Hindi', 'Bengali', 'Marathi', 'Telugu', 'Tamil', 'Gujarati', 'Urdu', 'Punjabi', 'Malayalam'];
 const DAYS_OF_WEEK = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
@@ -206,21 +207,7 @@ const DoctorProfile = () => {
 
                     {/* Status Badge */}
                     <div>
-                        {status === 'approved' && (
-                            <span className="badge badge-approved" style={{ fontSize: '0.85rem', padding: '6px 14px', display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
-                                <Icon name="checkCircle" size={14} /> Certified Provider
-                            </span>
-                        )}
-                        {status === 'pending' && (
-                            <span className="badge badge-pending" style={{ fontSize: '0.85rem', padding: '6px 14px', display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
-                                <Icon name="clockAlert" size={14} /> Pending Verification
-                            </span>
-                        )}
-                        {status === 'blocked' && (
-                            <span className="badge badge-blocked" style={{ fontSize: '0.85rem', padding: '6px 14px', display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
-                                <Icon name="ban" size={14} /> Account Suspended
-                            </span>
-                        )}
+                        <DoctorBadge status={status} size="lg" />
                     </div>
                 </div>
             </div>

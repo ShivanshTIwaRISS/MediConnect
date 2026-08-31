@@ -863,6 +863,56 @@ button, input, select, textarea {
 .badge-admin { background: var(--error-bg); color: var(--error); border: 1px solid var(--error-border); }
 .badge-blocked { background: var(--error-bg); color: var(--error); border: 1px solid var(--error-border); }
 
+/* ===== CLASSIC MEDICAL VERIFICATION BADGE ===== */
+.classic-verified-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 3px 10px;
+    border-radius: var(--radius-full);
+    font-size: 0.76rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    line-height: 1.2;
+    transition: all var(--transition-fast);
+}
+
+.classic-verified-badge.approved {
+    background: rgba(16, 185, 129, 0.1);
+    color: #059669;
+    border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+[data-theme="dark"] .classic-verified-badge.approved {
+    background: rgba(16, 185, 129, 0.16);
+    color: #34d399;
+    border-color: rgba(52, 211, 153, 0.35);
+}
+
+.classic-verified-badge.pending {
+    background: rgba(245, 158, 11, 0.1);
+    color: #d97706;
+    border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+[data-theme="dark"] .classic-verified-badge.pending {
+    background: rgba(245, 158, 11, 0.16);
+    color: #fbbf24;
+    border-color: rgba(251, 191, 36, 0.35);
+}
+
+.classic-verified-badge.blocked {
+    background: rgba(239, 68, 68, 0.1);
+    color: #dc2626;
+    border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+[data-theme="dark"] .classic-verified-badge.blocked {
+    background: rgba(239, 68, 68, 0.16);
+    color: #f87171;
+    border-color: rgba(248, 113, 113, 0.35);
+}
+
 /* ===== BUTTONS ===== */
 .btn {
     display: inline-flex;
