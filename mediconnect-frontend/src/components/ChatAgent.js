@@ -67,44 +67,32 @@ const ChatAgent = () => {
         setIsLoading(true);
 
         try {
-            const role = user?.role || 'patient';
-            const systemPrompt = {
-                role: 'system',
-                content: `You are the MediConnect AI Assistant, a specialized agent for the MediConnect Healthcare Platform.
-                
-YOUR CONTEXT:
-- User Name: ${user?.name || 'User'}
-- User Role: ${role}
-- Platform: MediConnect (Doctor consultations, online appointment bookings, healthcare records).
+            // Build chat history with ONLY user/assistant messages.
+            // The backend builds the authoritative system prompt server-side
+            // using the authenticated user's role + live database context.
+            // We do NOT send a system prompt from the frontend to avoid
+            // conflicts and ensure DB-grounded, role-specific responses.
+            const chatHistory = messages
+                .filter(m => m.role === 'user' || m.role === 'assistant')
+                .concat(userMessage);
 
-DIRECTIVES BASED ON ROLE:
-1. PATIENT:
-   - Help them search for verified specialists in "Find Doctors".
-   - Guide them to "Book Appointment" to select dates and times.
-   - Explain how to view scheduled and past appointments in "My Appointments".
-2. DOCTOR:
-   - Assist in managing consultation requests under "Appointment Requests".
-   - Guide on adjusting consultation schedule and biography under "Profile & Settings".
-   - Guide on checking previous patient consultations under "Consultation History".
-3. ADMIN:
-   - Guide on reviewing, approving, or suspending practitioners under "Manage Doctors".
-   - Guide on auditing patient/doctor accounts under "Manage Users".
-   - Explain monitoring platform appointments under "All Appointments".
-
-SCOPE LIMIT: Stay strictly within MediConnect healthcare platform capabilities and general medical navigation. Do not provide unverified medical diagnoses; recommend consulting a qualified specialist. Keep responses concise, professional, and helpful.`
-            };
-
-            const chatHistory = [systemPrompt, ...messages, userMessage];
-            const response = await groqService.getChatCompletion(chatHistory, user);
+            const response = await groqService.getChatCompletion(chatHistory, {
+                role: user?.role || 'patient',
+                name: user?.name || 'User',
+            });
             
             setMessages(prev => [...prev, { role: 'assistant', content: response }]);
         } catch (error) {
+            const role = user?.role || 'patient';
+            let fallbackMsg = "I'm your MediConnect AI Health Assistant. You can ask me how to find doctors, schedule appointments, review clinical visits, or adjust your settings.";
+            if (role === 'doctor') {
+                fallbackMsg = "I'm your MediConnect Clinical Assistant, Dr. " + (user?.name || '') + ". You can ask me about managing appointment requests, updating your schedule, or reviewing consultation history.";
+            } else if (role === 'admin') {
+                fallbackMsg = "I'm your MediConnect Operations Assistant. You can ask me about doctor verifications, user management, or platform metrics.";
+            }
             setMessages(prev => [
                 ...prev,
-                { 
-                    role: 'assistant', 
-                    content: "I'm your MediConnect AI Health Assistant. You can ask me how to find doctors, schedule appointments, review clinical visits, or adjust your settings." 
-                }
+                { role: 'assistant', content: fallbackMsg }
             ]);
         } finally {
             setIsLoading(false);

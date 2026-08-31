@@ -1,10 +1,5 @@
-import axios from 'axios';
 import api from './api';
 import { generateSmartResponse } from './clinicalEngine';
-
-const GROQ_API_URL = 'https://api.groq.com/openai/v1/chat/completions';
-const FALLBACK_API_KEY = process.env.REACT_APP_GROQ_API_KEY || '';
-const CANDIDATE_MODELS = ['openai/gpt-oss-120b', 'openai/gpt-oss-20b', 'groq/compound'];
 
 const groqService = {
     async getChatCompletion(messages, userInfo = {}) {
@@ -12,48 +7,24 @@ const groqService = {
         const role = userInfo.role || 'patient';
         const userName = userInfo.name || 'User';
 
-        // 1. Primary: Try backend /api/ai/chat route
+        // Primary: Send to backend /api/ai/chat (auth-protected, DB-grounded)
+        // The backend handles model fallback internally and builds role-specific
+        // system prompts with real database context. We do NOT call Groq directly
+        // from the frontend because it bypasses all database context and causes
+        // the model to hallucinate doctor names and data.
         try {
-            const response = await api.post('/ai/chat', { messages }, { timeout: 6000 });
+            const response = await api.post('/ai/chat', { messages }, { timeout: 18000 });
             if (response.data && response.data.success && response.data.content) {
                 return response.data.content;
             }
         } catch (backendError) {
-            console.warn('Backend AI service unreachable or offline, trying alternative channels:', backendError.message);
+            console.warn('Backend AI service unreachable:', backendError.message);
         }
 
-        // 2. Secondary: Direct Groq API fallback if configured
-        if (FALLBACK_API_KEY) {
-            for (const model of CANDIDATE_MODELS) {
-                try {
-                    const directResponse = await axios.post(
-                        GROQ_API_URL,
-                        {
-                            model,
-                            messages,
-                            temperature: 0.7,
-                            max_tokens: 1024,
-                        },
-                        {
-                            headers: {
-                                'Authorization': `Bearer ${FALLBACK_API_KEY}`,
-                                'Content-Type': 'application/json',
-                            },
-                            timeout: 8000,
-                        }
-                    );
-
-                    const content = directResponse.data?.choices?.[0]?.message?.content;
-                    if (content) {
-                        return content;
-                    }
-                } catch (groqErr) {
-                    console.warn(`Direct Groq fallback model ${model} failed:`, groqErr.response?.data?.error?.message || groqErr.message);
-                }
-            }
-        }
-
-        // 3. Guaranteed In-App Clinical Engine: Zero-latency, intelligent assistant response
+        // Fallback: Local clinical engine (zero-latency, no network needed)
+        // This provides role-aware navigation guidance WITHOUT any doctor names
+        // since it has no database access. It only guides users to the right
+        // UI sections based on their role.
         return generateSmartResponse(lastUserMsg, role, userName);
     },
 };
